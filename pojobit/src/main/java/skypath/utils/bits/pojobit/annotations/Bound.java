@@ -1,4 +1,4 @@
-package shaq.pojobit.annotations;
+package skypath.utils.bits.pojobit.annotations;
 
 
 import java.lang.annotation.ElementType;

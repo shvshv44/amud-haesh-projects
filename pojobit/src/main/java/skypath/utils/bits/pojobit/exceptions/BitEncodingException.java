@@ -1,4 +1,4 @@
-package shaq.pojobit.exceptions;
+package skypath.utils.bits.pojobit.exceptions;
 
 
 public class BitEncodingException extends RuntimeException {

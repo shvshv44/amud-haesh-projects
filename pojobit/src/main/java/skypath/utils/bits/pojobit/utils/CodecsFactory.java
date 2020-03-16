@@ -1,7 +1,6 @@
-package shaq.pojobit.utils;
+package skypath.utils.bits.pojobit.utils;
 
-import shaq.pojobit.codecs.*;
-
+import skypath.utils.bits.pojobit.codecs.*;
 import java.util.HashMap;
 
 public class CodecsFactory {

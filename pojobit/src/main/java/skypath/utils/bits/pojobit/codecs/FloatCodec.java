@@ -1,10 +1,10 @@
-package shaq.pojobit.codecs;
+package skypath.utils.bits.pojobit.codecs;
 
 
-import shaq.pojobit.annotations.Bound;
-import shaq.pojobit.bits.BitBuffer;
-import shaq.pojobit.bits.BitSizeOf;
-import shaq.pojobit.bits.ByteSizeOf;
+import skypath.utils.bits.pojobit.annotations.Bound;
+import skypath.utils.bits.pojobit.bits.BitBuffer;
+import skypath.utils.bits.pojobit.bits.BitSizeOf;
+import skypath.utils.bits.pojobit.bits.ByteSizeOf;
 
 import java.nio.ByteBuffer;
 

@@ -1,20 +1,15 @@
-package shaq.pojobit.encoding;
+package skypath.utils.bits.pojobit.encoding;
 
-import shaq.pojobit.annotations.Bound;
-import shaq.pojobit.bits.BitBuffer;
-import shaq.pojobit.codecs.Codec;
-import shaq.pojobit.exceptions.BitEncodingException;
-import shaq.pojobit.reflection.ReflectionHelper;
-import shaq.pojobit.utils.CodecsFactory;
+import skypath.utils.bits.pojobit.annotations.Bound;
+import skypath.utils.bits.pojobit.bits.BitBuffer;
+import skypath.utils.bits.pojobit.codecs.Codec;
+import skypath.utils.bits.pojobit.exceptions.BitEncodingException;
+import skypath.utils.bits.pojobit.reflection.ReflectionHelper;
+import skypath.utils.bits.pojobit.utils.CodecsFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class Encoder {
 

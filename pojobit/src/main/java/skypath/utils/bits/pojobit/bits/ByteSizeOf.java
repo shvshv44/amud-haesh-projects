@@ -1,4 +1,4 @@
-package shaq.pojobit.bits;
+package skypath.utils.bits.pojobit.bits;
 
 
 public enum ByteSizeOf {

@@ -1,8 +1,8 @@
 import org.junit.Assert;
 import org.junit.Test;
-import shaq.pojobit.annotations.Bound;
-import shaq.pojobit.encoding.Encoder;
-import shaq.pojobit.utils.CodecsFactory;
+import skypath.utils.bits.pojobit.annotations.Bound;
+import skypath.utils.bits.pojobit.encoding.Encoder;
+import skypath.utils.bits.pojobit.utils.CodecsFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
