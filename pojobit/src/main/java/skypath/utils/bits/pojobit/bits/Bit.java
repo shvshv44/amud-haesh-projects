@@ -10,11 +10,11 @@ public class Bit {
     }
 
     public Bit (byte value) {
-        this.value = value % 2 == 0;
+        this.value = (value % 2 == 1);
     }
 
     public Bit (int value) {
-        this.value = !(value % 2 == 0);
+        this.value = (value % 2 == 1);
     }
 
     public Bit() {
