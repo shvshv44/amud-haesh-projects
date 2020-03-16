@@ -1,14 +1,42 @@
 import org.junit.Assert;
 import org.junit.Test;
-import pojos.ByteListPojo;
-import pojos.BytePojo;
+import shaq.pojobit.annotations.Bound;
 import shaq.pojobit.encoding.Encoder;
 import shaq.pojobit.utils.CodecsFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ListTest {
+
+
+    private class BytePojo {
+
+        @Bound
+        public boolean bit1;
+        @Bound public boolean bit2;
+        @Bound public boolean bit3;
+        @Bound public boolean bit4;
+        @Bound public boolean bit5;
+        @Bound public boolean bit6;
+        @Bound public boolean bit7;
+        @Bound public boolean bit8;
+
+    }
+
+    private class ByteListPojo {
+
+        private List<BytePojo> bytePojos;
+
+        public List<BytePojo> getBytePojos() {
+            return bytePojos;
+        }
+
+        public void setBytePojos(List<BytePojo> bytePojos) {
+            this.bytePojos = bytePojos;
+        }
+    }
 
 
     @Test
