@@ -1,8 +1,9 @@
+package skypath.utils.bits.pojobit.utils;
+
 import org.junit.Assert;
 import org.junit.Test;
 import skypath.utils.bits.pojobit.annotations.Bound;
 import skypath.utils.bits.pojobit.encoding.Encoder;
-import skypath.utils.bits.pojobit.utils.CodecsFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +14,7 @@ public class ListTest {
 
     private class BytePojo {
 
-        @Bound
-        public boolean bit1;
+        @Bound public boolean bit1;
         @Bound public boolean bit2;
         @Bound public boolean bit3;
         @Bound public boolean bit4;

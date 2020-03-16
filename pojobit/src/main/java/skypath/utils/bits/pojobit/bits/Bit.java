@@ -33,7 +33,7 @@ public class Bit {
         return (value())? (byte)1 : (byte)0;
     }
 
-    private Bit xor(Bit b) {
+    public Bit xor(Bit b) {
         return new Bit(this.value != b.value);
     }
 
