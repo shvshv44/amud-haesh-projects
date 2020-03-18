@@ -1,12 +1,12 @@
 package iaf.ofek.skypath.plugins.generation.javafile.builder;
 
-import iaf.ofek.skypath.plugins.models.clazz.AnnotationData;
-import iaf.ofek.skypath.plugins.models.clazz.ClassFile;
-import iaf.ofek.skypath.plugins.models.clazz.FieldData;
-import iaf.ofek.skypath.plugins.models.clazz.MethodData;
-import iaf.ofek.skypath.plugins.models.common.Keywords;
-import iaf.ofek.skypath.plugins.models.common.ModifierType;
-import iaf.ofek.skypath.plugins.models.common.Signs;
+import iaf.ofek.skypath.plugins.models.javafile.clazz.AnnotationData;
+import iaf.ofek.skypath.plugins.models.javafile.clazz.ClassFile;
+import iaf.ofek.skypath.plugins.models.javafile.clazz.FieldData;
+import iaf.ofek.skypath.plugins.models.javafile.clazz.MethodData;
+import iaf.ofek.skypath.plugins.models.javafile.common.Keywords;
+import iaf.ofek.skypath.plugins.models.javafile.common.ModifierType;
+import iaf.ofek.skypath.plugins.models.javafile.common.Signs;
 import iaf.ofek.skypath.plugins.utils.ImportCollector;
 import iaf.ofek.skypath.plugins.utils.StringJavaFileBuilder;
 import javafx.util.Pair;

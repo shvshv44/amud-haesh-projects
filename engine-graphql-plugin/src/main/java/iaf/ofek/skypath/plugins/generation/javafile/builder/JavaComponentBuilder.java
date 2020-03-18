@@ -1,8 +1,8 @@
 package iaf.ofek.skypath.plugins.generation.javafile.builder;
 
-import iaf.ofek.skypath.plugins.models.FileJavaComponent;
-import iaf.ofek.skypath.plugins.models.common.Keywords;
-import iaf.ofek.skypath.plugins.models.common.Signs;
+import iaf.ofek.skypath.plugins.models.javafile.FileJavaComponent;
+import iaf.ofek.skypath.plugins.models.javafile.common.Keywords;
+import iaf.ofek.skypath.plugins.models.javafile.common.Signs;
 import iaf.ofek.skypath.plugins.utils.ImportCollector;
 import iaf.ofek.skypath.plugins.utils.StringJavaFileBuilder;
 

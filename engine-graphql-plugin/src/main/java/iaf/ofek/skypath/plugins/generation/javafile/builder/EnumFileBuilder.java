@@ -1,11 +1,11 @@
 package iaf.ofek.skypath.plugins.generation.javafile.builder;
 
-import iaf.ofek.skypath.plugins.models.clazz.AnnotationData;
-import iaf.ofek.skypath.plugins.models.common.Keywords;
-import iaf.ofek.skypath.plugins.models.common.ModifierType;
-import iaf.ofek.skypath.plugins.models.common.Signs;
-import iaf.ofek.skypath.plugins.models.enums.EnumFile;
-import iaf.ofek.skypath.plugins.models.enums.EnumValue;
+import iaf.ofek.skypath.plugins.models.javafile.clazz.AnnotationData;
+import iaf.ofek.skypath.plugins.models.javafile.common.Keywords;
+import iaf.ofek.skypath.plugins.models.javafile.common.ModifierType;
+import iaf.ofek.skypath.plugins.models.javafile.common.Signs;
+import iaf.ofek.skypath.plugins.models.javafile.enums.EnumFile;
+import iaf.ofek.skypath.plugins.models.javafile.enums.EnumValue;
 import iaf.ofek.skypath.plugins.utils.ImportCollector;
 import iaf.ofek.skypath.plugins.utils.StringJavaFileBuilder;
 import javafx.util.Pair;

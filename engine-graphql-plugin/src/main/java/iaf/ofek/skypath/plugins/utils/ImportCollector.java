@@ -1,7 +1,7 @@
 package iaf.ofek.skypath.plugins.utils;
 
-import iaf.ofek.skypath.plugins.models.common.Keywords;
-import iaf.ofek.skypath.plugins.models.common.Signs;
+import iaf.ofek.skypath.plugins.models.javafile.common.Keywords;
+import iaf.ofek.skypath.plugins.models.javafile.common.Signs;
 
 import java.util.ArrayList;
 import java.util.List;
