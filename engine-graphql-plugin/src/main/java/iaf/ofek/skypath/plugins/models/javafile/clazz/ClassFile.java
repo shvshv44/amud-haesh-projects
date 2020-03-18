@@ -3,8 +3,11 @@ package iaf.ofek.skypath.plugins.models.javafile.clazz;
 import iaf.ofek.skypath.plugins.generation.javafile.builder.ClassFileBuilder;
 import iaf.ofek.skypath.plugins.generation.javafile.builder.JavaComponentBuilder;
 import iaf.ofek.skypath.plugins.models.javafile.FileJavaComponent;
+import lombok.Data;
+
 import java.util.ArrayList;
 
+@Data
 public class ClassFile extends FileJavaComponent {
 
     private String extendedClass;
@@ -18,46 +21,6 @@ public class ClassFile extends FileJavaComponent {
         this.fields = new ArrayList<>();
         this.methods = new ArrayList<>();
         this.imports = new ArrayList<>();
-    }
-
-    public String getExtendedClass() {
-        return extendedClass;
-    }
-
-    public void setExtendedClass(String extendedClass) {
-        this.extendedClass = extendedClass;
-    }
-
-    public boolean isAbstract() {
-        return isAbstract;
-    }
-
-    public void setAbstract(boolean anAbstract) {
-        isAbstract = anAbstract;
-    }
-
-    public ArrayList<FieldData> getFields() {
-        return fields;
-    }
-
-    public void setFields(ArrayList<FieldData> fields) {
-        this.fields = fields;
-    }
-
-    public ArrayList<MethodData> getMethods() {
-        return methods;
-    }
-
-    public void setMethods(ArrayList<MethodData> methods) {
-        this.methods = methods;
-    }
-
-    public ArrayList<String> getImports() {
-        return imports;
-    }
-
-    public void setImports(ArrayList<String> imports) {
-        this.imports = imports;
     }
 
     @Override

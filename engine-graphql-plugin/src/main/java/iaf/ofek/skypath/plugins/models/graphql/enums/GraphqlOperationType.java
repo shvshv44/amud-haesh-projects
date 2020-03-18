@@ -1,4 +1,4 @@
-package iaf.ofek.skypath.plugins.models.graphql;
+package iaf.ofek.skypath.plugins.models.graphql.enums;
 
 public enum GraphqlOperationType {
 

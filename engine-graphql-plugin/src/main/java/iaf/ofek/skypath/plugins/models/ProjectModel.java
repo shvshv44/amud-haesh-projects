@@ -3,29 +3,15 @@ package iaf.ofek.skypath.plugins.models;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import lombok.Data;
 
+@Data
 public class ProjectModel {
 
     private PsiDirectory directory;
     private String packageName;
     private VirtualFile virtualFolder;
     private Project project;
-
-    public PsiDirectory getDirectory() {
-        return directory;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public VirtualFile getVirtualFolder() {
-        return virtualFolder;
-    }
-
-    public Project getProject() {
-        return project;
-    }
 
     public static class Builder {
         private ProjectModel instance;
