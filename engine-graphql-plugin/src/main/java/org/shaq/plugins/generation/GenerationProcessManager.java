@@ -1,6 +1,6 @@
 package org.shaq.plugins.generation;
 
-import org.shaq.plugins.models.graphql.GraphQLSchema;
+import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GenerationProcessManager {
 
-    public List<FileJavaComponent> startGeneration(GraphQLSchema graphqlSchema) {
+    public List<FileJavaComponent> startGeneration(TypeDefinitionRegistry graphqlSchema) {
         ArrayList <FileJavaComponent> javaComponents = new ArrayList<>();
 
         //TODO: implement

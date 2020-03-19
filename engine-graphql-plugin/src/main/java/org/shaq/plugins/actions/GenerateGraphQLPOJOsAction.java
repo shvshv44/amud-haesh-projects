@@ -2,11 +2,11 @@ package org.shaq.plugins.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.generation.GenerationInputManager;
 import org.shaq.plugins.generation.GenerationProcessManager;
 import org.shaq.plugins.generation.output.JaveComponentsPackageWriter;
 import org.shaq.plugins.models.ProjectModel;
-import org.shaq.plugins.models.graphql.GraphQLSchema;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
 import org.shaq.plugins.utils.EnvironmentDataFetcher;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class GenerateGraphQLPOJOsAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         ProjectModel projectModel = dataFetcher.obtainProjectModel(anActionEvent);
-        GraphQLSchema schema = inputManager.startGenerationInput();
+        TypeDefinitionRegistry schema = inputManager.startGenerationInput();
         List<FileJavaComponent> javaComponents = processManager.startGeneration(schema);
         componentsWriter.writeComponents(javaComponents, projectModel);
     }

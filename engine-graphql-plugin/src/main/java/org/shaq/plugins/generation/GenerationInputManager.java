@@ -2,32 +2,32 @@ package org.shaq.plugins.generation;
 
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.shaq.plugins.graphql.parser.GraphQLSchemaParser;
+import graphql.schema.idl.SchemaParser;
+import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.gui.windows.GraphQLSchemaInputWindow;
-import org.shaq.plugins.models.graphql.GraphQLSchema;
 
 import java.awt.*;
 
 public class GenerationInputManager {
 
-    private GraphQLSchemaParser graphqlSchemaParser;
+    private SchemaParser schemaParser;
     private String inputSchema;
 
     public GenerationInputManager() {
-        this.graphqlSchemaParser = new GraphQLSchemaParser();
+        this.schemaParser = new SchemaParser();
     }
 
-    public GraphQLSchema startGenerationInput() {
+    public TypeDefinitionRegistry startGenerationInput() {
         inputSchema = "";
-        GraphQLSchema graphqlSchema = new GraphQLSchema();
 
         if(showWindowAndGetInputSchema()) {
-            graphqlSchema = graphqlSchemaParser.parse(inputSchema);
+            TypeDefinitionRegistry graphqlSchema = schemaParser.parse(inputSchema);
+            //TODO: should implement a adapter to GraphQLGenerationContext
             showReduceGraphQLSchemaWindow(graphqlSchema);
         }
 
 
-        return graphqlSchema;
+        return new TypeDefinitionRegistry();
     }
 
     private boolean showWindowAndGetInputSchema() {
@@ -49,8 +49,8 @@ public class GenerationInputManager {
         return dialogBuilder.getDialogWrapper().getExitCode() == DialogWrapper.OK_EXIT_CODE;
     }
 
-    private void showReduceGraphQLSchemaWindow(GraphQLSchema graphqlSchema) {
-
+    private void showReduceGraphQLSchemaWindow(TypeDefinitionRegistry graphqlSchema) {
+        System.out.println("shaq"); //TODO: implement
     }
 
 }
