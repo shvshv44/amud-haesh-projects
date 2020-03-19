@@ -12,6 +12,6 @@ public class GraphQLOperation {
     private String name;
     private GraphqlOperationType type;
     private List<GraphQLParameter> parameters;
-    private GraphQLEntity returnEntity;
+    private GraphQLField returnEntity;
 
 }

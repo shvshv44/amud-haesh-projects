@@ -7,5 +7,6 @@ public class GraphQLType {
     private String name;
     private Boolean isCollection;
     private List<GraphQLType> inheritedTypes;
+    private List<GraphQLField> fields;
 
 }
