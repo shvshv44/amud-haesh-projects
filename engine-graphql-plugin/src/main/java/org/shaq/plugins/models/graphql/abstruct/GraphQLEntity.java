@@ -9,5 +9,6 @@ public abstract class GraphQLEntity {
     private String name;
     private GraphQLType type;
     private Boolean isNullable;
+    private Boolean isCollection;
 
 }

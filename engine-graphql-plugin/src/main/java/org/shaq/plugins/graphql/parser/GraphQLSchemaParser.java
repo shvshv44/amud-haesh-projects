@@ -2,6 +2,7 @@ package org.shaq.plugins.graphql.parser;
 
 import org.shaq.plugins.models.graphql.GraphQLOperation;
 import org.shaq.plugins.models.graphql.GraphQLSchema;
+import org.shaq.plugins.models.graphql.GraphQLType;
 import org.shaq.plugins.models.graphql.enums.GraphqlOperationType;
 
 import java.util.ArrayList;
@@ -33,12 +34,47 @@ public class GraphQLSchemaParser {
     }
 
     private void operateNonOperationalType(GraphQLSchema graphqlSchema, String typeAsString) {
+
     }
 
     private void operateOperationType(GraphQLSchema graphqlSchema, String typeAsString, GraphqlOperationType operationType) {
-        
+
+        String [] fields = getTypesFields(removeUnnecesserySpaces(typeAsString));
+        for(String fieldAsString : fields) {
+            String [] fieldProperties = fieldAsString.split(":");
+            //TODO: deal with parameters
+            GraphQLOperation operation = new GraphQLOperation();
+            operation.setName(fieldProperties[0]);
+            operation.setType(operationType);
+            //TODO: deal with returnEntity
+        }
     }
 
+    private String removeUnnecesserySpaces(String string) {
+        string = string.replaceAll("((\\s)+)?\\[((\\s)+)?", "["); // remove spaces [
+        string = string.replaceAll("((\\s)+)?\\]", "]"); // remove spaces before ]
+        string = string.replaceAll("((\\s)+)?:((\\s)+)?", ":"); // remove spaces :
+        string = string.replaceAll("\\s+", " "); // remove unnecessary spaces
+
+        return string;
+    }
+
+
+    private String getTypeSimpleName(String typeAsString) {
+        String patternStr = "(\\w)";
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(typeAsString);
+        if(matcher.find()){
+            return matcher.group();
+        }
+
+        return "";
+    }
+
+    private String[] getTypesFields(String typeAsString) {
+        String fieldsAsString = typeAsString.substring(typeAsString.indexOf('{') + 1, typeAsString.lastIndexOf('}')).trim();
+        return fieldsAsString.split(" ");
+    }
 
     private String getTypeNameFromTypeString(String typeAsString) {
         String startOfType = typeAsString.substring(0,typeAsString.indexOf("}"));
