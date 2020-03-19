@@ -21,9 +21,9 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="iaf.ofek.skypath.plugins.actions.GenerateGraphqlPOJOsAction"
+    <action id="org.shaq.plugins.actions.GenerateGraphqlPOJOsAction"
             icon="/icons/amudHaesh.png"
-            class="iaf.ofek.skypath.plugins.actions.GenerateGraphqlPOJOsAction"
+            class="org.shaq.plugins.actions.GenerateGraphqlPOJOsAction"
             text="Generate POJOs from a GRAPH-QL schema"
             description="GeneratePOJOAction">
       <add-to-group group-id="NewGroup" anchor="last"/>
