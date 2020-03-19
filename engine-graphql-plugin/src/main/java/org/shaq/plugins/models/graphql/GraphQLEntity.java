@@ -1,13 +1,11 @@
 package org.shaq.plugins.models.graphql;
 
-
 import lombok.Data;
 
 @Data
-public class GraphqlParameter {
+public class GraphQLEntity {
 
     private String name;
-    private GraphqlType type;
-    private Boolean isNullable;
+    private GraphQLType type;
 
 }

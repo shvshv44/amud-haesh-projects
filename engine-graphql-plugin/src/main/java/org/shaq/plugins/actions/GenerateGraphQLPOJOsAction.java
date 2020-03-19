@@ -6,21 +6,21 @@ import org.shaq.plugins.generation.GenerationInputManager;
 import org.shaq.plugins.generation.GenerationProcessManager;
 import org.shaq.plugins.generation.output.JaveComponentsPackageWriter;
 import org.shaq.plugins.models.ProjectModel;
-import org.shaq.plugins.models.graphql.GraphqlSchema;
+import org.shaq.plugins.models.graphql.GraphQLSchema;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
 import org.shaq.plugins.utils.EnvironmentDataFetcher;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GenerateGraphqlPOJOsAction extends AnAction {
+public class GenerateGraphQLPOJOsAction extends AnAction {
 
     private EnvironmentDataFetcher dataFetcher;
     private GenerationInputManager inputManager;
     private GenerationProcessManager processManager;
     private JaveComponentsPackageWriter componentsWriter;
 
-    public GenerateGraphqlPOJOsAction() {
+    public GenerateGraphQLPOJOsAction() {
         this.dataFetcher = new EnvironmentDataFetcher();
         this.inputManager = new GenerationInputManager();
         this.processManager = new GenerationProcessManager();
@@ -30,7 +30,7 @@ public class GenerateGraphqlPOJOsAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         ProjectModel projectModel = dataFetcher.obtainProjectModel(anActionEvent);
-        GraphqlSchema schema = inputManager.startGenerationInput();
+        GraphQLSchema schema = inputManager.startGenerationInput();
         List<FileJavaComponent> javaComponents = processManager.startGeneration(schema);
         componentsWriter.writeComponents(javaComponents, projectModel);
     }

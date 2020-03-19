@@ -1,14 +1,13 @@
-package org.shaq.plugins.gui;
+package org.shaq.plugins.gui.windows;
 
 import lombok.Data;
 
 import javax.swing.*;
 
 @Data
-public class GraphqlSchemaInputWindow {
+public class GraphQLSchemaInputWindow {
     private JTextArea graphqlInput;
     private JPanel inputPanel;
-    private JButton parseBtn;
     private JScrollPane scrollPane;
     private JLabel helpText;
 

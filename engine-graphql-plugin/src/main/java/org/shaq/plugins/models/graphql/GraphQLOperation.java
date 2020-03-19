@@ -7,11 +7,11 @@ import java.util.List;
 
 
 @Data
-public class GraphqlOperation {
+public class GraphQLOperation {
 
     private String name;
     private GraphqlOperationType type;
-    private List<GraphqlParameter> parameters;
-    private GraphqlEntity returnEntity;
+    private List<GraphQLParameter> parameters;
+    private GraphQLEntity returnEntity;
 
 }

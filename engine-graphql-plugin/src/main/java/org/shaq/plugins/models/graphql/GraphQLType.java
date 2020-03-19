@@ -2,10 +2,10 @@ package org.shaq.plugins.models.graphql;
 
 import java.util.List;
 
-public class GraphqlType {
+public class GraphQLType {
 
     private String name;
     private Boolean isCollection;
-    private List<GraphqlType> inheritedTypes;
+    private List<GraphQLType> inheritedTypes;
 
 }
