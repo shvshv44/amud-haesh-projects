@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import org.shaq.plugins.models.ProjectModel;
+import org.shaq.plugins.models.logic.ProjectModel;
 
 public class EnvironmentDataFetcher {
 

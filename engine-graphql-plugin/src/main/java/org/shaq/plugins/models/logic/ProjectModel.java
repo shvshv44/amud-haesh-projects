@@ -1,4 +1,4 @@
-package org.shaq.plugins.models;
+package org.shaq.plugins.models.logic;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;

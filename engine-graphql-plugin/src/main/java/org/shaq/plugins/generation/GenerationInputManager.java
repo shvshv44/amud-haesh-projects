@@ -5,16 +5,19 @@ import com.intellij.openapi.ui.DialogWrapper;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.gui.windows.GraphQLSchemaInputWindow;
+import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
 
 import java.awt.*;
 
 public class GenerationInputManager {
 
+    private GraphQLGenerationContextAdapter adapter;
     private SchemaParser schemaParser;
     private String inputSchema;
 
-    public GenerationInputManager() {
-        this.schemaParser = new SchemaParser();
+    public GenerationInputManager(GraphQLGenerationContextAdapter adapter, SchemaParser schemaParser) {
+        this.adapter = adapter;
+        this.schemaParser = schemaParser;
     }
 
     public TypeDefinitionRegistry startGenerationInput() {
@@ -22,8 +25,8 @@ public class GenerationInputManager {
 
         if(showWindowAndGetInputSchema()) {
             TypeDefinitionRegistry graphqlSchema = schemaParser.parse(inputSchema);
-            //TODO: should implement a adapter to GraphQLGenerationContext
-            showReduceGraphQLSchemaWindow(graphqlSchema);
+            GraphQLGenerationContext context = adapter.adapt(graphqlSchema);
+            showReduceGraphQLSchemaWindow(context);
         }
 
 
@@ -49,7 +52,7 @@ public class GenerationInputManager {
         return dialogBuilder.getDialogWrapper().getExitCode() == DialogWrapper.OK_EXIT_CODE;
     }
 
-    private void showReduceGraphQLSchemaWindow(TypeDefinitionRegistry graphqlSchema) {
+    private void showReduceGraphQLSchemaWindow(GraphQLGenerationContext generationContext) {
         System.out.println("shaq"); //TODO: implement
     }
 
