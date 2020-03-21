@@ -1,14 +1,12 @@
 package org.shaq.plugins.generation;
 
-import graphql.language.ObjectTypeDefinition;
-import graphql.language.Type;
-import graphql.language.TypeDefinition;
-import graphql.language.TypeName;
+import graphql.language.*;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
 import org.shaq.plugins.models.graphql.GraphQLSimpleType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GraphQLGenerationContextAdapter {
@@ -18,9 +16,38 @@ public class GraphQLGenerationContextAdapter {
 
         buildSimpleTypes(context, registry.types());
         buildTypeExtensions(context, registry.types());
+        buildFields(context, registry.types());
 
         return context;
     }
+
+    private void buildFields(GraphQLGenerationContext context, Map<String, TypeDefinition> registryTypes) {
+
+        for(TypeDefinition typeDefinition : registryTypes.values()) {
+
+            GraphQLSimpleType simpleType = context.getTypes().get(typeDefinition.getName());
+            if (typeDefinition instanceof ObjectTypeDefinition) {
+                dealWithTypeFields(simpleType, ((ObjectTypeDefinition) typeDefinition).getFieldDefinitions());
+            } else if (typeDefinition instanceof InterfaceTypeDefinition) {
+                dealWithTypeFields(simpleType, ((InterfaceTypeDefinition) typeDefinition).getFieldDefinitions());
+            }
+
+        }
+
+    }
+
+    private void dealWithTypeFields(GraphQLSimpleType simpleType, List<FieldDefinition> typeFieldDefinitions) {
+        for (FieldDefinition fieldDefinition : typeFieldDefinitions) {
+            addFieldFromDefinition(simpleType, fieldDefinition);
+        }
+    }
+
+    private void addFieldFromDefinition(GraphQLSimpleType simpleType, FieldDefinition fieldDefinition) {
+
+        //TODO: implement
+
+    }
+
 
     private void buildTypeExtensions(GraphQLGenerationContext context, Map<String, TypeDefinition> registryTypes) {
         for(TypeDefinition typeDefinition : registryTypes.values()) {
