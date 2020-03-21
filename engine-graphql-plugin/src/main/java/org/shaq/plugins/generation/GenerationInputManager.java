@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import org.shaq.plugins.gui.windows.GraphQLReduceSchemaWindow;
 import org.shaq.plugins.gui.windows.GraphQLSchemaInputWindow;
 import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
 
@@ -39,7 +40,7 @@ public class GenerationInputManager {
         GraphQLSchemaInputWindow inputWindow = new GraphQLSchemaInputWindow();
 
         dialogBuilder.setCenterPanel(inputWindow.getInputPanel());
-        dialogBuilder.setTitle("Graphql Schema Input");
+        dialogBuilder.setTitle("GraphQL Schema - Input");
         dialogBuilder.removeAllActions();
         dialogBuilder.setOkOperation(() -> {
             inputSchema = inputWindow.getGraphqlInput().getText();
@@ -53,7 +54,21 @@ public class GenerationInputManager {
     }
 
     private void showReduceGraphQLSchemaWindow(GraphQLGenerationContext generationContext) {
-        System.out.println("shaq"); //TODO: implement
+        final DialogBuilder dialogBuilder = new DialogBuilder();
+        final Window window = dialogBuilder.getWindow();
+        GraphQLReduceSchemaWindow inputWindow = new GraphQLReduceSchemaWindow();
+        inputWindow.fillSchema(generationContext);
+
+        dialogBuilder.setCenterPanel(inputWindow.getMainPanel());
+        dialogBuilder.setTitle("GraphQL Schema - Reduce Fields");
+        dialogBuilder.removeAllActions();
+        dialogBuilder.setOkOperation(() -> {
+            // TODO: OK Implement
+            dialogBuilder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
+        });
+
+        dialogBuilder.addOkAction().setText("Generate Schema");
+        dialogBuilder.show();
     }
 
 }

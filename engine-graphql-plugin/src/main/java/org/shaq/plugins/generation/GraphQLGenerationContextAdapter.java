@@ -3,14 +3,10 @@ package org.shaq.plugins.generation;
 import graphql.language.*;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.exceptions.GraphQLSchemaParseException;
-import org.shaq.plugins.models.graphql.GraphQLField;
-import org.shaq.plugins.models.graphql.GraphQLFieldType;
-import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
-import org.shaq.plugins.models.graphql.GraphQLSimpleType;
+import org.shaq.plugins.models.graphql.*;
+import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GraphQLGenerationContextAdapter {
 
@@ -21,8 +17,65 @@ public class GraphQLGenerationContextAdapter {
         buildSimpleTypes(context, registry.types());
         buildTypeExtensions(context, registry.types());
         buildFields(context, registry.types());
+        buildQueries(context, registry.schemaDefinition());
+        buildMutations(context, registry.schemaDefinition());
+
+        if (context.getQueries().size() == 0 && context.getMutations().size() == 0)
+            throw new GraphQLSchemaParseException("Cannot generate GraphQL Schema POJOs without at least one query or mutation definition!");
 
         return context;
+    }
+
+    private void buildMutations(GraphQLGenerationContext context, Optional<SchemaDefinition> schemaDefinitionOpt) {
+        context.setMutations(new HashMap<>());
+        HashMap<String, GraphQLOperation> mutations = buildOperations(context,schemaDefinitionOpt,GraphQLOperationType.MUTATION);
+
+        if (mutations != null && mutations.values().size() > 0) {
+            context.setMutations(mutations);
+        }
+    }
+
+    private void buildQueries (GraphQLGenerationContext context, Optional<SchemaDefinition> schemaDefinitionOpt) {
+        context.setQueries(new HashMap<>());
+        HashMap<String, GraphQLOperation> queries = buildOperations(context,schemaDefinitionOpt,GraphQLOperationType.QUERY);
+
+        if (queries != null && queries.values().size() > 0) {
+            context.setQueries(queries);
+        }
+    }
+
+    private HashMap<String, GraphQLOperation> buildOperations (GraphQLGenerationContext context, Optional<SchemaDefinition> schemaDefinitionOpt, GraphQLOperationType type) {
+        HashMap<String, GraphQLOperation> operations = new HashMap<>();
+        GraphQLSimpleType operationType = getOperationTypeFromContext(context, schemaDefinitionOpt, type);
+        if (operationType != null) {
+
+            for (GraphQLField field : operationType.getFields().values()) {
+                GraphQLOperation operation = new GraphQLOperation();
+                operation.setName(field.getName());
+                operation.setType(type);
+                operation.setReturnType(field.getType());
+                operations.put(operation.getName(), operation);
+            }
+
+            context.getTypes().remove(operationType.getName());
+        }
+
+        return operations;
+    }
+
+    private GraphQLSimpleType getOperationTypeFromContext(GraphQLGenerationContext context, Optional<SchemaDefinition> schemaDefinitionOpt, GraphQLOperationType type) {
+
+        String queryTypeName = type.getDefaultType();
+        if (schemaDefinitionOpt.isPresent()) {
+            SchemaDefinition schemaDefinition = schemaDefinitionOpt.get();
+            for (OperationTypeDefinition operationTypeDefinition : schemaDefinition.getOperationTypeDefinitions()) {
+                if (operationTypeDefinition.getName().equals(type.getNameInSchema())) {
+                    queryTypeName = operationTypeDefinition.getTypeName().getName();
+                }
+            }
+        }
+
+        return context.getTypes().get(queryTypeName);
     }
 
     private void buildFields(GraphQLGenerationContext context, Map<String, TypeDefinition> registryTypes) {
