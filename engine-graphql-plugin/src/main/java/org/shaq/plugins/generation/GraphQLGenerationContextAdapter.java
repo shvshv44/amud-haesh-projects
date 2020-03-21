@@ -17,9 +17,10 @@ public class GraphQLGenerationContextAdapter {
     public GraphQLGenerationContext adapt(TypeDefinitionRegistry registry) {
         GraphQLGenerationContext context = new GraphQLGenerationContext();
 
+        buildScalars(context);
         buildSimpleTypes(context, registry.types());
         buildTypeExtensions(context, registry.types());
-        buildFields(context, registry.types()); // TODO: implement deal with scalars
+        buildFields(context, registry.types());
 
         return context;
     }
@@ -84,8 +85,12 @@ public class GraphQLGenerationContextAdapter {
 
     private GraphQLFieldType createFieldTypeFromTypeName(GraphQLGenerationContext context, String core, boolean isCollection, boolean isNullable) {
         GraphQLSimpleType coreType = context.getTypes().get(core);
-        if (coreType == null)
-            throw new GraphQLSchemaParseException(core + " type does not exist in schema!");
+        if (coreType == null) {
+            coreType = context.getScalars().get(core);
+            if (coreType == null) {
+                throw new GraphQLSchemaParseException(core + " type does not exist in schema!");
+            }
+        }
 
         GraphQLFieldType graphQLFieldType = new GraphQLFieldType();
         graphQLFieldType.setCoreType(coreType);
@@ -118,23 +123,30 @@ public class GraphQLGenerationContextAdapter {
     }
 
     private void buildSimpleTypes(GraphQLGenerationContext context, Map<String, TypeDefinition> registryTypes) {
-
         context.setTypes(new HashMap<>());
         for(TypeDefinition typeDefinition : registryTypes.values()) {
-            GraphQLSimpleType simpleType = adaptTypeDefinitionToSimpleType(typeDefinition);
+            GraphQLSimpleType simpleType = createEmptySimpleType(typeDefinition.getName());
             context.getTypes().put(simpleType.getName(), simpleType);
         }
-
     }
 
-    private GraphQLSimpleType adaptTypeDefinitionToSimpleType(TypeDefinition typeDefinition) {
+    private GraphQLSimpleType createEmptySimpleType(String typeName) {
 
         GraphQLSimpleType simpleType = new GraphQLSimpleType();
-        simpleType.setName(typeDefinition.getName());
+        simpleType.setName(typeName);
         simpleType.setFields(new HashMap<>());
         simpleType.setInheritedTypes(new HashMap<>());
 
         return simpleType;
+    }
+
+    private void buildScalars(GraphQLGenerationContext context) {
+        context.setScalars(new HashMap<>());
+        String [] scalars = {"String","Int","Float","Boolean"};
+
+        for (String scalarName : scalars) {
+            context.getScalars().put(scalarName, createEmptySimpleType(scalarName));
+        }
     }
 
 }
