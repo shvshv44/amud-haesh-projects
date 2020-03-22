@@ -5,11 +5,11 @@ import models.UserOptions;
 
 public class ApplicationManager {
     private UIManager uiManager;
-    private FileEncryptor encryptor;
+    private FileEncryptor fileEncryptor;
 
-    public ApplicationManager(FileEncryptor encryptor, UIManager uiManager) {
+    public ApplicationManager(FileEncryptor fileEncryptor, UIManager uiManager) {
         this.uiManager = uiManager;
-        this.encryptor = encryptor;
+        this.fileEncryptor = fileEncryptor;
     }
 
     public void startMenu() {
@@ -31,12 +31,12 @@ public class ApplicationManager {
 
     private void choseEncrypt() {
         String path = uiManager.getMessagePath();
-        encryptor.encrypt(path);
+        fileEncryptor.encrypt(path);
     }
 
     private void choseDecrypt() {
         String cipherPath = uiManager.getCipherPath();
         String keyPath = uiManager.getKeyPath();
-        encryptor.decrypt(cipherPath, keyPath);
+        fileEncryptor.decrypt(cipherPath, keyPath);
     }
 }

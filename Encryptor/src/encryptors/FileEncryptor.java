@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class FileEncryptor {
-    private IEncryptor encryptor;
+    private Encryptor encryptor;
     private KeyGenerator keyGenerator;
     private FileManager fileManager;
 
-    public FileEncryptor(IEncryptor encryptor, KeyGenerator keyGenerator, FileManager fileManager) {
+    public FileEncryptor(Encryptor encryptor, KeyGenerator keyGenerator, FileManager fileManager) {
         this.encryptor = encryptor;
         this.keyGenerator = keyGenerator;
         this.fileManager = fileManager;
@@ -31,12 +31,10 @@ public class FileEncryptor {
     public void decrypt(String pathToFile, String pathToKey) {
         try {
             tryToDecrypt(pathToFile, pathToKey);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+        } catch (IOException | DecryptionNotExistException e) {
+            System.err.println("Error while decrypting: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e) {
             System.err.println("Cannot split the file path. Check the path.");
-        } catch (DecryptionNotExistException e) {
-            System.err.println("decryption not found.");
         }
     }
 

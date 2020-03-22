@@ -1,11 +1,11 @@
 package algorithms.shift;
 
-import algorithms.IEncryptionAlgorithm;
+import algorithms.EncryptionAlgorithm;
 
 import java.math.BigInteger;
 import java.util.function.BinaryOperator;
 
-public abstract class ShiftAlgorithm implements IEncryptionAlgorithm {
+public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
 
     String shiftEncrypt(String text, int key, BinaryOperator<BigInteger> operator) {
         StringBuilder message = new StringBuilder();

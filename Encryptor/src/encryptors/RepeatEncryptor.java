@@ -1,18 +1,18 @@
 package encryptors;
 
-import algorithms.IEncryptionAlgorithm;
+import algorithms.EncryptionAlgorithm;
 import exceptions.DecryptionNotExistException;
 import generators.KeyGenerator;
 
-public class RepeatEncryptor implements IEncryptor {
+public class RepeatEncryptor implements Encryptor {
 
     private int repeats;
-    private IEncryptionAlgorithm algorithm;
+    private EncryptionAlgorithm algorithm;
     private KeyGenerator keyGenerator;
 
-    public RepeatEncryptor(IEncryptionAlgorithm algorithm, int n, KeyGenerator generator) {
+    public RepeatEncryptor(EncryptionAlgorithm algorithm, int repeats, KeyGenerator generator) {
         this.algorithm = algorithm;
-        this.repeats = n;
+        this.repeats = repeats;
         this.keyGenerator = generator;
     }
 
@@ -27,7 +27,6 @@ public class RepeatEncryptor implements IEncryptor {
 
     @Override
     public String decrypt(String cipher, int key) throws DecryptionNotExistException {
-        System.err.println("cannot decrypt repeat encryption.");
-        throw new DecryptionNotExistException();
+        throw new DecryptionNotExistException("cannot decrypt repeat encryption.");
     }
 }
