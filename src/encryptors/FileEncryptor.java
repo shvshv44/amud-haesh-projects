@@ -1,6 +1,6 @@
 package encryptors;
 
-import algorithms.IEncryptionAlgorithm;
+import exceptions.DecryptionNotExistException;
 import generators.KeyGenerator;
 import managers.FileManager;
 
@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class FileEncryptor {
-    private IEncryptionAlgorithm algorithm;
+    private IEncryptor encryptor;
     private KeyGenerator keyGenerator;
     private FileManager fileManager;
 
-    public FileEncryptor(IEncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager) {
-        this.algorithm = algorithm;
+    public FileEncryptor(IEncryptor encryptor, KeyGenerator keyGenerator, FileManager fileManager) {
+        this.encryptor = encryptor;
         this.keyGenerator = keyGenerator;
         this.fileManager = fileManager;
     }
@@ -35,6 +35,8 @@ public class FileEncryptor {
             System.err.println(e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e) {
             System.err.println("Cannot split the file path. Check the path.");
+        } catch (DecryptionNotExistException e) {
+            System.err.println("decryption not found.");
         }
     }
 
@@ -43,15 +45,15 @@ public class FileEncryptor {
         String cipherPath = pathToFile.split("\\.")[0] + "_encrypted." + pathToFile.split("\\.")[1];
         String keyPath = Paths.get(pathToFile).getParent() + "\\key.txt";
         String message = fileManager.readFile(pathToFile);
-        String cipher = algorithm.encrypt(message, key);
+        String cipher = encryptor.encrypt(message, key);
         publishEncryptionResults(cipherPath, cipher, keyPath, key);
     }
 
-    private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException {
+    private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, DecryptionNotExistException {
         int key = Integer.valueOf(fileManager.readFile(pathToKey));
         String messagePath = pathToFile.split("\\.")[0] + "_decrypted." + pathToFile.split("\\.")[1];
         String cipher = fileManager.readFile(pathToFile);
-        String message = algorithm.decrypt(cipher, key);
+        String message = encryptor.decrypt(cipher, key);
         publishDecryptionResults(messagePath, message);
     }
 
