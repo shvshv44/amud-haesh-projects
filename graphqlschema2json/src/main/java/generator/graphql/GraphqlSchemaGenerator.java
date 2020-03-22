@@ -1,5 +1,6 @@
 package generator.graphql;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -25,16 +26,36 @@ public class GraphqlSchemaGenerator {
     }
 
     private JsonElement createjson(String currSchemaType, Map<String,List<String>> schemaTypesMap) {
-        JsonPrimitive defaultType = getDefaultBasicType(currSchemaType);
-        if(defaultType != null){
-            return defaultType;
-        }
-        List<String> typeWords = schemaTypesMap.get(currSchemaType);
         JsonObject json = new JsonObject();
+        boolean isTypeArray = false;
+        if (currSchemaType.contains("[") && currSchemaType.contains("]")) {
+            currSchemaType = currSchemaType.replace("[", "");
+            currSchemaType = currSchemaType.replace("]", "");
+            isTypeArray = true;
+        }
+
+        JsonPrimitive defaultType = getDefaultBasicType(currSchemaType);
+        if (defaultType != null) {
+            return getAsJsonAsNeeded(isTypeArray, defaultType);
+        }
+
+        List<String> typeWords = schemaTypesMap.get(currSchemaType);
         int currentWordIndex = 1;
-        while (currentWordIndex < typeWords.size()){
+        while (currentWordIndex < typeWords.size()) {
             String currentWord = typeWords.get(currentWordIndex++);
-            json.add(currentWord, createjson(typeWords.get(currentWordIndex++), schemaTypesMap));
+            JsonElement innerJson = createjson(typeWords.get(currentWordIndex++), schemaTypesMap);
+            json.add(currentWord, innerJson);
+        }
+
+        return getAsJsonAsNeeded(isTypeArray, json);
+    }
+
+    private JsonElement getAsJsonAsNeeded(boolean isTypeArray, JsonElement json) {
+        if (isTypeArray) {
+            JsonArray jsonArray = new JsonArray();
+            jsonArray.add(json);
+            jsonArray.add(json);
+            return jsonArray;
         }
         return json;
     }
