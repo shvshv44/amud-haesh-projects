@@ -15,46 +15,60 @@ import java.util.Map;
 public class GraphqlSchemaGenerator {
 
     public String getJsonFromGraphqlSchema(String schema){
-        List<String> schemaTypes = splitByType(schema);
+        List<String> schemaTypes = splitByBrackets(schema);
         Map<String,List<String>> schemaTypesMap = new HashMap<>();
         for (String singleSchemaType : schemaTypes) {
             List<String> typeWords = splitTypeToWords(singleSchemaType);
-            schemaTypesMap.put(typeWords.get(0),typeWords);
+            schemaTypesMap.put(typeWords.get(1),typeWords);
         }
 
-        return createjson("Query",schemaTypesMap).toString();
+        return createJson("Query",schemaTypesMap).toString();
     }
 
-    private JsonElement createjson(String currSchemaType, Map<String,List<String>> schemaTypesMap) {
+    private JsonElement createJson(String currSchemaTypeName, Map<String,List<String>> schemaTypesMap) {
         JsonObject json = new JsonObject();
         boolean isTypeArray = false;
-        if (currSchemaType.contains("[") && currSchemaType.contains("]")) {
-            currSchemaType = currSchemaType.replace("[", "");
-            currSchemaType = currSchemaType.replace("]", "");
+        if (currSchemaTypeName.contains("[") && currSchemaTypeName.contains("]")) {
+            currSchemaTypeName = currSchemaTypeName.replace("[", "");
+            currSchemaTypeName = currSchemaTypeName.replace("]", "");
             isTypeArray = true;
         }
 
-        JsonPrimitive defaultType = getDefaultBasicType(currSchemaType);
+        JsonPrimitive defaultType = getDefaultBasicType(currSchemaTypeName);
         if (defaultType != null) {
-            return getAsJsonAsNeeded(isTypeArray, defaultType);
+            return getJsonAsNeeded(isTypeArray, defaultType);
         }
 
-        List<String> typeWords = schemaTypesMap.get(currSchemaType);
-        int currentWordIndex = 1;
-        while (currentWordIndex < typeWords.size()) {
-            String currentWord = typeWords.get(currentWordIndex++);
-            JsonElement innerJson = createjson(typeWords.get(currentWordIndex++), schemaTypesMap);
-            json.add(currentWord, innerJson);
+        List<String> typeWords = schemaTypesMap.get(currSchemaTypeName);
+        if(typeWords.get(0).equalsIgnoreCase("enum")) {
+            return handleEnum(currSchemaTypeName, schemaTypesMap);
         }
-
-        return getAsJsonAsNeeded(isTypeArray, json);
+        if(typeWords.get(0).equalsIgnoreCase("type")) {
+            handleType(currSchemaTypeName, schemaTypesMap, json, typeWords);
+        }
+        return getJsonAsNeeded(isTypeArray, json);
     }
 
-    private JsonElement getAsJsonAsNeeded(boolean isTypeArray, JsonElement json) {
+    private void handleType(String currSchemaType, Map<String, List<String>> schemaTypesMap, JsonObject json, List<String> typeWords) {
+        int currentWordIndex = 2;
+        while (currentWordIndex < typeWords.size()) {
+            String currentWord = typeWords.get(currentWordIndex++);
+            JsonElement innerJson = createJson(typeWords.get(currentWordIndex++), schemaTypesMap);
+            json.add(currentWord, innerJson);
+        }
+        json.addProperty("__typename", currSchemaType);
+    }
+
+    private JsonElement handleEnum(String currSchemaEnum, Map<String, List<String>> schemaEnumsMap) {
+        return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(Defaults.ENUM_PLACE + 1));
+    }
+
+    private JsonElement getJsonAsNeeded(boolean isTypeArray, JsonElement json) {
         if (isTypeArray) {
             JsonArray jsonArray = new JsonArray();
-            jsonArray.add(json);
-            jsonArray.add(json);
+            for (int i = 0; i < Defaults.ARRAY_LENGTH; i++) {
+                jsonArray.add(json);
+            }
             return jsonArray;
         }
         return json;
@@ -112,9 +126,9 @@ public class GraphqlSchemaGenerator {
         return removeEmptyStrings(schemaTypes);
     }
 
-    public List<String> splitByType(String schema) {
+    public List<String> splitByBrackets(String schema) {
         List<String> schemaTypes = new ArrayList<>();
-        for (String type : schema.split("type")) {
+        for (String type : schema.split("}")) {
             schemaTypes.add(type);
         }
         return removeEmptyStrings(schemaTypes);
