@@ -5,6 +5,7 @@ import generators.KeyGenerator;
 import managers.FileManager;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 
 public class FileEncryptor {
@@ -23,7 +24,7 @@ public class FileEncryptor {
             tryToEncrypt(pathToFile);
         } catch (IOException e) {
             System.err.println(e.getMessage());
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
             System.err.println("Cannot split the file path. Check the path.");
         }
     }
@@ -33,8 +34,11 @@ public class FileEncryptor {
             tryToDecrypt(pathToFile, pathToKey);
         } catch (IOException | DecryptionNotExistException e) {
             System.err.println("Error while decrypting: " + e.getMessage());
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
             System.err.println("Cannot split the file path. Check the path.");
+        } catch (NumberFormatException e) {
+            String foundKey = e.getMessage().split(": ")[1];
+            System.err.println("Error while decrypting: wrong key format. The key found was " + foundKey);
         }
     }
 
@@ -47,7 +51,7 @@ public class FileEncryptor {
         publishEncryptionResults(cipherPath, cipher, keyPath, key);
     }
 
-    private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, DecryptionNotExistException {
+    private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, DecryptionNotExistException, NumberFormatException {
         int key = Integer.valueOf(fileManager.readFile(pathToKey));
         String messagePath = pathToFile.split("\\.")[0] + "_decrypted." + pathToFile.split("\\.")[1];
         String cipher = fileManager.readFile(pathToFile);
