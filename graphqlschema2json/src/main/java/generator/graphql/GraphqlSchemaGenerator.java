@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import generator.api.GraphqlImplementation;
+import generator.interfaces.db.ImplementationResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +17,8 @@ import java.util.Map;
 @Service
 public class GraphqlSchemaGenerator {
 
+    @Autowired
+    private ImplementationResolver implementationResolver;
     public String getJsonFromGraphqlSchema(String schema){
         List<String> schemaTypes = splitByBrackets(schema);
         Map<String,List<String>> schemaTypesMap = new HashMap<>();
@@ -43,16 +48,39 @@ public class GraphqlSchemaGenerator {
         if(typeWords.get(0).equalsIgnoreCase("enum")) {
             return handleEnum(currSchemaTypeName, schemaTypesMap);
         }
-        if(typeWords.get(0).equalsIgnoreCase("type")) {
+        if(typeWords.get(0).equalsIgnoreCase("interface")){
+            handleInterface(currSchemaTypeName, schemaTypesMap, json, typeWords);
+        }
+        if(typeWords.get(0).equalsIgnoreCase("type")){
             handleType(currSchemaTypeName, schemaTypesMap, json, typeWords);
         }
         return getJsonAsNeeded(isTypeArray, json);
     }
 
+    private void handleInterface(String currSchemaType, Map<String, List<String>> schemaTypesMap, JsonObject json, List<String> typeWords) {
+        boolean isImplementationFound = false;
+        List<GraphqlImplementation> graphqlImplementationList = implementationResolver.findAll();
+        for (GraphqlImplementation currGraphqlImplementation : graphqlImplementationList) {
+            if(currSchemaType.equalsIgnoreCase(currGraphqlImplementation.getInterfaceName()) &&
+                    schemaTypesMap.get(currGraphqlImplementation.getImplementationName())!= null) {
+                isImplementationFound = true;
+                handleType( currGraphqlImplementation.getImplementationName(),
+                            schemaTypesMap,
+                            json,
+                            schemaTypesMap.get(currGraphqlImplementation.getImplementationName()));
+                break;
+            }
+        }
+        if (!isImplementationFound)
+            handleType(currSchemaType, schemaTypesMap, json, typeWords);
+    }
+
     private void handleType(String currSchemaType, Map<String, List<String>> schemaTypesMap, JsonObject json, List<String> typeWords) {
         int currentWordIndex = 2;
+        if(typeWords.get(currentWordIndex).equalsIgnoreCase("implements"))
+            currentWordIndex = 4;
         while (currentWordIndex < typeWords.size()) {
-            String currentWord = typeWords.get(currentWordIndex++);
+                String currentWord = typeWords.get(currentWordIndex++);
             JsonElement innerJson = createJson(typeWords.get(currentWordIndex++), schemaTypesMap);
             json.add(currentWord, innerJson);
         }
