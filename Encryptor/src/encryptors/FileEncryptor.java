@@ -4,11 +4,15 @@ import exceptions.DecryptionNotExistException;
 import generators.KeyGenerator;
 import managers.FileManager;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 public class FileEncryptor {
+    @Resource(name = "Properties")
+    private Properties properties;
     private Encryptor encryptor;
     private KeyGenerator keyGenerator;
     private FileManager fileManager;
@@ -44,8 +48,9 @@ public class FileEncryptor {
 
     private void tryToEncrypt(String pathToFile) throws IOException {
         int key = keyGenerator.generateKey();
-        String cipherPath = pathToFile.split("\\.")[0] + "_encrypted." + pathToFile.split("\\.")[1];
-        String keyPath = Paths.get(pathToFile).getParent() + "\\key.txt";
+        String[] splitPath = pathToFile.split(properties.getProperty("pathSplittingChar"));
+        String cipherPath = splitPath[0] + properties.getProperty("encryptedFileEnding") + splitPath[1];
+        String keyPath = Paths.get(pathToFile).getParent() + properties.getProperty("keyFileName");
         String message = fileManager.readFile(pathToFile);
         String cipher = encryptor.encrypt(message, key);
         publishEncryptionResults(cipherPath, cipher, keyPath, key);
@@ -53,7 +58,8 @@ public class FileEncryptor {
 
     private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, DecryptionNotExistException, NumberFormatException {
         int key = Integer.valueOf(fileManager.readFile(pathToKey));
-        String messagePath = pathToFile.split("\\.")[0] + "_decrypted." + pathToFile.split("\\.")[1];
+        String[] splitPath = pathToFile.split(properties.getProperty("pathSplittingChar"));
+        String messagePath = splitPath[0] + properties.getProperty("decryptedFileEnding") + splitPath[1];
         String cipher = fileManager.readFile(pathToFile);
         String message = encryptor.decrypt(cipher, key);
         publishDecryptionResults(messagePath, message);
