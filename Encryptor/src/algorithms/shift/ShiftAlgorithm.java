@@ -2,14 +2,17 @@ package algorithms.shift;
 
 import algorithms.EncryptionAlgorithm;
 
-import javax.annotation.Resource;
+import javax.swing.*;
 import java.math.BigInteger;
 import java.util.Properties;
 import java.util.function.BinaryOperator;
 
 public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
-    @Resource(name = "Properties")
     private Properties properties;
+
+    public ShiftAlgorithm(Properties properties) {
+        this.properties = properties;
+    }
 
     String shiftEncrypt(String text, int key, BinaryOperator<BigInteger> operator) {
         StringBuilder message = new StringBuilder();
@@ -24,7 +27,7 @@ public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
 
     String shiftDecrypt(String text, int key, BinaryOperator<BigInteger> operator) {
         StringBuilder message = new StringBuilder();
-        String[] textArr = text.split(properties.getProperty("splittingChar"));
+        String[] textArr = text.split(properties.getProperty("encryptionSplittingChar"));
         for(String letter : textArr) {
             message.append((char) operator.apply(new BigInteger(letter), BigInteger.valueOf(key)).intValue());
         }

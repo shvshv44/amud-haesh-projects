@@ -4,23 +4,22 @@ import exceptions.DecryptionNotExistException;
 import generators.KeyGenerator;
 import managers.FileManager;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Properties;
 
 public class FileEncryptor {
-    @Resource(name = "Properties")
     private Properties properties;
     private Encryptor encryptor;
     private KeyGenerator keyGenerator;
     private FileManager fileManager;
 
-    public FileEncryptor(Encryptor encryptor, KeyGenerator keyGenerator, FileManager fileManager) {
+    public FileEncryptor(Encryptor encryptor, KeyGenerator keyGenerator, FileManager fileManager, Properties properties) {
         this.encryptor = encryptor;
         this.keyGenerator = keyGenerator;
         this.fileManager = fileManager;
+        this.properties = properties;
     }
 
     public void encrypt(String pathToFile) {
