@@ -23,13 +23,13 @@ public class GraphQLQueryGenerator {
             GraphQLQuery graphQLQueryAnnotation = classToGenerate.getAnnotation(GraphQLQuery.class);
             GraphqlQueryStringBuilder builder = new GraphqlQueryStringBuilder();
 
-            addQueryType(classToGenerate,builder);
+            addQueryType(classToGenerate, builder);
             builder.append(" ").append(graphQLQueryAnnotation.name());
-            writeParametersOfQuery(builder,graphQLQueryAnnotation.parametersClass());
+            writeParametersOfQuery(builder, graphQLQueryAnnotation.parametersClass());
             builder.append(" {");
 
             if (prettyPrinting) builder.newLine();
-            generateObject(classToGenerate,builder,prettyPrinting,(prettyPrinting)? 1:0);
+            generateObject(classToGenerate, builder, prettyPrinting, (prettyPrinting)? 1:0);
 
             builder.append("} ");
 
@@ -80,15 +80,14 @@ public class GraphQLQueryGenerator {
             Field field = fields[index];
 
             if (!isExcluded(field)) {
-
-                builder.appendByLevel(field.getName(), (prettyPrinting) ? level + 1 : 0);
-                handlePrameterizedObject(field,builder);
+                String fieldName = handleFieldName(field);
+                builder.appendByLevel(fieldName, (prettyPrinting) ? level + 1 : 0);
+                handlePrameterizedObject(field, builder);
 
                 if (isGraphqlQueryObject(field)) {
-                    handleFieldGraphqlObject(field,builder,prettyPrinting,level);
+                    handleFieldGraphqlObject(field, builder, prettyPrinting, level);
                 }
 
-                // separator
                 if (prettyPrinting) builder.newLine();
                 else builder.append(" ");
             }
@@ -106,7 +105,7 @@ public class GraphQLQueryGenerator {
             Class<?> innerClass = field.getAnnotation(GraphQLQueryInnerObject.class).value();
             generateObject(innerClass, builder, prettyPrinting,level + 1);
         } else if (isFieldGraphqlObject(field)) {
-            generateObject(field.getType(), builder, prettyPrinting,(prettyPrinting)? level + 1: 0);
+            generateObject(field.getType(), builder, prettyPrinting, (prettyPrinting)? level + 1: 0);
         }
 
         builder.appendByLevel("} ", (prettyPrinting) ? level + 1 : 0);
@@ -117,7 +116,6 @@ public class GraphQLQueryGenerator {
             Class<?> [] inheritedClasses = classToGenerate.getAnnotation(GraphQLQueryInheritedObject.class).value();
 
             for (Class<?> inheritedClass : inheritedClasses) {
-                // Print inherited only if he has at least 1 declared fields
                 if (inheritedClass.getDeclaredFields().length > 0) {
                     builder.appendByLevel("... on " + inheritedClass.getSimpleName() + " {" , (prettyPrinting)? level + 1: 0);
                     if (prettyPrinting) builder.newLine();
@@ -126,7 +124,6 @@ public class GraphQLQueryGenerator {
                     builder.appendByLevel("} ", (prettyPrinting)? level + 1: 0);
                 }
 
-                // separator between inherited classes
                 if (prettyPrinting) builder.newLine();
                 else builder.append(" ");
             }
@@ -136,8 +133,15 @@ public class GraphQLQueryGenerator {
     private void handlePrameterizedObject(Field field, GraphqlQueryStringBuilder builder) {
         if (field.isAnnotationPresent(GraphQLQueryPrameterizedObject.class)) {
             GraphQLQueryPrameterizedObject prameterizedObject = field.getAnnotation(GraphQLQueryPrameterizedObject.class);
-            writeParametersOfObject(builder,prameterizedObject.parametersClass());
+            writeParametersOfObject(builder, prameterizedObject.parametersClass());
         }
+    }
+
+    public String handleFieldName(Field field){
+        if(isFieldGraphqlSerializedName(field)) {
+            return field.getAnnotation(GraphQLSerializedName.class).value();
+        }
+        return field.getName();
     }
 
     private boolean isGraphqlQueryObject(Field field) {
@@ -152,6 +156,10 @@ public class GraphQLQueryGenerator {
 
     private boolean isFieldGraphqlInnerObject(Field field) {
         return field.isAnnotationPresent(GraphQLQueryInnerObject.class);
+    }
+
+    private boolean isFieldGraphqlSerializedName(Field field) {
+        return field.isAnnotationPresent(GraphQLSerializedName.class);
     }
 
     private boolean isExcluded(Field field) {

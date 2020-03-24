@@ -44,8 +44,8 @@ public class GraphqlParameterGenerator {
             if(field.isAnnotationPresent(GraphQLParameterObject.class)) {
                 findAllParameterNameAndType(field.getType(), builder);
             } else if(field.isAnnotationPresent(GraphQLParameter.class)) {
-                GraphQLParameter parameterAnnot = field.getAnnotation(GraphQLParameter.class);
-                builder.append("$").append(parameterAnnot.name()).append(":").append(parameterAnnot.type());
+                GraphQLParameter parameterAnnotation = field.getAnnotation(GraphQLParameter.class);
+                builder.append("$").append(parameterAnnotation.name()).append(":").append(parameterAnnotation.type());
             }
             builder.append(", ");
         }
@@ -60,9 +60,9 @@ public class GraphqlParameterGenerator {
                 buildQueryServerParameterForObject(field.getType(), builder);
                 builder.append("}");
             } else if(field.isAnnotationPresent(GraphQLParameter.class)) {
-                GraphQLParameter parameterAnnot = field.getAnnotation(GraphQLParameter.class);
+                GraphQLParameter parameterAnnotation = field.getAnnotation(GraphQLParameter.class);
                 builder.append(field.getName()).append(":");
-                builder.append("$").append(parameterAnnot.name());
+                builder.append("$").append(parameterAnnotation.name());
             }
             builder.append(" ");
         }
@@ -77,8 +77,8 @@ public class GraphqlParameterGenerator {
                 if(field.isAnnotationPresent(GraphQLParameterObject.class)) {
                     putAllParametersAndValuesInHash(fieldValue, hash);
                 } else if(field.isAnnotationPresent(GraphQLParameter.class)) {
-                    GraphQLParameter parameterAnnot = field.getAnnotation(GraphQLParameter.class);
-                    hash.put(parameterAnnot.name(),fieldValue);
+                    GraphQLParameter parameterAnnotation = field.getAnnotation(GraphQLParameter.class);
+                    hash.put(parameterAnnotation.name(), fieldValue);
                 }
             } catch (IllegalAccessException e) {
                 throw new GraphQLQueryGeneratorException("The value of parameter " + field + " cannot be accessed.");
