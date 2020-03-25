@@ -3,12 +3,16 @@ package org.shaq.plugins.gui.windows;
 import com.intellij.ui.components.JBList;
 import lombok.Data;
 import org.shaq.plugins.gui.components.ChooseGraphQLOperationComponent;
+import org.shaq.plugins.gui.components.SelectableTreeCellRenderer;
 import org.shaq.plugins.models.graphql.GraphQLFieldType;
 import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
 import org.shaq.plugins.models.graphql.GraphQLOperation;
+import org.shaq.plugins.models.graphql.GraphQLSimpleType;
 import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.util.Map;
 
@@ -30,8 +34,10 @@ public class GraphQLReduceSchemaWindow {
     public void fillSchema(GraphQLGenerationContext context) {
 
         chooseOperationPanel.setLayout(new GridLayout(1,1));
-        operationJList = initializeComponentList(context);
+        chooseFieldsPanel.setLayout(new GridLayout(1,1));
+        chooseParametersPanel.setLayout(new GridLayout(1,1));
 
+        operationJList = initializeComponentList(context);
         fillChoosingListWithOperations(context.getQueries());
         fillChoosingListWithOperations(context.getMutations());
         chooseOperationPanel.add(operationJList);
@@ -74,7 +80,27 @@ public class GraphQLReduceSchemaWindow {
     }
 
     private void updateChooseFieldsPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
-        //TODO: implement
+        JTree fieldTree = new JTree(createNodesFromFields(operation.getReturnType().getCoreType()));
+        fieldTree.setCellRenderer(new SelectableTreeCellRenderer());
+        fieldTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+        chooseFieldsPanel.removeAll();
+        chooseFieldsPanel.add(fieldTree);
+        chooseFieldsPanel.updateUI();
+    }
+
+    private DefaultMutableTreeNode createNodesFromFields(GraphQLSimpleType coreType) {
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Shaq");
+        DefaultMutableTreeNode parent = new DefaultMutableTreeNode("Soliders");
+        parent.add(new DefaultMutableTreeNode("Or"));
+        parent.add(new DefaultMutableTreeNode("Gal"));
+        parent.add(new DefaultMutableTreeNode("Ben"));
+        parent.add(new DefaultMutableTreeNode("Amit"));
+        parent.add(new DefaultMutableTreeNode("Ilya"));
+        parent.add(new DefaultMutableTreeNode("Israel"));
+
+        root.add(parent);
+        return root;
     }
 
     private void updateChooseParametersPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
