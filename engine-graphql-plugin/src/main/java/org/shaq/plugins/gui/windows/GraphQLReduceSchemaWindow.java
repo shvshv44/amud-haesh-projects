@@ -9,6 +9,8 @@ import org.shaq.plugins.models.graphql.GraphQLOperation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.Map;
 
 @Data
 public class GraphQLReduceSchemaWindow {
@@ -25,29 +27,33 @@ public class GraphQLReduceSchemaWindow {
 
 
     public void fillSchema(GraphQLGenerationContext context) {
-        // TODO: implement
 
         chooseOperationPanel.setLayout(new GridLayout(1,1));
+        JList<ChooseGraphQLOperationComponent> operationJList = initalizeComponentList();
+
+        fillChoosingListWithOperations(operationJList, context.getQueries());
+        fillChoosingListWithOperations(operationJList, context.getMutations());
+        chooseOperationPanel.add(operationJList);
+    }
+
+    private void fillChoosingListWithOperations(JList<ChooseGraphQLOperationComponent> operationJList, Map<String, GraphQLOperation> operations) {
+        DefaultListModel  model = (DefaultListModel) (operationJList.getModel());
+        for (GraphQLOperation operation : operations.values()) {
+            ChooseGraphQLOperationComponent component = new ChooseGraphQLOperationComponent();
+            component.setName(operation.getName());
+            component.setOperationType(operation.getType().getNameInSchema());
+            component.setReturnType(graphQLTypeToString(operation.getReturnType()));
+            model.addElement(component);
+        }
+    }
+
+
+    private JList<ChooseGraphQLOperationComponent> initalizeComponentList() {
         JList<ChooseGraphQLOperationComponent> operationJList = new JBList<>(new DefaultListModel<>());
         operationJList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         operationJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        DefaultListModel  model = (DefaultListModel) (operationJList.getModel());
-        for (GraphQLOperation query : context.getQueries().values()) {
-            ChooseGraphQLOperationComponent component = new ChooseGraphQLOperationComponent();
-            component.setName(query.getName());
-            component.setOperationType(query.getType().getNameInSchema());
-            component.setReturnType(graphQLTypeToString(query.getReturnType()));
-            model.addElement(component);
-        }
-        for (GraphQLOperation mutation : context.getMutations().values()) {
-            ChooseGraphQLOperationComponent component = new ChooseGraphQLOperationComponent();
-            component.setName(mutation.getName());
-            component.setOperationType(mutation.getType().getNameInSchema());
-            component.setReturnType(graphQLTypeToString(mutation.getReturnType()));
-            model.addElement(component);
-        }
-        chooseOperationPanel.add(operationJList);
+        return operationJList;
     }
 
     private String graphQLTypeToString(GraphQLFieldType type) {
