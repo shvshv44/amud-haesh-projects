@@ -23,9 +23,10 @@ public class UIManager {
     }
 
     public UserOptions getChoice() {
-        int choice = 0;
+        int choice = UserOptions.DEFAULT.getValue();
         try {
-            choice = Integer.valueOf(getUserInput("Hello user!\nPress 1 for encryption\nPress 2 for decryption\nPress 3 to exit"));
+            choice = Integer.valueOf(getUserInput(
+                    "Hello user!\nPress 1 for encryption\nPress 2 for decryption\nPress 3 to exit"));
         } catch (NumberFormatException e) {
             System.err.println("Could not parse your choice. Please enter a number again.");
         }

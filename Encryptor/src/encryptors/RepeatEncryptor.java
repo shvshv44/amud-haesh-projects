@@ -4,29 +4,30 @@ import algorithms.EncryptionAlgorithm;
 import exceptions.DecryptionNotExistException;
 import generators.KeyGenerator;
 
-public class RepeatEncryptor implements Encryptor {
+public class RepeatEncryptor extends Encryptor {
 
     private int repeats;
-    private EncryptionAlgorithm algorithm;
     private KeyGenerator keyGenerator;
 
-    public RepeatEncryptor(EncryptionAlgorithm algorithm, int repeats, KeyGenerator generator) {
-        this.algorithm = algorithm;
+    public RepeatEncryptor(EncryptionAlgorithm algorithm, int repeats, KeyGenerator generator, String separator) {
+        super(algorithm, separator);
         this.repeats = repeats;
         this.keyGenerator = generator;
     }
 
     @Override
     public String encrypt(String message, int key) {
+        String formattedMessage = prepareMessageForEncryption(message);
         for (int i = 0; i < repeats; i++) {
+            message = algorithm.encrypt(formattedMessage, key, separator);
             key = keyGenerator.generateKey();
-            message = algorithm.encrypt(message, key);
         }
         return message;
     }
 
     @Override
     public String decrypt(String cipher, int key) throws DecryptionNotExistException {
-        throw new DecryptionNotExistException("cannot decrypt repeat encryption.");
+        return algorithm.decrypt(cipher, key, separator);
+        //throw new DecryptionNotExistException("cannot decrypt repeat encryption.");
     }
 }

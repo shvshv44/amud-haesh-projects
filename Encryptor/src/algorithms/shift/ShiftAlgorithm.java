@@ -2,41 +2,31 @@ package algorithms.shift;
 
 import algorithms.EncryptionAlgorithm;
 
-import javax.swing.*;
 import java.math.BigInteger;
-import java.util.Properties;
 import java.util.function.BinaryOperator;
 
 public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
-    private Properties properties;
 
-    public ShiftAlgorithm(Properties properties) {
-        this.properties = properties;
+    public ShiftAlgorithm() {
     }
 
-    String shiftEncrypt(String text, int key, BinaryOperator<BigInteger> operator) {
+    String shiftEncrypt(String text, int key, String separator, BinaryOperator<BigInteger> operator) {
         StringBuilder message = new StringBuilder();
-        char[] textArr = text.toCharArray();
-        for(char letter : textArr) {
-            BigInteger res = operator.apply(BigInteger.valueOf((int)letter), BigInteger.valueOf(key));
-            message.append(res).append(properties.getProperty("encryptionSplittingChar"));
+        String[] textArray = text.split(separator);
+        for(String letter : textArray) {
+            BigInteger res = operator.apply(BigInteger.valueOf(Integer.valueOf(letter)), BigInteger.valueOf(key));
+            message.append(res).append(separator);
         }
         return message.toString();
     }
 
 
-    String shiftDecrypt(String text, int key, BinaryOperator<BigInteger> operator) {
+    String shiftDecrypt(String text, int key, String separator, BinaryOperator<BigInteger> operator) {
         StringBuilder message = new StringBuilder();
-        String[] textArr = text.split(properties.getProperty("encryptionSplittingChar"));
-        for(String letter : textArr) {
+        String[] textArray = text.split(separator);
+        for(String letter : textArray) {
             message.append((char) operator.apply(new BigInteger(letter), BigInteger.valueOf(key)).intValue());
         }
         return message.toString();
     }
-
-    @Override
-    public abstract String encrypt(String message, int key);
-
-    @Override
-    public abstract String decrypt(String cipher, int key);
 }

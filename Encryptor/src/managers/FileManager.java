@@ -21,7 +21,7 @@ public class FileManager {
         }
     }
 
-    public  String readFile(String pathToFile) throws IOException {
+    public String readFile(String pathToFile) throws IOException {
         try {
             return new String(Files.readAllBytes(Paths.get(pathToFile)));
         } catch (IOException e) {

@@ -3,20 +3,23 @@ package encryptors;
 import algorithms.shift.ShiftAlgorithm;
 import exceptions.DecryptionNotExistException;
 
-public class ShiftEncryptor implements Encryptor {
-    private ShiftAlgorithm shiftAlgorithm;
-    public ShiftEncryptor(ShiftAlgorithm shiftAlgorithm) {
-        this.shiftAlgorithm = shiftAlgorithm;
-    }
+public class ShiftEncryptor extends Encryptor {
 
+    public ShiftEncryptor(ShiftAlgorithm shiftAlgorithm, String separator) {
+        super(shiftAlgorithm, separator);
+    }
 
     @Override
     public String encrypt(String message, int key) {
-        return shiftAlgorithm.encrypt(message, key);
+        String formattedMessage = prepareMessageForEncryption(message);
+        return algorithm.encrypt(formattedMessage, key, separator);
     }
 
     @Override
     public String decrypt(String cipher, int key) throws DecryptionNotExistException {
-        return shiftAlgorithm.decrypt(cipher, key);
+        return algorithm.decrypt(cipher, key, separator);
+
     }
+
+
 }

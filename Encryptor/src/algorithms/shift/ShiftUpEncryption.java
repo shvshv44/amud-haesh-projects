@@ -1,21 +1,19 @@
 package algorithms.shift;
 
 import java.math.BigInteger;
-import java.util.Properties;
 
 public class ShiftUpEncryption extends ShiftAlgorithm {
 
-    public ShiftUpEncryption(Properties properties) {
-        super(properties);
+    public ShiftUpEncryption() {
     }
 
     @Override
-    public String encrypt(String message, int key) {
-        return shiftEncrypt(message, key, BigInteger::add);
+    public String encrypt(String message, int key, String separator) {
+        return shiftEncrypt(message, key, separator, BigInteger::add);
     }
 
     @Override
-    public String decrypt(String cipher, int key) {
-        return shiftDecrypt(cipher, key, BigInteger::subtract);
+    public String decrypt(String cipher, int key, String separator) {
+        return shiftDecrypt(cipher, key, separator, BigInteger::subtract);
     }
 }
