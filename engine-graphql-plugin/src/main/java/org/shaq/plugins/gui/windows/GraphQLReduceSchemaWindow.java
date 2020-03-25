@@ -6,10 +6,10 @@ import org.shaq.plugins.gui.components.ChooseGraphQLOperationComponent;
 import org.shaq.plugins.models.graphql.GraphQLFieldType;
 import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
 import org.shaq.plugins.models.graphql.GraphQLOperation;
+import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -25,18 +25,19 @@ public class GraphQLReduceSchemaWindow {
     private JScrollPane chooseOperationScroll;
     private JPanel chooseOperationPanel;
 
+    private JList<ChooseGraphQLOperationComponent> operationJList;
 
     public void fillSchema(GraphQLGenerationContext context) {
 
         chooseOperationPanel.setLayout(new GridLayout(1,1));
-        JList<ChooseGraphQLOperationComponent> operationJList = initalizeComponentList();
+        operationJList = initializeComponentList(context);
 
-        fillChoosingListWithOperations(operationJList, context.getQueries());
-        fillChoosingListWithOperations(operationJList, context.getMutations());
+        fillChoosingListWithOperations(context.getQueries());
+        fillChoosingListWithOperations(context.getMutations());
         chooseOperationPanel.add(operationJList);
     }
 
-    private void fillChoosingListWithOperations(JList<ChooseGraphQLOperationComponent> operationJList, Map<String, GraphQLOperation> operations) {
+    private void fillChoosingListWithOperations(Map<String, GraphQLOperation> operations) {
         DefaultListModel  model = (DefaultListModel) (operationJList.getModel());
         for (GraphQLOperation operation : operations.values()) {
             ChooseGraphQLOperationComponent component = new ChooseGraphQLOperationComponent();
@@ -48,11 +49,11 @@ public class GraphQLReduceSchemaWindow {
     }
 
 
-    private JList<ChooseGraphQLOperationComponent> initalizeComponentList() {
+    private JList<ChooseGraphQLOperationComponent> initializeComponentList(GraphQLGenerationContext context) {
         JList<ChooseGraphQLOperationComponent> operationJList = new JBList<>(new DefaultListModel<>());
         operationJList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         operationJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        operationJList.addListSelectionListener((listSelectionEvent) -> updateChoosenOperationData(context, listSelectionEvent.getFirstIndex()));
         return operationJList;
     }
 
@@ -63,6 +64,29 @@ public class GraphQLReduceSchemaWindow {
         if (type.getIsCollection()) typeAsString += "]";
         if (type.getIsNullable()) typeAsString += "!";
         return typeAsString;
+    }
+
+    private void updateChoosenOperationData(GraphQLGenerationContext context, int operationIndex) {
+        ChooseGraphQLOperationComponent operationComponent = operationJList.getModel().getElementAt(operationIndex);
+        GraphQLOperation operation = getGraphQLTypeFromChoosenComponent(context, operationComponent);
+        updateChooseParametersPanel(context, operation);
+        updateChooseFieldsPanel(context, operation);
+    }
+
+    private void updateChooseFieldsPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
+        //TODO: implement
+    }
+
+    private void updateChooseParametersPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
+        //TODO: implement
+    }
+
+    private GraphQLOperation getGraphQLTypeFromChoosenComponent(GraphQLGenerationContext context, ChooseGraphQLOperationComponent operationComponent) {
+        if (operationComponent.getOperationType().equals(GraphQLOperationType.QUERY.getNameInSchema())) {
+            return context.getQueries().get(operationComponent.getName());
+        }
+
+        return context.getMutations().get(operationComponent.getName());
     }
 
 }
