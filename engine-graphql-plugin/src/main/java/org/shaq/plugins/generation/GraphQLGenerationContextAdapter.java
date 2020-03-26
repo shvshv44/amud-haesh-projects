@@ -178,17 +178,18 @@ public class GraphQLGenerationContextAdapter {
     private void buildSimpleTypes(GraphQLGenerationContext context, Map<String, TypeDefinition> registryTypes) {
         context.setTypes(new HashMap<>());
         for(TypeDefinition typeDefinition : registryTypes.values()) {
-            GraphQLSimpleType simpleType = createEmptySimpleType(typeDefinition.getName());
+            GraphQLSimpleType simpleType = createEmptySimpleType(typeDefinition.getName(), false);
             context.getTypes().put(simpleType.getName(), simpleType);
         }
     }
 
-    private GraphQLSimpleType createEmptySimpleType(String typeName) {
+    private GraphQLSimpleType createEmptySimpleType(String typeName, boolean isScalar) {
 
         GraphQLSimpleType simpleType = new GraphQLSimpleType();
         simpleType.setName(typeName);
         simpleType.setFields(new HashMap<>());
         simpleType.setInheritedTypes(new HashMap<>());
+        simpleType.setIsScalar(isScalar);
 
         return simpleType;
     }
@@ -198,7 +199,7 @@ public class GraphQLGenerationContextAdapter {
         String [] scalars = {"String","Int","Float","Boolean"};
 
         for (String scalarName : scalars) {
-            context.getScalars().put(scalarName, createEmptySimpleType(scalarName));
+            context.getScalars().put(scalarName, createEmptySimpleType(scalarName, true));
         }
     }
 

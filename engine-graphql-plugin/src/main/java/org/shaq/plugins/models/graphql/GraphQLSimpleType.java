@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class GraphQLSimpleType {
 
     private String name;
+    private Boolean isScalar;
     private HashMap <String, GraphQLSimpleType> inheritedTypes;
     private HashMap <String, GraphQLField> fields;
 

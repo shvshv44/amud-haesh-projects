@@ -2,12 +2,8 @@ package org.shaq.plugins.gui.windows;
 
 import com.intellij.ui.components.JBList;
 import lombok.Data;
-import org.shaq.plugins.gui.components.ChooseGraphQLOperationComponent;
-import org.shaq.plugins.gui.components.SelectableTreeCellRenderer;
-import org.shaq.plugins.models.graphql.GraphQLFieldType;
-import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
-import org.shaq.plugins.models.graphql.GraphQLOperation;
-import org.shaq.plugins.models.graphql.GraphQLSimpleType;
+import org.shaq.plugins.gui.components.*;
+import org.shaq.plugins.models.graphql.*;
 import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
 
 import javax.swing.*;
@@ -80,26 +76,25 @@ public class GraphQLReduceSchemaWindow {
     }
 
     private void updateChooseFieldsPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
-        JTree fieldTree = new JTree(createNodesFromFields(operation.getReturnType().getCoreType()));
-        fieldTree.setCellRenderer(new SelectableTreeCellRenderer());
-        fieldTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+        GraphQLField rootField = new GraphQLField();
+        rootField.setName(operation.getName());
+        rootField.setType(operation.getReturnType());
+        JCheckBoxTree fieldTree = new JCheckBoxTree(createNodesFromFields(rootField));
         chooseFieldsPanel.removeAll();
         chooseFieldsPanel.add(fieldTree);
         chooseFieldsPanel.updateUI();
     }
 
-    private DefaultMutableTreeNode createNodesFromFields(GraphQLSimpleType coreType) {
+    private DefaultMutableTreeNode createNodesFromFields(GraphQLField field) {
 
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Shaq");
-        DefaultMutableTreeNode parent = new DefaultMutableTreeNode("Soliders");
-        parent.add(new DefaultMutableTreeNode("Or"));
-        parent.add(new DefaultMutableTreeNode("Gal"));
-        parent.add(new DefaultMutableTreeNode("Ben"));
-        parent.add(new DefaultMutableTreeNode("Amit"));
-        parent.add(new DefaultMutableTreeNode("Ilya"));
-        parent.add(new DefaultMutableTreeNode("Israel"));
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(field.getName() + " : " + graphQLTypeToString(field.getType()));
+        GraphQLSimpleType coreType = field.getType().getCoreType();
+        if (!coreType.getIsScalar() && coreType.getFields().size() > 0 ) {
+            for (GraphQLField child : coreType.getFields().values()) {
+                root.add(createNodesFromFields(child));
+            }
+        }
 
-        root.add(parent);
         return root;
     }
 
