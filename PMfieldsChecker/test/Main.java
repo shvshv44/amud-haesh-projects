@@ -3,20 +3,22 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        AmitModel amitModel = new AmitModel("Amit", null);
+        TestModel testModel = new TestModel("Amit", null);
         List<InnerModel> list = new ArrayList<>();
         InnerInnerModel innerInnerModel = new InnerInnerModel(null);
         InnerModel innerModel = new InnerModel(null, innerInnerModel);
-        amitModel.setInnerModel(innerModel);
+        testModel.setInnerModel(innerModel);
         list.add(null);
         list.add(innerModel);
-        amitModel.setList(list);
+        testModel.setList(list);
+        Integer[] numbers = {1, 2 , null};
+        testModel.setNumbers(numbers);
         NullFieldHandler handleNullField = (String path)-> {
-            System.out.println(path);
+            System.out.println(path + " is null");
         };
         NullFieldsFinder nullFieldsFinder = new NullFieldsFinder(handleNullField);
         try {
-            nullFieldsFinder.checkNullFields(amitModel);
+            nullFieldsFinder.checkNullFields(testModel);
         } catch (Exception e) {
             e.printStackTrace();
         }

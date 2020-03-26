@@ -1,8 +1,11 @@
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class NullFieldsFinder {
 
-    private final String SEPARATOR_STRING = " -> ";
+    private final String SEPARATOR_STRING = ".";
     private String path;
     private NullFieldHandler nullFieldHandler;
 
@@ -17,7 +20,7 @@ public class NullFieldsFinder {
                 path += field.getName() + SEPARATOR_STRING;
                 field.setAccessible(true);
                 if (field.get(object) == null) {
-                    nullFieldHandler.handleNullField(path + "is null");
+                    nullFieldHandler.handleNullField(path.substring(0, path.length() - SEPARATOR_STRING.length()));
                     path = path.substring(0, path.length() - field.getName().length() - SEPARATOR_STRING.length());
                 } else {
                     handleInnerObject(field, object);
@@ -29,7 +32,12 @@ public class NullFieldsFinder {
     private void handleInnerObject(Field field, Object object) throws IllegalAccessException {
         if (isFieldNeedToBeChecked(field.get(object))) {
             if (field.get(object) instanceof Iterable<?>) {
-               handleIterableObject(field, object);
+                Iterable<?> iterable = (Iterable<?>) field.get(object);
+                handleIterableObject(iterable);
+            } else if(field.get(object).getClass().isArray()){
+                List<?> arrayAsList = Arrays.asList((Object[])field.get(object));
+                Iterable<?> iterable = arrayAsList;
+                handleIterableObject(iterable);
             } else {
                 checkNullFields(field.get(object));
             }
@@ -41,17 +49,19 @@ public class NullFieldsFinder {
                object instanceof Long || object instanceof Short|| object instanceof Boolean);
     }
 
-    private void handleIterableObject(Field field, Object object) throws IllegalAccessException {
-        Iterable<?> iterable = (Iterable<?>) field.get(object);
+    private void handleIterableObject(Iterable<?> iterable) throws IllegalAccessException {
         int index = 0;
         for (Object iterableElement : iterable) {
-            path += index + SEPARATOR_STRING;
+            path = path.substring(0, path.length() - SEPARATOR_STRING.length());
+            path += "[" + index + "]" + SEPARATOR_STRING;
             if (iterableElement == null) {
-                nullFieldHandler.handleNullField(path + "is null");
-                path = path.substring(0, path.length()-(String.valueOf(index).length() + SEPARATOR_STRING.length()));
+                nullFieldHandler.handleNullField(path.substring(0, path.length() - SEPARATOR_STRING.length()));
+                path = path.substring(0, path.length()-(String.valueOf(index).length() + 2));
             } else {
                 if (isFieldNeedToBeChecked(iterableElement)) {
                     checkNullFields(iterableElement);
+                } else {
+                    path = path.substring(0, path.length()-(String.valueOf(index).length() + 2));
                 }
             }
             index++;
