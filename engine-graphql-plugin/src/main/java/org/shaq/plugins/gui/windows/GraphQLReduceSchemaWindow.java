@@ -55,7 +55,7 @@ public class GraphQLReduceSchemaWindow {
         JList<ChooseGraphQLOperationComponent> operationJList = new JBList<>(new DefaultListModel<>());
         operationJList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         operationJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        operationJList.addListSelectionListener((listSelectionEvent) -> updateChoosenOperationData(context, listSelectionEvent.getFirstIndex()));
+        operationJList.addListSelectionListener((listSelectionEvent) -> updateChoosenOperationData(context, operationJList.getSelectedIndex()));
         return operationJList;
     }
 

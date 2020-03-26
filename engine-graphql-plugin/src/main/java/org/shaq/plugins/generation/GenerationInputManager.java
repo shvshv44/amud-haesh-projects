@@ -67,7 +67,7 @@ public class GenerationInputManager {
             dialogBuilder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
         });
 
-        dialogBuilder.addOkAction().setText("Generate Schema");
+        dialogBuilder.addOkAction().setText("Generate Classes");
         dialogBuilder.show();
     }
 
