@@ -89,7 +89,7 @@ public class GraphQLReduceSchemaWindow {
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(field.getName() + " : " + graphQLTypeToString(field.getType()));
         GraphQLSimpleType coreType = field.getType().getCoreType();
-        if (!coreType.getIsScalar() && coreType.getFields().size() > 0 ) {
+        if (!coreType.getIsScalar() && !coreType.getIsEnum() && coreType.getFields().size() > 0 ) {
             for (GraphQLField child : coreType.getFields().values()) {
                 root.add(createNodesFromFields(child));
             }

@@ -54,6 +54,8 @@ public class GraphQLGenerationContextAdapter {
                 operation.setName(field.getName());
                 operation.setType(type);
                 operation.setReturnType(field.getType());
+                operation.setParameters(adaptFieldInputToParameters(field.getInputs()));
+
                 operations.put(operation.getName(), operation);
             }
 
@@ -61,6 +63,20 @@ public class GraphQLGenerationContextAdapter {
         }
 
         return operations;
+    }
+
+    private HashMap<String, GraphQLParameter> adaptFieldInputToParameters(HashMap<String, GraphQLField> inputs) {
+        HashMap<String, GraphQLParameter> parameters = new HashMap<>();
+        if (inputs != null) {
+            for (GraphQLField inputField : inputs.values()) {
+                GraphQLParameter parameter = new GraphQLParameter();
+                parameter.setName(inputField.getName());
+                parameter.setType(inputField.getType());
+                parameters.put(parameter.getName(), parameter);
+            }
+        }
+
+        return parameters;
     }
 
     private GraphQLSimpleType getOperationTypeFromContext(GraphQLGenerationContext context, Optional<SchemaDefinition> schemaDefinitionOpt, GraphQLOperationType type) {
@@ -87,10 +103,19 @@ public class GraphQLGenerationContextAdapter {
                 dealWithTypeFields(context, simpleType, ((ObjectTypeDefinition) typeDefinition).getFieldDefinitions());
             } else if (typeDefinition instanceof InterfaceTypeDefinition) {
                 dealWithTypeFields(context, simpleType, ((InterfaceTypeDefinition) typeDefinition).getFieldDefinitions());
+            } else if (typeDefinition instanceof EnumTypeDefinition) {
+                dealWithEnumFields(simpleType,  ((EnumTypeDefinition) typeDefinition).getEnumValueDefinitions());
             }
-
         }
 
+    }
+
+    private void dealWithEnumFields(GraphQLSimpleType simpleType, List<EnumValueDefinition> enumValueDefinitions) {
+        for (EnumValueDefinition enumValue : enumValueDefinitions) {
+            GraphQLField field = new GraphQLField();
+            field.setName(enumValue.getName());
+            simpleType.getFields().put(field.getName(), field);
+        }
     }
 
     private void dealWithTypeFields(GraphQLGenerationContext context, GraphQLSimpleType simpleType, List<FieldDefinition> typeFieldDefinitions) {
@@ -104,7 +129,22 @@ public class GraphQLGenerationContextAdapter {
         field.setName(fieldDefinition.getName());
         GraphQLFieldType fieldType = createFieldType(context, fieldDefinition.getType());
         field.setType(fieldType);
+        if(fieldDefinition.getInputValueDefinitions() != null && fieldDefinition.getInputValueDefinitions().size() > 0)
+            field.setInputs(adaptInputValueToGraphQLFields(context, fieldDefinition.getInputValueDefinitions()));
+
         simpleType.getFields().put(field.getName(), field);
+    }
+
+    private HashMap<String, GraphQLField> adaptInputValueToGraphQLFields(GraphQLGenerationContext context, List<InputValueDefinition> inputValueDefinitions) {
+        HashMap<String, GraphQLField> inputs = new HashMap<>();
+        for (InputValueDefinition inputDefinition : inputValueDefinitions) {
+            GraphQLField inputField = new GraphQLField();
+            inputField.setName(inputDefinition.getName());
+            inputField.setType(createFieldType(context,inputDefinition.getType()));
+            inputs.put(inputField.getName(), inputField);
+        }
+
+        return inputs;
     }
 
     private GraphQLFieldType createFieldType(GraphQLGenerationContext context, Type type) {
@@ -178,18 +218,19 @@ public class GraphQLGenerationContextAdapter {
     private void buildSimpleTypes(GraphQLGenerationContext context, Map<String, TypeDefinition> registryTypes) {
         context.setTypes(new HashMap<>());
         for(TypeDefinition typeDefinition : registryTypes.values()) {
-            GraphQLSimpleType simpleType = createEmptySimpleType(typeDefinition.getName(), false);
+            GraphQLSimpleType simpleType = createEmptySimpleType(typeDefinition.getName(), false, (typeDefinition instanceof EnumTypeDefinition));
             context.getTypes().put(simpleType.getName(), simpleType);
         }
     }
 
-    private GraphQLSimpleType createEmptySimpleType(String typeName, boolean isScalar) {
+    private GraphQLSimpleType createEmptySimpleType(String typeName, boolean isScalar, boolean isEnum) {
 
         GraphQLSimpleType simpleType = new GraphQLSimpleType();
         simpleType.setName(typeName);
         simpleType.setFields(new HashMap<>());
         simpleType.setInheritedTypes(new HashMap<>());
         simpleType.setIsScalar(isScalar);
+        simpleType.setIsEnum(isEnum);
 
         return simpleType;
     }
@@ -199,7 +240,7 @@ public class GraphQLGenerationContextAdapter {
         String [] scalars = {"String","Int","Float","Boolean"};
 
         for (String scalarName : scalars) {
-            context.getScalars().put(scalarName, createEmptySimpleType(scalarName, true));
+            context.getScalars().put(scalarName, createEmptySimpleType(scalarName, true, false));
         }
     }
 
