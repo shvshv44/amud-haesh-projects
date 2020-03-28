@@ -7,6 +7,7 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.gui.windows.GraphQLReduceSchemaWindow;
 import org.shaq.plugins.gui.windows.GraphQLSchemaInputWindow;
 import org.shaq.plugins.models.graphql.GraphQLGenerationContext;
+import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 
 import java.awt.*;
 
@@ -15,14 +16,16 @@ public class GenerationInputManager {
     private GraphQLGenerationContextAdapter adapter;
     private SchemaParser schemaParser;
     private String inputSchema;
+    private UserChoiceGraphQLContext userChoices;
 
     public GenerationInputManager(GraphQLGenerationContextAdapter adapter, SchemaParser schemaParser) {
         this.adapter = adapter;
         this.schemaParser = schemaParser;
     }
 
-    public TypeDefinitionRegistry startGenerationInput() {
+    public UserChoiceGraphQLContext startGenerationInput() {
         inputSchema = "";
+        userChoices = null;
 
         if(showWindowAndGetInputSchema()) {
             TypeDefinitionRegistry graphqlSchema = schemaParser.parse(inputSchema);
@@ -30,8 +33,7 @@ public class GenerationInputManager {
             showReduceGraphQLSchemaWindow(context);
         }
 
-
-        return new TypeDefinitionRegistry();
+        return userChoices;
     }
 
     private boolean showWindowAndGetInputSchema() {
@@ -63,7 +65,7 @@ public class GenerationInputManager {
         dialogBuilder.setTitle("GraphQL Schema - Reduce Fields");
         dialogBuilder.removeAllActions();
         dialogBuilder.setOkOperation(() -> {
-            // TODO: OK Implement
+            userChoices = inputWindow.getUserChoiceContext();
             dialogBuilder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
         });
 

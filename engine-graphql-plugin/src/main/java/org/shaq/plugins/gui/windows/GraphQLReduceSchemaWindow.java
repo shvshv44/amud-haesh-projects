@@ -5,6 +5,7 @@ import lombok.Data;
 import org.shaq.plugins.gui.components.*;
 import org.shaq.plugins.models.graphql.*;
 import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
+import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -99,7 +100,16 @@ public class GraphQLReduceSchemaWindow {
     }
 
     private void updateChooseParametersPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
-        //TODO: implement
+        chooseParametersPanel.removeAll();
+        if(operation.getParameters() != null && operation.getParameters().values().size() > 0) {
+            chooseParametersPanel.setLayout(new BoxLayout(chooseParametersPanel,BoxLayout.Y_AXIS));
+            for (GraphQLParameter parameter : operation.getParameters().values()) {
+                ParameterCheckBoxPanel checkBoxPanel = new ParameterCheckBoxPanel(parameter);
+                chooseParametersPanel.add(checkBoxPanel);
+            }
+        }
+
+        chooseParametersPanel.updateUI();
     }
 
     private GraphQLOperation getGraphQLTypeFromChoosenComponent(GraphQLGenerationContext context, ChooseGraphQLOperationComponent operationComponent) {
@@ -108,6 +118,14 @@ public class GraphQLReduceSchemaWindow {
         }
 
         return context.getMutations().get(operationComponent.getName());
+    }
+
+    public UserChoiceGraphQLContext getUserChoiceContext() {
+        UserChoiceGraphQLContext userChoice = new UserChoiceGraphQLContext();
+
+
+
+        return userChoice;
     }
 
 }

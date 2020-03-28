@@ -10,6 +10,7 @@ import org.shaq.plugins.generation.GraphQLGenerationContextAdapter;
 import org.shaq.plugins.generation.output.JaveComponentsPackageWriter;
 import org.shaq.plugins.models.logic.ProjectModel;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
+import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 import org.shaq.plugins.utils.EnvironmentDataFetcher;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +33,11 @@ public class GenerateGraphQLPOJOsAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         ProjectModel projectModel = dataFetcher.obtainProjectModel(anActionEvent);
-        TypeDefinitionRegistry schema = inputManager.startGenerationInput();
-        List<FileJavaComponent> javaComponents = processManager.startGeneration(schema);
-        componentsWriter.writeComponents(javaComponents, projectModel);
+        UserChoiceGraphQLContext userChoices = inputManager.startGenerationInput();
+
+        if (userChoices != null) {
+            List<FileJavaComponent> javaComponents = processManager.startGeneration(userChoices);
+            componentsWriter.writeComponents(javaComponents, projectModel);
+        }
     }
 }
