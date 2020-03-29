@@ -1,3 +1,6 @@
+import annotations.NullCheckableObject;
+
+@NullCheckableObject
 public class InnerModel {
     private String description;
     private InnerInnerModel innerInnerModel;

@@ -1,5 +1,8 @@
+import annotations.NullCheckableObject;
+
 import java.util.List;
 
+@NullCheckableObject
 public class TestModel {
     private String name;
     private Integer age;

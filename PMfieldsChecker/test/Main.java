@@ -16,9 +16,9 @@ public class Main {
         NullFieldHandler handleNullField = (String path)-> {
             System.out.println(path + " is null");
         };
-        NullFieldsFinder nullFieldsFinder = new NullFieldsFinder(handleNullField);
+        NullFieldsOperator nullFieldsOperator = new NullFieldsOperator(handleNullField);
         try {
-            nullFieldsFinder.checkNullFields(testModel);
+            nullFieldsOperator.checkNullFields(testModel, "");
         } catch (Exception e) {
             e.printStackTrace();
         }
