@@ -1,33 +1,39 @@
 package encryptors;
 
 import algorithms.EncryptionAlgorithm;
-import exceptions.DecryptionNotExistException;
 import generators.KeyGenerator;
+import managers.FileManager;
+
+import java.util.Properties;
 
 public class RepeatEncryptor extends Encryptor {
-
     private int repeats;
-    private KeyGenerator keyGenerator;
 
-    public RepeatEncryptor(EncryptionAlgorithm algorithm, int repeats, KeyGenerator generator, String separator) {
-        super(algorithm, separator);
+    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, Properties properties, int repeats) {
+        super(algorithm, keyGenerator, fileManager, properties);
         this.repeats = repeats;
-        this.keyGenerator = generator;
+        this.keys = new int[repeats];
     }
 
     @Override
-    public String encrypt(String message, int key) {
-        String formattedMessage = prepareMessageForEncryption(message);
+    public String encrypt(String message) {
         for (int i = 0; i < repeats; i++) {
-            message = algorithm.encrypt(formattedMessage, key, separator);
-            key = keyGenerator.generateKey();
+            int key = keys[i];
+            message = algorithm.encrypt(message, key, SEPARATOR);
         }
         return message;
     }
 
     @Override
-    public String decrypt(String cipher, int key) throws DecryptionNotExistException {
-        return algorithm.decrypt(cipher, key, separator);
-        //throw new DecryptionNotExistException("cannot decrypt repeat encryption.");
+    public String decrypt(String cipher) {
+        for (int i = repeats-1; i >= 0; i--) {
+            cipher = algorithm.decrypt(cipher, keys[i], SEPARATOR);
+        }
+        return cipher;
+    }
+
+    @Override
+    protected void generateKeys() {
+        this.keys = keyGenerator.generateKeys(repeats);
     }
 }

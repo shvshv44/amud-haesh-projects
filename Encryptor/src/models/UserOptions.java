@@ -25,6 +25,5 @@ public enum UserOptions {
             default:
                 return DEFAULT;
         }
-
     }
 }

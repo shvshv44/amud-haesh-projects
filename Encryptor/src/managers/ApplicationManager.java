@@ -1,13 +1,13 @@
 package managers;
 
-import encryptors.FileEncryptor;
+import encryptors.Encryptor;
 import models.UserOptions;
 
 public class ApplicationManager {
     private UIManager uiManager;
-    private FileEncryptor fileEncryptor;
+    private Encryptor fileEncryptor;
 
-    public ApplicationManager(FileEncryptor fileEncryptor, UIManager uiManager) {
+    public ApplicationManager(Encryptor fileEncryptor, UIManager uiManager) {
         this.uiManager = uiManager;
         this.fileEncryptor = fileEncryptor;
     }
@@ -31,12 +31,12 @@ public class ApplicationManager {
 
     private void choseEncrypt() {
         String path = uiManager.getMessagePath();
-        fileEncryptor.encrypt(path);
+        fileEncryptor.startEncryption(path);
     }
 
     private void choseDecrypt() {
         String cipherPath = uiManager.getCipherPath();
         String keyPath = uiManager.getKeyPath();
-        fileEncryptor.decrypt(cipherPath, keyPath);
+        fileEncryptor.startDecryption(cipherPath, keyPath);
     }
 }

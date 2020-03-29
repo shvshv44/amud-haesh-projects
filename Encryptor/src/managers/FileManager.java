@@ -17,7 +17,7 @@ public class FileManager {
             writer.write(text);
             writer.close();
         } catch (IOException e) {
-            throw new WritingToFileException("Error writing to file " + pathToFile);
+            throw new WritingToFileException(pathToFile);
         }
     }
 
@@ -25,7 +25,7 @@ public class FileManager {
         try {
             return new String(Files.readAllBytes(Paths.get(pathToFile)));
         } catch (IOException e) {
-            throw new ReadingFromFileException("Error reading from file " + pathToFile);
+            throw new ReadingFromFileException(pathToFile);
         }
     }
 }

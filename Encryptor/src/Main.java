@@ -1,11 +1,10 @@
 import algorithms.shift.ShiftUpEncryption;
-import encryptors.Encryptor;
 import encryptors.RepeatEncryptor;
 import encryptors.ShiftEncryptor;
 import generators.KeyGenerator;
 import generators.RandomKeyGenerator;
 import managers.ApplicationManager;
-import encryptors.FileEncryptor;
+import encryptors.Encryptor;
 import managers.FileManager;
 import managers.UIManager;
 
@@ -14,14 +13,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import static java.lang.System.exit;
+
 public class Main {
     public static void main(String[] args) {
         Properties properties = getProperties();
         KeyGenerator keyGenerator = new RandomKeyGenerator();
-        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), 1, keyGenerator, properties.getProperty("separator"));
-        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), properties.getProperty("separator"));
-        FileEncryptor fileEncryptor = new FileEncryptor(encryptor, keyGenerator, new FileManager(), properties);
-        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager());
+        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), properties, 20);
+        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), properties);
+        ApplicationManager applicationManager = new ApplicationManager(encryptor, new UIManager());
         applicationManager.startMenu();
 
 
@@ -41,6 +41,7 @@ public class Main {
 
         } catch (IOException e) {
             System.err.println("Error while reaching properties file.");
+            exit(1);
         }
         finally {
             return prop;

@@ -14,7 +14,7 @@ public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
         StringBuilder message = new StringBuilder();
         String[] textArray = text.split(separator);
         for(String letter : textArray) {
-            BigInteger res = operator.apply(BigInteger.valueOf(Integer.valueOf(letter)), BigInteger.valueOf(key));
+            BigInteger res = operator.apply(new BigInteger(letter), BigInteger.valueOf(key));
             message.append(res).append(separator);
         }
         return message.toString();
@@ -25,7 +25,7 @@ public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
         StringBuilder message = new StringBuilder();
         String[] textArray = text.split(separator);
         for(String letter : textArray) {
-            message.append((char) operator.apply(new BigInteger(letter), BigInteger.valueOf(key)).intValue());
+            message.append(operator.apply(new BigInteger(letter), BigInteger.valueOf(key))).append(separator);
         }
         return message.toString();
     }
