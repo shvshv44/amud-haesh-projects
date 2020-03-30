@@ -21,10 +21,11 @@ public class NullFieldsOperator {
                     nullFieldHandler.handleNullField(path.substring(0, path.length() - SEPARATOR_STRING.length()));
                     path = path.substring(0, path.length() - field.getName().length() - SEPARATOR_STRING.length());
                 } else {
-                    if (isObjectNeedToBeChecked(object)) {
+                    if(field.getType().isArray() || field.get(object) instanceof Iterable<?> ||
+                       (isObjectNeedToBeChecked(field.get(object).getClass()))) {
                         handleInnerObject(field, object, path);
-                        path = "";
                     }
+                    path = "";
                 }
             }
     }
@@ -41,8 +42,8 @@ public class NullFieldsOperator {
             }
     }
 
-    private boolean isObjectNeedToBeChecked(Object object){
-      return object.getClass().isAnnotationPresent(NullCheckableObject.class);
+    private boolean isObjectNeedToBeChecked(Class classToCheck){
+      return classToCheck.isAnnotationPresent(NullCheckableObject.class);
     }
 
     private void handleIterableObject(Iterable<?> iterable,  String path) throws IllegalAccessException {
@@ -54,7 +55,7 @@ public class NullFieldsOperator {
                 nullFieldHandler.handleNullField(path.substring(0, path.length() - SEPARATOR_STRING.length()));
                 path = path.substring(0, path.length() - (String.valueOf(index).length() + 2));
             } else {
-                    if (isObjectNeedToBeChecked(iterableElement)) {
+                    if (isObjectNeedToBeChecked(iterableElement.getClass())) {
                         checkNullFields(iterableElement, path);
                     } else {
                         path = path.substring(0, path.length() - (String.valueOf(index).length() + 2));

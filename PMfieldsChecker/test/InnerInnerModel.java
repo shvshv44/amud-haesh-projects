@@ -1,3 +1,6 @@
+import annotations.NullCheckableObject;
+
+@NullCheckableObject
 public class InnerInnerModel {
     Integer bla;
 
