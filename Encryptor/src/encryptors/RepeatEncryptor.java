@@ -9,8 +9,9 @@ import java.util.Properties;
 public class RepeatEncryptor extends Encryptor {
     private int repeats;
 
-    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, Properties properties, int repeats) {
-        super(algorithm, keyGenerator, fileManager, properties);
+    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager,
+                           String separator, String pathSplitChar, String encryptionEnding, String decryptionEnding, String keyFileName, int repeats) {
+        super(algorithm, keyGenerator, fileManager, separator, pathSplitChar, encryptionEnding, decryptionEnding, keyFileName);
         this.repeats = repeats;
         this.keys = new int[repeats];
     }

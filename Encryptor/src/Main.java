@@ -18,12 +18,22 @@ import static java.lang.System.exit;
 public class Main {
     public static void main(String[] args) {
         Properties properties = getProperties();
+        String separator = properties.getProperty("separator");
+        String pathSeparator = properties.getProperty("pathSeparator");
+        String encryptedEnding = properties.getProperty("encryptedFileEnding");
+        String decryptedEnding = properties.getProperty("decryptedFileEnding");
+        String keyFileName = properties.getProperty("keyFileName");
+
         KeyGenerator keyGenerator = new RandomKeyGenerator();
-        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), properties, 20);
-        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), properties);
+
+        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(),
+                separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName, 20);
+        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(),
+          //      separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
+
+
         ApplicationManager applicationManager = new ApplicationManager(encryptor, new UIManager());
         applicationManager.startMenu();
-
 
         // C:\BEN\Encryptor_messages\ben.txt
 
@@ -35,15 +45,12 @@ public class Main {
         try {
             InputStream input = new FileInputStream(
                     "C:\\BEN\\Encryptor\\amud-haesh-projects\\Encryptor\\src\\resources\\Properties.properties");
-
             // load a properties file
             prop.load(input);
-
         } catch (IOException e) {
             System.err.println("Error while reaching properties file.");
             exit(1);
-        }
-        finally {
+        } finally {
             return prop;
         }
     }

@@ -8,8 +8,9 @@ import java.util.Properties;
 
 public class ShiftEncryptor extends Encryptor {
 
-    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, Properties properties) {
-        super(algorithm, keyGenerator, fileManager, properties);
+    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager,
+                          String separator, String pathSplitChar, String encryptionEnding, String decryptionEnding, String keyFileName) {
+        super(algorithm, keyGenerator, fileManager, separator, pathSplitChar, encryptionEnding, decryptionEnding, keyFileName);
     }
 
     @Override

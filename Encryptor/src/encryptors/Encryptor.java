@@ -22,17 +22,18 @@ public abstract class Encryptor {
     private final String DECRYPTED_FILE_ENDING;
     private final String KEY_FILE_NAME;
 
-    public Encryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, Properties properties) {
+    public Encryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager,
+                     String separator, String pathSplitChar, String encryptionEnding, String decryptionEnding, String keyFileName) {
         this.keyGenerator = keyGenerator;
         this.fileManager = fileManager;
         this.algorithm = algorithm;
         this.keys = new int[1]; // the default number of keys is 1
 
-        this.SEPARATOR = properties.getProperty("separator");
-        this.PATH_SPLITTING_CHAR   = properties.getProperty("pathSeparator");
-        this.ENCRYPTED_FILE_ENDING = properties.getProperty("encryptedFileEnding");
-        this.DECRYPTED_FILE_ENDING = properties.getProperty("decryptedFileEnding");
-        this.KEY_FILE_NAME = properties.getProperty("keyFileName");
+        this.SEPARATOR = separator;
+        this.PATH_SPLITTING_CHAR = pathSplitChar;
+        this.ENCRYPTED_FILE_ENDING = encryptionEnding;
+        this.DECRYPTED_FILE_ENDING = decryptionEnding;
+        this.KEY_FILE_NAME = keyFileName;
     }
 
     abstract String encrypt(String message);
@@ -78,7 +79,7 @@ public abstract class Encryptor {
         String messagePath = splitPath[0] + DECRYPTED_FILE_ENDING + splitPath[1];
         String cipher = fileManager.readFile(pathToFile);
         String message = decrypt(cipher);
-        String convertedMessage = convertToTextAfterDecryption(message);
+        String convertedMessage = convertDecryptionToText(message);
         publishDecryptionResults(messagePath, convertedMessage);
     }
 
@@ -92,7 +93,7 @@ public abstract class Encryptor {
         return formattedString.toString();
     }
 
-    private String convertToTextAfterDecryption(String message) {
+    private String convertDecryptionToText(String message) {
         String[] decryptedArray = message.split(SEPARATOR);
         StringBuilder messageText = new StringBuilder();
         for(String decryptedLetter : decryptedArray) {
