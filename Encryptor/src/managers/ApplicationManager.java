@@ -18,10 +18,10 @@ public class ApplicationManager {
             choice = uiManager.getChoice();
 
             switch (choice) {
-                case ENCRYPT:
+                case ENCRYPTION:
                     choseEncrypt();
                     break;
-                case DECRYPT:
+                case DECRYPTION:
                     choseDecrypt();
                     break;
             }

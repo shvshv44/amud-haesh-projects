@@ -26,11 +26,21 @@ public class UIManager {
         int choice = UserOptions.DEFAULT.getValue();
         try {
             choice = Integer.valueOf(getUserInput(
-                    "Hello user!\nPress 1 for encryption\nPress 2 for decryption\nPress 3 to exit"));
+                    buildMenuMessage()));
         } catch (NumberFormatException e) {
             System.err.println("Could not parse your choice. Please enter a number again.");
         }
         return UserOptions.getOptionByCodeNumber(choice);
+    }
+
+    private String buildMenuMessage() {
+        StringBuilder menuMessage = new StringBuilder("Hello user!");
+        UserOptions[] options = UserOptions.values();
+        for(UserOptions option : options) {
+            if(option.isPrintable())
+                menuMessage.append("\nPress " + option.getValue() + " for " + option.name().toLowerCase());
+        }
+        return menuMessage.toString();
     }
 
     private String getUserInput(String messageToPrint) {

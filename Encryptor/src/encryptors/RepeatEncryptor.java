@@ -4,8 +4,6 @@ import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileManager;
 
-import java.util.Properties;
-
 public class RepeatEncryptor extends Encryptor {
     private int repeats;
 

@@ -2,8 +2,8 @@ package models;
 
 public enum UserOptions {
     DEFAULT(0),
-    ENCRYPT(1),
-    DECRYPT (2),
+    ENCRYPTION(1),
+    DECRYPTION (2),
     EXIT(3);
 
     private int value;
@@ -14,12 +14,16 @@ public enum UserOptions {
 
     public int getValue() { return value; }
 
+    public boolean isPrintable() {
+        return this != DEFAULT;
+    }
+
     public static UserOptions getOptionByCodeNumber(int code) {
         switch (code) {
             case 1:
-                return ENCRYPT;
+                return ENCRYPTION;
             case 2:
-                return DECRYPT;
+                return DECRYPTION;
             case 3:
                 return EXIT;
             default:
