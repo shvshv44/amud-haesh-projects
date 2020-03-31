@@ -7,11 +7,11 @@ public class AvionicChefRemarkProperties {
     private String remark;
     private String remarkFill;
 
-    public Boolean getRemarkValid() {
+    public Boolean getIsRemarkValid() {
         return isRemarkValid;
     }
 
-    public void setRemarkValid(Boolean remarkValid) {
+    public void setIsRemarkValid(Boolean remarkValid) {
         isRemarkValid = remarkValid;
     }
 

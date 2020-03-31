@@ -29,8 +29,8 @@ public class InternetOrderToAvionicRecipientDataMapperTest {
         Long expectedMillisSinceMidnight =
                 Duration.between(zonedDateTime.toLocalDate().atStartOfDay(zonedDateTime.getZone()), zonedDateTime).getSeconds();
         String expectedNameFill = "    ";
-        int expectedMessageSerialNumber = 1;
-        Assert.assertEquals((Integer)expectedMessageSerialNumber, avionicRecipientData.getMetaData().getMessageSerialNumber());
+        Integer expectedMessageSerialNumber = 1;
+        Assert.assertEquals(expectedMessageSerialNumber, avionicRecipientData.getMetaData().getMessageSerialNumber());
         Assert.assertEquals(clientDetails.getFirstName(), avionicRecipientData.getProperties().getRecipientName());
         Assert.assertEquals(expectedNameFill, avionicRecipientData.getProperties().getRecipientNameFill());
         Assert.assertEquals((Integer)orderDetails.getTimeOrdered().getYear(), avionicRecipientData.getProperties().getWhenOrdered().getYear());

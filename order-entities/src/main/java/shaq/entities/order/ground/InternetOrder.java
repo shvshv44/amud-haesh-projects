@@ -6,7 +6,7 @@ public class InternetOrder {
 
     private ClientDetails clientDetails;
     private OrderDetails orderDetails;
-    private String chefDailySource;
+    private String chefDailySouce;
     private String chefRemark;
     private List<Order> orders;
 
@@ -26,12 +26,12 @@ public class InternetOrder {
         this.orderDetails = orderDetails;
     }
 
-    public String getChefDailySource() {
-        return chefDailySource;
+    public String getChefDailySouce() {
+        return chefDailySouce;
     }
 
-    public void setChefDailySource(String chefDailySource) {
-        this.chefDailySource = chefDailySource;
+    public void setChefDailySouce(String chefDailySouce) {
+        this.chefDailySouce = chefDailySouce;
     }
 
     public String getChefRemark() {
