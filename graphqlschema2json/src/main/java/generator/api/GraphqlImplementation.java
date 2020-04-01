@@ -10,6 +10,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "implementation")
 public class GraphqlImplementation {
-    @Id private String implementationName;
+    @Id private String instanceName;
     private String interfaceName;
 }

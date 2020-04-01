@@ -1,62 +1,44 @@
 package generator.controller;
 
 import generator.api.GraphqlImplementation;
+import generator.api.GraphqlToJsonWithAll;
 import generator.api.UserDefaults;
 import generator.graphql.GraphqlSchemaGenerator;
-import generator.interfaces.db.GraphqlImplementationResolver;
-import generator.interfaces.db.UserDefaultResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 public class JsonCreatorController {
     
     private GraphqlSchemaGenerator qraphqlSchemaGenerator;
-    private GraphqlImplementationResolver graphqlImplementationResolver;
-    private UserDefaultResolver userDefaultsResolver;
 
     @Autowired
-    public JsonCreatorController(GraphqlSchemaGenerator qraphqlSchemaGenerator,
-                                 GraphqlImplementationResolver graphqlImplementationResolver,
-                                 UserDefaultResolver userDefaultsResolver) {
+    public JsonCreatorController(GraphqlSchemaGenerator qraphqlSchemaGenerator) {
         this.qraphqlSchemaGenerator = qraphqlSchemaGenerator;
-        this.graphqlImplementationResolver = graphqlImplementationResolver;
-        this.userDefaultsResolver = userDefaultsResolver;
     }
 
-    @ResponseBody
-    @PostMapping("/graphqlSchema2Json")
-    public String graphqlSchemaToJson(@RequestBody String graphqlSchema){
-        return qraphqlSchemaGenerator.getJsonFromGraphqlSchema(graphqlSchema);
+    @PostMapping("/chooseImplementation/chooseDefaults/graphqlSchema2Json")
+    public ResponseEntity<String> graphqlSchemaToJsonWithAll(@RequestBody GraphqlToJsonWithAll all) {
+        UserDefaults defaults = all.getDefaults();
+        if(all.getDefaults() == null)
+            defaults = new UserDefaults();
+        return graphqlSchemaToJson(all.getGraphqlSchema(),defaults,all.getGraphqlImplementations());
     }
 
-    @ResponseBody
-    @PostMapping("/chooseImplementation")
-    public String chooseImplementation(@RequestBody GraphqlImplementation graphqlImplementation){
-        return "saved successfully " + graphqlImplementationResolver.save(graphqlImplementation);
-    }
-    
-    @ResponseBody
-    @PostMapping("/chooseDefaults")
-    public String chooseUserDefaults(@RequestBody UserDefaults userDefaults){
-        return "saved successfully " + userDefaultsResolver.save(userDefaults);
-    }
-
-    @ResponseBody
-    @DeleteMapping("/resetDefaults")
-    public String resetUserDefaults(){
-        userDefaultsResolver.deleteAll();
-        return "deleted defaults successfully";
-    }
-
-    @ResponseBody
-    @DeleteMapping("/resetImplementation")
-    public String resetImplementation(){
-        graphqlImplementationResolver.deleteAll();
-        return "deleted implementations successfully";
+    private ResponseEntity<String> graphqlSchemaToJson(@RequestBody String graphqlSchema,
+                                                      UserDefaults defaults,
+                                                      List<GraphqlImplementation> graphqlImplementation){
+        try {
+            String schema = qraphqlSchemaGenerator.getJsonFromGraphqlSchema(graphqlSchema,defaults,graphqlImplementation);
+            return new ResponseEntity<>(schema,HttpStatus.OK);
+        }catch(Exception e){
+                return new ResponseEntity<>("invalid input", HttpStatus.OK);
+        }
     }
 }

@@ -7,8 +7,6 @@ import com.google.gson.JsonPrimitive;
 import generator.api.GraphqlImplementation;
 import generator.api.UserDefaults;
 import generator.graphql.manipulators.GraphqlSchemaTextManipulator;
-import generator.interfaces.db.GraphqlImplementationResolver;
-import generator.interfaces.db.UserDefaultResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,26 +18,25 @@ import java.util.Map;
 public class GraphqlSchemaGenerator {
 
     public GraphqlSchemaTextManipulator textManipulator;
-    private GraphqlImplementationResolver graphqlImplementationResolver;
-    private UserDefaultResolver userDefaultsResolver;
     private UserDefaults defaults;
+    private List<GraphqlImplementation> graphqlImplementationList;
 
     @Autowired
-    public GraphqlSchemaGenerator(GraphqlSchemaTextManipulator textManipulator,
-                                  GraphqlImplementationResolver graphqlImplementationResolver,
-                                  UserDefaultResolver userDefaultsResolver) {
+    public GraphqlSchemaGenerator(GraphqlSchemaTextManipulator textManipulator) {
         this.textManipulator = textManipulator;
-        this.graphqlImplementationResolver = graphqlImplementationResolver;
-        this.userDefaultsResolver = userDefaultsResolver;
     }
 
-    public String getJsonFromGraphqlSchema(String schema){
-        this.defaults = createUserDefaults();
+    public String getJsonFromGraphqlSchema(String schema,
+                                           UserDefaults defaults,
+                                           List<GraphqlImplementation> graphqlImplementationList){
+        this.defaults = defaults;
+        this.graphqlImplementationList = graphqlImplementationList;
         List<String> schemaTypes = textManipulator.splitByBrackets(schema);
         Map<String,List<String>> schemaTypesMap = new HashMap<>();
         for (String singleSchemaType : schemaTypes) {
             List<String> typeWords = textManipulator.splitTypeToWords(singleSchemaType);
-            schemaTypesMap.put(typeWords.get(1),typeWords);
+            if(!typeWords.isEmpty())
+                schemaTypesMap.put(typeWords.get(1).toUpperCase(),typeWords);
         }
 
         return createJson("Query",schemaTypesMap).toString();
@@ -55,7 +52,7 @@ public class GraphqlSchemaGenerator {
 
         JsonElement json = getDefaultBasicType(currSchemaTypeName);
         if (json == null) {
-            List<String> typeWords = schemaTypesMap.get(currSchemaTypeName);
+            List<String> typeWords = schemaTypesMap.get(currSchemaTypeName.toUpperCase());
             json = handleCurrType(currSchemaTypeName, schemaTypesMap, typeWords);
         }
 
@@ -87,13 +84,14 @@ public class GraphqlSchemaGenerator {
     }
 
     private JsonElement handleInterface(String currSchemaType, Map<String, List<String>> schemaTypesMap, List<String> typeWords) {
-        List<GraphqlImplementation> graphqlImplementationList = graphqlImplementationResolver.findAll();
-        for (GraphqlImplementation currGraphqlImplementation : graphqlImplementationList) {
-            if(currSchemaType.equalsIgnoreCase(currGraphqlImplementation.getInterfaceName()) &&
-                    schemaTypesMap.get(currGraphqlImplementation.getImplementationName())!= null) {
-                return handleType( currGraphqlImplementation.getImplementationName(),
-                        schemaTypesMap,
-                        schemaTypesMap.get(currGraphqlImplementation.getImplementationName()));
+        if(this.graphqlImplementationList != null) {
+            for (GraphqlImplementation currGraphqlImplementation : this.graphqlImplementationList) {
+                if (currSchemaType.equalsIgnoreCase(currGraphqlImplementation.getInterfaceName()) &&
+                        schemaTypesMap.get(currGraphqlImplementation.getInstanceName().toUpperCase()) != null) {
+                    return handleType(currGraphqlImplementation.getInstanceName(),
+                            schemaTypesMap,
+                            schemaTypesMap.get(currGraphqlImplementation.getInstanceName().toUpperCase()));
+                }
             }
         }
         return handleType(currSchemaType, schemaTypesMap, typeWords);
@@ -114,9 +112,9 @@ public class GraphqlSchemaGenerator {
     }
 
     private JsonElement handleEnum(String currSchemaEnum, Map<String, List<String>> schemaEnumsMap) {
-        if(schemaEnumsMap.get(currSchemaEnum).size() > defaults.getEnumPlace())
-            return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(defaults.getEnumPlace() + 1));
-        return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(Defaults.ENUM_PLACE + 1));
+        if(schemaEnumsMap.get(currSchemaEnum.toUpperCase()).size() > defaults.getEnumPlace())
+            return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum.toUpperCase()).get(defaults.getEnumPlace() + 1));
+        return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum.toUpperCase()).get(Defaults.ENUM_PLACE + 1));
     }
 
     private JsonPrimitive getDefaultBasicType(String currSchemaType) {
@@ -141,15 +139,5 @@ public class GraphqlSchemaGenerator {
     private boolean isType(String type, String schemaType) {
         return schemaType.equalsIgnoreCase(type) ||
                 schemaType.equalsIgnoreCase(type + "!");
-    }
-
-    private UserDefaults createUserDefaults() {
-        List<UserDefaults> userDefaultsList = userDefaultsResolver.findAll();
-        if(!userDefaultsList.isEmpty()) {
-            UserDefaults userDefaults = userDefaultsList.get(userDefaultsList.size() - 1);
-            if (userDefaults != null)
-                return userDefaults;
-        }
-        return new UserDefaults();
     }
 }
