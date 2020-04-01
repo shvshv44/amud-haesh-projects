@@ -144,16 +144,35 @@ public class GraphQLReduceSchemaWindow {
         HashMap<Integer, List<TreePath>> pathByLevel = dividePathsByLevel(fieldTree.getCheckedPaths());
         TreePath rootPath = pathByLevel.get(1).get(0);
         GraphQLField field = getFieldFromPath(rootPath);
+        GraphQLChoosenField choosenField = createChoosenFieldFromField(field);
+        if (fieldTree.getCheckedPaths().length > 1)
+            buildFieldTreeFromRoot(choosenField, pathByLevel, 2);
+
+        userChoice.setRootField(choosenField);
+    }
+
+    private GraphQLChoosenField createChoosenFieldFromField(GraphQLField field) {
         GraphQLChoosenField choosenField = new GraphQLChoosenField();
         choosenField.setName(field.getName());
         choosenField.setOriginalField(field);
-        if (fieldTree.getCheckedPaths().length > 1)
-            buildFieldTreeFromRoot(choosenField, pathByLevel, 2);
+        choosenField.setInnerChoosenFields(new ArrayList<>());
+        return choosenField;
     }
 
     private void buildFieldTreeFromRoot(GraphQLChoosenField rootField, HashMap<Integer, List<TreePath>> pathByLevel, int currentlevel) {
-        List<TreePath> getCurrentLevelPaths = pathByLevel.get(currentlevel);
-        //TODO: continue implement
+        List<TreePath> currentLevelPaths = pathByLevel.get(currentlevel);
+
+        if (currentLevelPaths != null && currentLevelPaths.size() > 0) {
+            for (TreePath treePath : currentLevelPaths) {
+                GraphQLField currentField = getFieldFromPath(treePath);
+                GraphQLField currentParentField = getFieldFromPath(treePath.getParentPath());
+                if (currentParentField.getName().equals(rootField.getName())) {
+                    GraphQLChoosenField choosenField = createChoosenFieldFromField(currentField);
+                    rootField.getInnerChoosenFields().add(choosenField);
+                    buildFieldTreeFromRoot(choosenField, pathByLevel, currentlevel + 1);
+                }
+            }
+        }
     }
 
     private GraphQLField getFieldFromPath(TreePath treePath) {
