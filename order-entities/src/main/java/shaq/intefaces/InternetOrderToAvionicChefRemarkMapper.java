@@ -2,7 +2,6 @@ package shaq.intefaces;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import shaq.entities.order.avionic.chefremark.AvionicChefRemark;
 import shaq.entities.order.ground.InternetOrder;
 

@@ -4,16 +4,16 @@ import java.util.List;
 
 public class Order {
 
-    private String sourceName;
+    private String souceName;
     private List<String> requests;
     private List<Location> locations;
 
     public String getSouceName() {
-        return sourceName;
+        return souceName;
     }
 
     public void setSouceName(String souceName) {
-        this.sourceName = souceName;
+        this.souceName = souceName;
     }
 
     public List<String> getRequests() {
