@@ -38,4 +38,12 @@ public class ParameterCheckBoxPanel extends JPanel {
         if (type.getIsNullable()) typeAsString += "!";
         return typeAsString;
     }
+
+    public String getParameterName() {
+        return parameter.getName();
+    }
+
+    public Boolean hasParameterBeenChoosen() {
+        return checkBox.isSelected();
+    }
 }

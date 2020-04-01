@@ -1,7 +1,9 @@
 package org.shaq.plugins.gui.windows;
 
 import com.intellij.ui.components.JBList;
+import graphql.GraphQL;
 import lombok.Data;
+import org.shaq.plugins.exceptions.GraphQLUserChoiceException;
 import org.shaq.plugins.gui.components.*;
 import org.shaq.plugins.models.graphql.*;
 import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
@@ -9,8 +11,10 @@ import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -26,15 +30,17 @@ public class GraphQLReduceSchemaWindow {
     private JScrollPane chooseOperationScroll;
     private JPanel chooseOperationPanel;
 
+    private GraphQLGenerationContext context;
     private JList<ChooseGraphQLOperationComponent> operationJList;
+    private JCheckBoxTree fieldTree;
 
     public void fillSchema(GraphQLGenerationContext context) {
-
+        this.context = context;
         chooseOperationPanel.setLayout(new GridLayout(1,1));
         chooseFieldsPanel.setLayout(new GridLayout(1,1));
         chooseParametersPanel.setLayout(new GridLayout(1,1));
 
-        operationJList = initializeComponentList(context);
+        operationJList = initializeComponentList();
         fillChoosingListWithOperations(context.getQueries());
         fillChoosingListWithOperations(context.getMutations());
         chooseOperationPanel.add(operationJList);
@@ -52,11 +58,11 @@ public class GraphQLReduceSchemaWindow {
     }
 
 
-    private JList<ChooseGraphQLOperationComponent> initializeComponentList(GraphQLGenerationContext context) {
+    private JList<ChooseGraphQLOperationComponent> initializeComponentList() {
         JList<ChooseGraphQLOperationComponent> operationJList = new JBList<>(new DefaultListModel<>());
         operationJList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         operationJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        operationJList.addListSelectionListener((listSelectionEvent) -> updateChoosenOperationData(context, operationJList.getSelectedIndex()));
+        operationJList.addListSelectionListener((listSelectionEvent) -> updateChoosenOperationData(operationJList.getSelectedIndex()));
         return operationJList;
     }
 
@@ -69,18 +75,18 @@ public class GraphQLReduceSchemaWindow {
         return typeAsString;
     }
 
-    private void updateChoosenOperationData(GraphQLGenerationContext context, int operationIndex) {
+    private void updateChoosenOperationData(int operationIndex) {
         ChooseGraphQLOperationComponent operationComponent = operationJList.getModel().getElementAt(operationIndex);
-        GraphQLOperation operation = getGraphQLTypeFromChoosenComponent(context, operationComponent);
-        updateChooseParametersPanel(context, operation);
-        updateChooseFieldsPanel(context, operation);
+        GraphQLOperation operation = getGraphQLTypeFromChoosenComponent(operationComponent);
+        updateChooseParametersPanel(operation);
+        updateChooseFieldsPanel(operation);
     }
 
-    private void updateChooseFieldsPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
+    private void updateChooseFieldsPanel(GraphQLOperation operation) {
         GraphQLField rootField = new GraphQLField();
         rootField.setName(operation.getName());
         rootField.setType(operation.getReturnType());
-        JCheckBoxTree fieldTree = new JCheckBoxTree(createNodesFromFields(rootField));
+        fieldTree = new JCheckBoxTree(createNodesFromFields(rootField));
         chooseFieldsPanel.removeAll();
         chooseFieldsPanel.add(fieldTree);
         chooseFieldsPanel.updateUI();
@@ -99,7 +105,7 @@ public class GraphQLReduceSchemaWindow {
         return root;
     }
 
-    private void updateChooseParametersPanel(GraphQLGenerationContext context, GraphQLOperation operation) {
+    private void updateChooseParametersPanel(GraphQLOperation operation) {
         chooseParametersPanel.removeAll();
         if(operation.getParameters() != null && operation.getParameters().values().size() > 0) {
             chooseParametersPanel.setLayout(new BoxLayout(chooseParametersPanel,BoxLayout.Y_AXIS));
@@ -112,7 +118,7 @@ public class GraphQLReduceSchemaWindow {
         chooseParametersPanel.updateUI();
     }
 
-    private GraphQLOperation getGraphQLTypeFromChoosenComponent(GraphQLGenerationContext context, ChooseGraphQLOperationComponent operationComponent) {
+    private GraphQLOperation getGraphQLTypeFromChoosenComponent(ChooseGraphQLOperationComponent operationComponent) {
         if (operationComponent.getOperationType().equals(GraphQLOperationType.QUERY.getNameInSchema())) {
             return context.getQueries().get(operationComponent.getName());
         }
@@ -122,10 +128,51 @@ public class GraphQLReduceSchemaWindow {
 
     public UserChoiceGraphQLContext getUserChoiceContext() {
         UserChoiceGraphQLContext userChoice = new UserChoiceGraphQLContext();
+        setOperationChoice(userChoice);
+        setParametersChoice(userChoice);
+        setFieldsChoice(userChoice);
 
-
-
+        userChoice.setTypes(context.getTypes());
         return userChoice;
+    }
+
+    private void setFieldsChoice(UserChoiceGraphQLContext userChoice) {
+        for (TreePath treePath : fieldTree.getCheckedPaths()) {
+            System.out.println(treePath);
+            // TODO: implement somehow
+        }
+    }
+
+    private void setParametersChoice(UserChoiceGraphQLContext userChoice) {
+        GraphQLOperation choosenOperation = userChoice.getChoosenOperation();
+        userChoice.setChoosenParameters(new HashMap<>());
+        if (chooseParametersPanel != null && chooseParametersPanel.getComponents() != null && chooseParametersPanel.getComponents().length > 0) {
+            for (Component component : chooseParametersPanel.getComponents()) {
+                ParameterCheckBoxPanel parameterCheckBox = (ParameterCheckBoxPanel) component;
+                if(parameterCheckBox.hasParameterBeenChoosen()) {
+                    GraphQLParameter parameter = choosenOperation.getParameters().get(parameterCheckBox.getParameterName());
+                    if (parameter == null)
+                        throw new GraphQLUserChoiceException("Parameter " + parameterCheckBox.getParameterName() + " does not exist in " + choosenOperation.getName());
+
+                    userChoice.getChoosenParameters().put(parameter.getName(), parameter);
+                }
+            }
+        }
+    }
+
+    private void setOperationChoice(UserChoiceGraphQLContext userChoice) {
+        int selectedOperationIndex = operationJList.getSelectedIndex();
+        ChooseGraphQLOperationComponent operationComponent = operationJList.getModel().getElementAt(selectedOperationIndex);
+        GraphQLOperation operation = null;
+        if (operationComponent.getOperationType().equals(GraphQLOperationType.QUERY.getNameInSchema()))
+            operation = context.getQueries().get(operationComponent.getName());
+        else
+            operation = context.getMutations().get(operationComponent.getName());
+
+        if (operation == null)
+            throw new GraphQLUserChoiceException("Operation of type " + operationComponent.getName() + " cannot be handled!");
+
+        userChoice.setChoosenOperation(operation);
     }
 
 }
