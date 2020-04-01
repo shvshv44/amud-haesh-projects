@@ -1,21 +1,24 @@
 package org.shaq.plugins.gui.windows;
 
 import com.intellij.ui.components.JBList;
-import graphql.GraphQL;
 import lombok.Data;
 import org.shaq.plugins.exceptions.GraphQLUserChoiceException;
 import org.shaq.plugins.gui.components.*;
 import org.shaq.plugins.models.graphql.*;
 import org.shaq.plugins.models.graphql.enums.GraphQLOperationType;
+import org.shaq.plugins.models.user.GraphQLChoosenField;
 import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Data
 public class GraphQLReduceSchemaWindow {
@@ -93,8 +96,9 @@ public class GraphQLReduceSchemaWindow {
     }
 
     private DefaultMutableTreeNode createNodesFromFields(GraphQLField field) {
-
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(field.getName() + " : " + graphQLTypeToString(field.getType()));
+        FieldNodeDetails details = new FieldNodeDetails();
+        details.setField(field);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(details);
         GraphQLSimpleType coreType = field.getType().getCoreType();
         if (!coreType.getIsScalar() && !coreType.getIsEnum() && coreType.getFields().size() > 0 ) {
             for (GraphQLField child : coreType.getFields().values()) {
@@ -137,10 +141,39 @@ public class GraphQLReduceSchemaWindow {
     }
 
     private void setFieldsChoice(UserChoiceGraphQLContext userChoice) {
-        for (TreePath treePath : fieldTree.getCheckedPaths()) {
-            System.out.println(treePath);
-            // TODO: implement somehow
+        HashMap<Integer, List<TreePath>> pathByLevel = dividePathsByLevel(fieldTree.getCheckedPaths());
+        TreePath rootPath = pathByLevel.get(1).get(0);
+        GraphQLField field = getFieldFromPath(rootPath);
+        GraphQLChoosenField choosenField = new GraphQLChoosenField();
+        choosenField.setName(field.getName());
+        choosenField.setOriginalField(field);
+        if (fieldTree.getCheckedPaths().length > 1)
+            buildFieldTreeFromRoot(choosenField, pathByLevel, 2);
+    }
+
+    private void buildFieldTreeFromRoot(GraphQLChoosenField rootField, HashMap<Integer, List<TreePath>> pathByLevel, int currentlevel) {
+        List<TreePath> getCurrentLevelPaths = pathByLevel.get(currentlevel);
+        //TODO: continue implement
+    }
+
+    private GraphQLField getFieldFromPath(TreePath treePath) {
+        DefaultMutableTreeNode lastComponentNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+        FieldNodeDetails fieldNodeDetails = (FieldNodeDetails) lastComponentNode.getUserObject();
+        return fieldNodeDetails.getField();
+    }
+
+
+    private  HashMap<Integer, List<TreePath>> dividePathsByLevel(TreePath[] checkedPaths) {
+        HashMap<Integer, List<TreePath>> pathByLevel = new HashMap<>();
+        for (TreePath treePath : checkedPaths) {
+            int pathLevel = treePath.getPathCount();
+            if(pathByLevel.get(pathLevel) == null)
+                pathByLevel.put(pathLevel, new ArrayList<>());
+
+            pathByLevel.get(pathLevel).add(treePath);
         }
+
+        return pathByLevel;
     }
 
     private void setParametersChoice(UserChoiceGraphQLContext userChoice) {
