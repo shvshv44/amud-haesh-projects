@@ -7,7 +7,6 @@ import managers.FileManager;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.Properties;
 import java.util.StringJoiner;
 
 public abstract class Encryptor {
