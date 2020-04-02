@@ -17,7 +17,7 @@ public abstract class InternetOrderToAvionicOrderDataMapper {
     protected Integer orderIndex = 0;
     protected SouceTypeSource souceTypeSource;
     protected ZonedDateTimeToOrderTimeMapper zonedDateTimeToOrderTimeMapper =
-            Mappers.getMapper(ZonedDateTimeToOrderTimeMapper.class);;
+            Mappers.getMapper(ZonedDateTimeToOrderTimeMapper.class);
 
     @Mapping(target = "messageMetaData.messageSerialNumber", expression = "java( messageSerialNumber() )")
     @Mapping(target = "properties.orderNo", expression = "java( orderIndex() )")
