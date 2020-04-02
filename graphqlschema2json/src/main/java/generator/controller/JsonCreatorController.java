@@ -32,7 +32,7 @@ public class JsonCreatorController {
             String schema = qraphqlSchemaGenerator.getJsonFromGraphqlSchema(graphqlToJson);
             return new ResponseEntity<>(schema,HttpStatus.OK);
         }catch(Exception e){
-                return new ResponseEntity<>("invalid input", HttpStatus.OK);
+            return new ResponseEntity<>("invalid input", HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -1,9 +1,6 @@
 package generator.graphql;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import generator.api.GraphqlImplementation;
 import generator.api.GraphqlToJsonAPI;
 import generator.api.UserDefaults;
@@ -11,7 +8,6 @@ import generator.graphql.manipulators.GraphqlSchemaTextManipulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +26,14 @@ public class GraphqlSchemaGenerator {
         this.textManipulator = textManipulator;
     }
 
-    private void initGraphqlToJson(GraphqlToJsonAPI graphqlToJson) {
+    private void initGraphqlToJsonParameters(GraphqlToJsonAPI graphqlToJson) {
         this.defaults = graphqlToJson.getDefaults();
         this.graphqlImplementationList = graphqlToJson.getGraphqlImplementations();
         this.query = graphqlToJson.getQuery();
     }
 
     public String getJsonFromGraphqlSchema(GraphqlToJsonAPI graphqlToJson){
-        initGraphqlToJson(graphqlToJson);
+        initGraphqlToJsonParameters(graphqlToJson);
 
         List<String> schemaTypes = textManipulator.splitByBrackets(graphqlToJson.getGraphqlSchema());
         Map<String,List<String>> schemaTypesMap = new HashMap<>();
@@ -52,15 +48,6 @@ public class GraphqlSchemaGenerator {
         return json.toString();
     }
 
-    private  List<String> getCurrTypeWords(String query, String currObj) {
-        if(query==null)
-            return new ArrayList<>();
-        String notPrettyQuery = query.replaceAll("... on ","on-");
-        notPrettyQuery = notPrettyQuery.replaceAll("\\s"," ");
-        notPrettyQuery = notPrettyQuery.replaceAll("\\(.*?\\)","");
-        return textManipulator.splitQueryToSubWords(notPrettyQuery,currObj);
-    }
-
     private JsonElement createJson(String currSchemaTypeName, String currWord, Map<String, List<String>> schemaTypesMap) {
         boolean isTypeArray = false;
         if (currSchemaTypeName.contains("[") && currSchemaTypeName.contains("]")) {
@@ -70,12 +57,31 @@ public class GraphqlSchemaGenerator {
         }
 
         JsonElement json = getDefaultBasicType(currSchemaTypeName);
-        if (json == null) {
+        if (json == null || json.isJsonNull()) {
             List<String> typeWords = schemaTypesMap.get(currSchemaTypeName);
             json = handleCurrType(currSchemaTypeName, currWord, schemaTypesMap, typeWords);
         }
 
             return getJsonAsNeeded(isTypeArray, json);
+    }
+
+    private JsonElement getDefaultBasicType(String currSchemaType) {
+        if(isType("Boolean",currSchemaType)){
+            return new JsonPrimitive(defaults.getDefaultBoolean());
+        }
+        if(isType("Int",currSchemaType)){
+            return new JsonPrimitive(defaults.getDefaultInteger());
+        }
+        if(isType("Float",currSchemaType)){
+            return new JsonPrimitive(defaults.getDefaultFloat());
+        }
+        if(isType("String",currSchemaType)){
+            return new JsonPrimitive(defaults.getDefaultString());
+        }
+        if(isType("Id",currSchemaType)){
+            return new JsonPrimitive(defaults.getDefaultID());
+        }
+        return new JsonNull();
     }
 
     private JsonElement handleCurrType(String currSchemaTypeName, String currWord, Map<String, List<String>> schemaTypesMap, List<String> typeWords) {
@@ -88,29 +94,27 @@ public class GraphqlSchemaGenerator {
         if (typeWords.get(0).equalsIgnoreCase("type")) {
             return handleType(currSchemaTypeName, currWord, schemaTypesMap, typeWords);
         }
-        return null;
+        return new JsonNull();
 
     }
 
-    private JsonElement getJsonAsNeeded(boolean isTypeArray, JsonElement json) {
-        if (isTypeArray) {
-            JsonArray jsonArray = new JsonArray();
-            for (int i = 0; i < defaults.getArrayLength(); i++) {
-                jsonArray.add(json);
-            }
-            return jsonArray;
-        }
-        return json;
+    private JsonElement handleEnum(String currSchemaEnum, Map<String, List<String>> schemaEnumsMap) {
+        if(schemaEnumsMap.get(currSchemaEnum).size() > defaults.getEnumPlace())
+            return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(defaults.getEnumPlace() + 1));
+        return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(Defaults.ENUM_PLACE + 1));
     }
 
     private JsonElement handleInterface(String currSchemaType, String currTypeKey, Map<String, List<String>> schemaTypesMap, List<String> typeWords) {
-        List<String> queryWordsList = getCurrTypeWords(this.query,currTypeKey);
-        List<String> interfacesWordsList = queryWordsList.stream().filter(str -> str.contains("on-")).collect(Collectors.toList());
-            interfacesWordsList.replaceAll(str -> {
-                if (str.contains("on-"))
-                    return str.replaceFirst("on-", "");
-                return str;
-            });
+        JsonElement json = handleInterfaceWithImpl(currSchemaType, currTypeKey, schemaTypesMap);
+        if (json != null && !json.isJsonNull())
+            return json;
+        json = handleInterfaceFromQuery(currSchemaType, currTypeKey, schemaTypesMap, typeWords);
+        if (json != null && !json.isJsonNull())
+            return json;
+        return handleType(currSchemaType, currTypeKey, schemaTypesMap, typeWords);
+    }
+
+    private JsonElement handleInterfaceWithImpl(String currSchemaType, String currTypeKey, Map<String, List<String>> schemaTypesMap) {
         if(this.graphqlImplementationList != null){
             for (GraphqlImplementation currGraphqlImplementation : this.graphqlImplementationList) {
                 if (currSchemaType.equalsIgnoreCase(currGraphqlImplementation.getInterfaceName()) &&
@@ -122,6 +126,18 @@ public class GraphqlSchemaGenerator {
                 }
             }
         }
+        return new JsonNull();
+    }
+
+    private JsonElement handleInterfaceFromQuery(String currSchemaType, String currTypeKey, Map<String, List<String>> schemaTypesMap, List<String> typeWords){
+        List<String> queryWordsList = textManipulator.getCurrTypeWords(this.query,currTypeKey);
+        List<String> interfacesWordsList = queryWordsList.stream().filter(str -> str.contains("on-")).collect(Collectors.toList());
+        interfacesWordsList.replaceAll(str -> {
+            if (str.contains("on-")) {
+                return str.replaceFirst("on-", "");
+            }
+            return str;
+        });
         for (String currInstance : interfacesWordsList) {
             List<String> currInsanceTypes = schemaTypesMap.get(currInstance);
             if(currInsanceTypes != null && currInsanceTypes.get(3).equals(currSchemaType)) {
@@ -137,11 +153,11 @@ public class GraphqlSchemaGenerator {
             }
 
         }
-        return handleType(currSchemaType, currTypeKey, schemaTypesMap, typeWords);
+        return new JsonNull();
     }
 
     private JsonElement handleType(String currSchemaType,String currTypeKey, Map<String, List<String>> schemaTypesMap, List<String> typeWords) {
-        List<String> queryWordsList = getCurrTypeWords(this.query,currTypeKey);
+        List<String> queryWordsList = textManipulator.getCurrTypeWords(this.query,currTypeKey);
         JsonObject json = new JsonObject();
         int currentWordIndex = 2;
         if(typeWords.get(currentWordIndex).equalsIgnoreCase("implements"))
@@ -160,29 +176,15 @@ public class GraphqlSchemaGenerator {
         return json;
     }
 
-    private JsonElement handleEnum(String currSchemaEnum, Map<String, List<String>> schemaEnumsMap) {
-        if(schemaEnumsMap.get(currSchemaEnum).size() > defaults.getEnumPlace())
-            return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(defaults.getEnumPlace() + 1));
-        return new JsonPrimitive(schemaEnumsMap.get(currSchemaEnum).get(Defaults.ENUM_PLACE + 1));
-    }
-
-    private JsonPrimitive getDefaultBasicType(String currSchemaType) {
-        if(isType("Boolean",currSchemaType)){
-            return new JsonPrimitive(defaults.getDefaultBoolean());
+    private JsonElement getJsonAsNeeded(boolean isTypeArray, JsonElement json) {
+        if (isTypeArray) {
+            JsonArray jsonArray = new JsonArray();
+            for (int i = 0; i < defaults.getArrayLength(); i++) {
+                jsonArray.add(json);
+            }
+            return jsonArray;
         }
-        if(isType("Int",currSchemaType)){
-            return new JsonPrimitive(defaults.getDefaultInteger());
-        }
-        if(isType("Float",currSchemaType)){
-            return new JsonPrimitive(defaults.getDefaultFloat());
-        }
-        if(isType("String",currSchemaType)){
-            return new JsonPrimitive(defaults.getDefaultString());
-        }
-        if(isType("Id",currSchemaType)){
-            return new JsonPrimitive(defaults.getDefaultID());
-        }
-        return null;
+        return json;
     }
 
     private boolean isType(String type, String schemaType) {
