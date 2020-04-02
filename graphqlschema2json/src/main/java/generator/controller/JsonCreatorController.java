@@ -1,7 +1,6 @@
 package generator.controller;
 
-import generator.api.GraphqlImplementation;
-import generator.api.GraphqlToJsonWithAll;
+import generator.api.GraphqlToJsonAPI;
 import generator.api.UserDefaults;
 import generator.graphql.GraphqlSchemaGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @Controller
 public class JsonCreatorController {
@@ -23,19 +20,16 @@ public class JsonCreatorController {
         this.qraphqlSchemaGenerator = qraphqlSchemaGenerator;
     }
 
-    @PostMapping("/chooseImplementation/chooseDefaults/graphqlSchema2Json")
-    public ResponseEntity<String> graphqlSchemaToJsonWithAll(@RequestBody GraphqlToJsonWithAll all) {
-        UserDefaults defaults = all.getDefaults();
-        if(all.getDefaults() == null)
-            defaults = new UserDefaults();
-        return graphqlSchemaToJson(all.getGraphqlSchema(),defaults,all.getGraphqlImplementations());
+    @PostMapping("/graphqlSchema2Json")
+    public ResponseEntity<String> graphqlSchemaToJsonWithAll(@RequestBody GraphqlToJsonAPI graphqlToJson) {
+        if(graphqlToJson.getDefaults() == null)
+            graphqlToJson.setDefaults(new UserDefaults());
+        return graphqlSchemaToJson(graphqlToJson);
     }
 
-    private ResponseEntity<String> graphqlSchemaToJson(@RequestBody String graphqlSchema,
-                                                      UserDefaults defaults,
-                                                      List<GraphqlImplementation> graphqlImplementation){
+    private ResponseEntity<String> graphqlSchemaToJson(GraphqlToJsonAPI graphqlToJson){
         try {
-            String schema = qraphqlSchemaGenerator.getJsonFromGraphqlSchema(graphqlSchema,defaults,graphqlImplementation);
+            String schema = qraphqlSchemaGenerator.getJsonFromGraphqlSchema(graphqlToJson);
             return new ResponseEntity<>(schema,HttpStatus.OK);
         }catch(Exception e){
                 return new ResponseEntity<>("invalid input", HttpStatus.OK);
