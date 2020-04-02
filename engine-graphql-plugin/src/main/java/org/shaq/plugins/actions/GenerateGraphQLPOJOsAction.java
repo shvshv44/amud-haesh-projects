@@ -36,7 +36,7 @@ public class GenerateGraphQLPOJOsAction extends AnAction {
         UserChoiceGraphQLContext userChoices = inputManager.startGenerationInput();
 
         if (userChoices != null) {
-            List<FileJavaComponent> javaComponents = processManager.startGeneration(userChoices);
+            List<FileJavaComponent> javaComponents = processManager.startGeneration(userChoices, projectModel);
             componentsWriter.writeComponents(javaComponents, projectModel);
         }
     }

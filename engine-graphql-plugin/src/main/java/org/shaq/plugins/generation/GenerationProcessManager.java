@@ -5,6 +5,7 @@ import org.shaq.plugins.models.javafile.FileJavaComponent;
 import org.shaq.plugins.models.javafile.clazz.ClassFile;
 import org.shaq.plugins.models.javafile.clazz.FieldData;
 import org.shaq.plugins.models.javafile.common.ModifierType;
+import org.shaq.plugins.models.logic.ProjectModel;
 import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 
 import java.util.ArrayList;
@@ -15,11 +16,11 @@ public class GenerationProcessManager {
 
     private HashSet<String> usedClassNames;
 
-    public List<FileJavaComponent> startGeneration(UserChoiceGraphQLContext userChoices) {
+    public List<FileJavaComponent> startGeneration(UserChoiceGraphQLContext userChoices, ProjectModel projectModel) {
         ArrayList <FileJavaComponent> javaComponents = new ArrayList<>();
         usedClassNames = new HashSet<>();
 
-        FileJavaComponent operationMainClass = createOperationClass(userChoices);
+        FileJavaComponent operationMainClass = createOperationClass(userChoices, projectModel);
         javaComponents.add(operationMainClass);
 
         createAllTypesClass(userChoices, javaComponents);
@@ -33,10 +34,11 @@ public class GenerationProcessManager {
 
     }
 
-    private FileJavaComponent createOperationClass(UserChoiceGraphQLContext userChoices) {
+    private FileJavaComponent createOperationClass(UserChoiceGraphQLContext userChoices, ProjectModel projectModel) {
         GraphQLOperation mainOperation = userChoices.getChoosenOperation();
         ClassFile classFile = new ClassFile();
         classFile.setName(mainOperation.getName() + mainOperation.getType().getDefaultType());
+        classFile.setPackagePath(projectModel.getPackageName());
 
         FieldData rootField = new FieldData();
         rootField.setName(userChoices.getRootField().getName());
