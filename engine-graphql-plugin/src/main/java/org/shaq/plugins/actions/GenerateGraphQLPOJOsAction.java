@@ -2,6 +2,7 @@ package org.shaq.plugins.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.generation.GenerationInputManager;
@@ -38,6 +39,7 @@ public class GenerateGraphQLPOJOsAction extends AnAction {
         if (userChoices != null) {
             List<FileJavaComponent> javaComponents = processManager.startGeneration(userChoices, projectModel);
             componentsWriter.writeComponents(javaComponents, projectModel);
+            VirtualFileManager.getInstance().syncRefresh();
         }
     }
 }

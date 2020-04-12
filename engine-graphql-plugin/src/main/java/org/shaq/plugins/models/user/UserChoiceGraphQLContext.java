@@ -14,5 +14,7 @@ public class UserChoiceGraphQLContext {
     private HashMap <String, GraphQLParameter> choosenParameters;
     private HashMap <String, GraphQLSimpleType> types;
     private GraphQLChoosenField rootField;
+    private boolean lombokSupport;
+    private boolean serializedNameSupport;
 
 }
