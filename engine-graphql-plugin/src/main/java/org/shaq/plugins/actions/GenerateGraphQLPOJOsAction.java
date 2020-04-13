@@ -14,6 +14,7 @@ import org.shaq.plugins.models.javafile.FileJavaComponent;
 import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 import org.shaq.plugins.utils.EnvironmentDataFetcher;
 import org.jetbrains.annotations.NotNull;
+import org.shaq.plugins.utils.PrimitiveImportFinder;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class GenerateGraphQLPOJOsAction extends AnAction {
     public GenerateGraphQLPOJOsAction() {
         this.dataFetcher = new EnvironmentDataFetcher();
         this.inputManager = new GenerationInputManager(new GraphQLGenerationContextAdapter(), new SchemaParser());
-        this.processManager = new GenerationProcessManager();
+        this.processManager = new GenerationProcessManager(new PrimitiveImportFinder());
         this.componentsWriter = new JaveComponentsPackageWriter();
     }
 
