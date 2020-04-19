@@ -3,6 +3,7 @@ package encryptors;
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileManager;
+import pojos.EncryptorParameters;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
@@ -21,18 +22,17 @@ public abstract class Encryptor {
     private final String DECRYPTED_FILE_ENDING;
     private final String KEY_FILE_NAME;
 
-    public Encryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager,
-                     String separator, String pathSplitChar, String encryptionEnding, String decryptionEnding, String keyFileName) {
+    public Encryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
         this.keyGenerator = keyGenerator;
         this.fileManager = fileManager;
         this.algorithm = algorithm;
         this.keys = new int[1]; // the default number of keys is 1
 
-        this.SEPARATOR = separator;
-        this.PATH_SPLITTING_CHAR = pathSplitChar;
-        this.ENCRYPTED_FILE_ENDING = encryptionEnding;
-        this.DECRYPTED_FILE_ENDING = decryptionEnding;
-        this.KEY_FILE_NAME = keyFileName;
+        this.SEPARATOR = parameters.getSeparator();
+        this.PATH_SPLITTING_CHAR = parameters.getPathSeparator();
+        this.ENCRYPTED_FILE_ENDING = parameters.getEncryptedEnding();
+        this.DECRYPTED_FILE_ENDING = parameters.getDecryptedEnding();
+        this.KEY_FILE_NAME = parameters.getKeyFileName();
     }
 
     abstract String encrypt(String message);

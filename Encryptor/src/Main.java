@@ -1,12 +1,12 @@
 import algorithms.shift.ShiftUpEncryption;
+import encryptors.Encryptor;
 import encryptors.RepeatEncryptor;
-import encryptors.ShiftEncryptor;
 import generators.KeyGenerator;
 import generators.RandomKeyGenerator;
 import managers.ApplicationManager;
-import encryptors.Encryptor;
 import managers.FileManager;
 import managers.UIManager;
+import pojos.EncryptorParameters;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,11 +25,10 @@ public class Main {
         String keyFileName = properties.getProperty("keyFileName");
 
         KeyGenerator keyGenerator = new RandomKeyGenerator();
+        EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(),
-                separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName, 20);
-        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(),
-          //      separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
+        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), 20, parameters);
+        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), parameters);
 
 
         ApplicationManager applicationManager = new ApplicationManager(encryptor, new UIManager());

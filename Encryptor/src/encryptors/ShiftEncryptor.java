@@ -3,14 +3,14 @@ package encryptors;
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileManager;
+import pojos.EncryptorParameters;
 
 import java.util.Properties;
 
 public class ShiftEncryptor extends Encryptor {
 
-    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager,
-                          String separator, String pathSplitChar, String encryptionEnding, String decryptionEnding, String keyFileName) {
-        super(algorithm, keyGenerator, fileManager, separator, pathSplitChar, encryptionEnding, decryptionEnding, keyFileName);
+    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
+        super(algorithm, keyGenerator, fileManager, parameters);
     }
 
     @Override

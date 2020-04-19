@@ -3,13 +3,13 @@ package encryptors;
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileManager;
+import pojos.EncryptorParameters;
 
 public class RepeatEncryptor extends Encryptor {
     private int repeats;
 
-    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager,
-                           String separator, String pathSplitChar, String encryptionEnding, String decryptionEnding, String keyFileName, int repeats) {
-        super(algorithm, keyGenerator, fileManager, separator, pathSplitChar, encryptionEnding, decryptionEnding, keyFileName);
+    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, int repeats, EncryptorParameters parameters) {
+        super(algorithm, keyGenerator, fileManager, parameters);
         this.repeats = repeats;
         this.keys = new int[repeats];
     }
