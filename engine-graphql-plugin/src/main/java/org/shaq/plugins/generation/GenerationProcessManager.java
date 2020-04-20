@@ -5,6 +5,7 @@ import org.shaq.plugins.models.graphql.GraphQLField;
 import org.shaq.plugins.models.graphql.GraphQLOperation;
 import org.shaq.plugins.models.graphql.GraphQLSimpleType;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
+import org.shaq.plugins.models.javafile.clazz.AnnotationData;
 import org.shaq.plugins.models.javafile.clazz.ClassFile;
 import org.shaq.plugins.models.javafile.clazz.FieldData;
 import org.shaq.plugins.models.javafile.common.ModifierType;
@@ -13,6 +14,7 @@ import org.shaq.plugins.models.javafile.enums.EnumValue;
 import org.shaq.plugins.models.logic.ProjectModel;
 import org.shaq.plugins.models.user.GraphQLChoosenField;
 import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
+import org.shaq.plugins.utils.GraphQLQueryGeneratorAnnotation;
 import org.shaq.plugins.utils.PrimitiveImportFinder;
 
 import java.util.ArrayList;
@@ -123,10 +125,18 @@ public class GenerationProcessManager {
             EnumValue enumValue = new EnumValue();
             enumValue.setName(gqlEnumValue.getName());
             enumFile.getValues().add(enumValue);
+
             //TODO: serializedName when implement
+            if(serializedNameSupport)
+                addSerializedNameToEnumValue();
         }
 
         javaComponents.add(enumFile);
+    }
+
+    private void addSerializedNameToEnumValue() {
+        //TODO: add ser name annot
+        // TODO: use makeGraphQLQueryGeneratorAnnotation function
     }
 
     private boolean isFieldEnum (GraphQLChoosenField field) {
@@ -179,6 +189,16 @@ public class GenerationProcessManager {
             return name.toUpperCase();
 
         return name.substring(0,1).toUpperCase() + name.substring(1);
+    }
+
+    private AnnotationData makeGraphQLQueryGeneratorAnnotation(GraphQLQueryGeneratorAnnotation annotation) {
+        AnnotationData annotationData = new AnnotationData();
+        annotationData.setName(annotation.getAnnotName());
+        annotationData.setImports(new ArrayList<>());
+        annotationData.setParameters(new ArrayList<>());
+
+        annotationData.getImports().add(annotation.getAnnotPackage() + "." +  annotationData.getName());
+        return annotationData;
     }
 
 }
