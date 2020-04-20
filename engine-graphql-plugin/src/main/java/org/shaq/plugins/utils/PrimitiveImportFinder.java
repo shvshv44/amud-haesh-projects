@@ -4,13 +4,14 @@ import java.util.HashMap;
 
 public class PrimitiveImportFinder {
 
-    public HashMap<String,String> imports;
+    private HashMap<String,String> imports;
 
     public PrimitiveImportFinder() {
         this.imports = new HashMap<>();
         put(Integer.class);
         put(Double.class);
         put(Boolean.class);
+        put(Float.class);
         put(String.class);
     }
 

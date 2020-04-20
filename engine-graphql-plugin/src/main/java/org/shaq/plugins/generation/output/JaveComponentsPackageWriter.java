@@ -3,7 +3,7 @@ package org.shaq.plugins.generation.output;
 import com.intellij.openapi.ui.Messages;
 import org.shaq.plugins.generation.javafile.builder.JavaComponentBuilder;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
-import org.shaq.plugins.models.ProjectModel;
+import org.shaq.plugins.models.logic.ProjectModel;
 import org.shaq.plugins.utils.StringJavaFileBuilder;
 import org.apache.commons.io.FileUtils;
 

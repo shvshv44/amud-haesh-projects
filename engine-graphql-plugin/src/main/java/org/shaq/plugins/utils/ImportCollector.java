@@ -21,8 +21,10 @@ public class ImportCollector {
     }
 
     public void collectImports(List<String> imports) {
-        for(String importPath : imports) {
-          addImport(importPath);
+        if(imports != null && imports.size() > 0) {
+            for(String importPath : imports) {
+                addImport(importPath);
+            }
         }
     }
 

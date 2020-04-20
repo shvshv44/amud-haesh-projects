@@ -2,14 +2,19 @@ package org.shaq.plugins.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.shaq.plugins.generation.GenerationInputManager;
 import org.shaq.plugins.generation.GenerationProcessManager;
+import org.shaq.plugins.generation.GraphQLGenerationContextAdapter;
 import org.shaq.plugins.generation.output.JaveComponentsPackageWriter;
-import org.shaq.plugins.models.ProjectModel;
+import org.shaq.plugins.models.logic.ProjectModel;
 import org.shaq.plugins.models.javafile.FileJavaComponent;
+import org.shaq.plugins.models.user.UserChoiceGraphQLContext;
 import org.shaq.plugins.utils.EnvironmentDataFetcher;
 import org.jetbrains.annotations.NotNull;
+import org.shaq.plugins.utils.PrimitiveImportFinder;
 
 import java.util.List;
 
@@ -22,16 +27,20 @@ public class GenerateGraphQLPOJOsAction extends AnAction {
 
     public GenerateGraphQLPOJOsAction() {
         this.dataFetcher = new EnvironmentDataFetcher();
-        this.inputManager = new GenerationInputManager();
-        this.processManager = new GenerationProcessManager();
+        this.inputManager = new GenerationInputManager(new GraphQLGenerationContextAdapter(), new SchemaParser());
+        this.processManager = new GenerationProcessManager(new PrimitiveImportFinder());
         this.componentsWriter = new JaveComponentsPackageWriter();
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         ProjectModel projectModel = dataFetcher.obtainProjectModel(anActionEvent);
-        TypeDefinitionRegistry schema = inputManager.startGenerationInput();
-        List<FileJavaComponent> javaComponents = processManager.startGeneration(schema);
-        componentsWriter.writeComponents(javaComponents, projectModel);
+        UserChoiceGraphQLContext userChoices = inputManager.startGenerationInput();
+
+        if (userChoices != null) {
+            List<FileJavaComponent> javaComponents = processManager.startGeneration(userChoices, projectModel);
+            componentsWriter.writeComponents(javaComponents, projectModel);
+            VirtualFileManager.getInstance().syncRefresh();
+        }
     }
 }
