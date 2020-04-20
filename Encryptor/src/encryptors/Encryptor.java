@@ -16,11 +16,7 @@ public abstract class Encryptor {
     protected EncryptionAlgorithm algorithm;
     protected int[] keys;
 
-    protected final String SEPARATOR;
-    private final String PATH_SPLITTING_CHAR;
-    private final String ENCRYPTED_FILE_ENDING;
-    private final String DECRYPTED_FILE_ENDING;
-    private final String KEY_FILE_NAME;
+    protected EncryptorParameters parameters;
 
     public Encryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
         this.keyGenerator = keyGenerator;
@@ -28,11 +24,7 @@ public abstract class Encryptor {
         this.algorithm = algorithm;
         this.keys = new int[1]; // the default number of keys is 1
 
-        this.SEPARATOR = parameters.getSeparator();
-        this.PATH_SPLITTING_CHAR = parameters.getPathSeparator();
-        this.ENCRYPTED_FILE_ENDING = parameters.getEncryptedEnding();
-        this.DECRYPTED_FILE_ENDING = parameters.getDecryptedEnding();
-        this.KEY_FILE_NAME = parameters.getKeyFileName();
+        this.parameters = parameters;
     }
 
     abstract String encrypt(String message);
@@ -63,9 +55,9 @@ public abstract class Encryptor {
 
     private void tryToEncrypt(String pathToFile) throws IOException {
         generateKeys();
-        String[] splitPath = pathToFile.split(PATH_SPLITTING_CHAR);
-        String cipherPath = splitPath[0] + ENCRYPTED_FILE_ENDING + splitPath[1];
-        String keyPath = Paths.get(pathToFile).getParent() + KEY_FILE_NAME;
+        String[] splitPath = pathToFile.split(parameters.getPathSeparator());
+        String cipherPath = splitPath[0] + parameters.getEncryptedEnding() + splitPath[1];
+        String keyPath = Paths.get(pathToFile).getParent() + parameters.getKeyFileName();
         String message = fileManager.readFile(pathToFile);
         String readyToEncryptMessage = prepareMessageForEncryption(message);
         String cipher = encrypt(readyToEncryptMessage);
@@ -74,8 +66,8 @@ public abstract class Encryptor {
 
     private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException {
         readKeys(fileManager.readFile(pathToKey));
-        String[] splitPath = pathToFile.split(PATH_SPLITTING_CHAR);
-        String messagePath = splitPath[0] + DECRYPTED_FILE_ENDING + splitPath[1];
+        String[] splitPath = pathToFile.split(parameters.getPathSeparator());
+        String messagePath = splitPath[0] + parameters.getDecryptedEnding()+ splitPath[1];
         String cipher = fileManager.readFile(pathToFile);
         String message = decrypt(cipher);
         String convertedMessage = convertDecryptionToText(message);
@@ -84,7 +76,7 @@ public abstract class Encryptor {
 
     private String prepareMessageForEncryption(String message) {
         char[] charsArray = message.toCharArray();
-        StringJoiner formattedString = new StringJoiner(SEPARATOR);
+        StringJoiner formattedString = new StringJoiner(parameters.getSeparator());
         for(char letter : charsArray) {
             int letterValue = (int)letter;
             formattedString.add(String.valueOf(letterValue));
@@ -93,7 +85,7 @@ public abstract class Encryptor {
     }
 
     private String convertDecryptionToText(String message) {
-        String[] decryptedArray = message.split(SEPARATOR);
+        String[] decryptedArray = message.split(parameters.getSeparator());
         StringBuilder messageText = new StringBuilder();
         for(String decryptedLetter : decryptedArray) {
             messageText.append((char)(Integer.parseInt(decryptedLetter)));
@@ -114,7 +106,7 @@ public abstract class Encryptor {
     }
 
     private String getKeysString() {
-        StringJoiner formattedString = new StringJoiner(SEPARATOR);
+        StringJoiner formattedString = new StringJoiner(parameters.getSeparator());
         for(int key : keys) {
             formattedString.add(String.valueOf(key));
         }
@@ -122,7 +114,7 @@ public abstract class Encryptor {
     }
 
     private void readKeys(String keysString) {
-        String[] keysArray = keysString.split(SEPARATOR);
+        String[] keysArray = keysString.split(parameters.getSeparator());
         for (int i = 0; i < keysArray.length; i++) {
             keys[i] = Integer.parseInt(keysArray[i]);
         }

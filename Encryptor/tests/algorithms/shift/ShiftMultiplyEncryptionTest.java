@@ -2,11 +2,13 @@ package algorithms.shift;
 
 import algorithms.EncryptionAlgorithm;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import java.util.StringJoiner;
-
 import static org.junit.Assert.assertEquals;
 
+
+@RunWith(MockitoJUnitRunner.class)
 public class ShiftMultiplyEncryptionTest {
     private EncryptionAlgorithm shiftMultiply = new ShiftMultiplyEncryption();
     private final String SEPARATOR = ",";
@@ -23,18 +25,6 @@ public class ShiftMultiplyEncryptionTest {
     void decryptTest_exampleKey() {
         String encryptedMessage = "196,198,200,202";
         String actual = shiftMultiply.decrypt(encryptedMessage, 2, SEPARATOR);
-        assertEquals(MESSAGE, actual);
-    }
-
-    @Test
-    void encryptTest_keyIsOne() {
-        String actual = shiftMultiply.encrypt(MESSAGE, 1, SEPARATOR);
-        assertEquals(MESSAGE, actual);
-    }
-
-    @Test
-    void decryptTest_keyIsOne() {
-        String actual = shiftMultiply.decrypt(MESSAGE, 1, SEPARATOR);
         assertEquals(MESSAGE, actual);
     }
 }

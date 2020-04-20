@@ -16,13 +16,13 @@ public class ShiftEncryptor extends Encryptor {
     @Override
     public String encrypt(String message) {
         int key = getKey();
-        return algorithm.encrypt(message, key, SEPARATOR);
+        return algorithm.encrypt(message, key, parameters.getSeparator());
     }
 
     @Override
     public String decrypt(String cipher) {
         int key = getKey();
-        return algorithm.decrypt(cipher, key, SEPARATOR);
+        return algorithm.decrypt(cipher, key, parameters.getSeparator());
     }
 
     private int getKey() {

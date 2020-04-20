@@ -4,8 +4,10 @@ import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileManager;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.MockitoAnnotations;
 import pojos.EncryptorParameters;
 
@@ -13,7 +15,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class RepeatEncryptorTest  {
 
     private  RepeatEncryptor repeatEncryptor;

@@ -18,7 +18,7 @@ public class RepeatEncryptor extends Encryptor {
     public String encrypt(String message) {
         for (int i = 0; i < repeats; i++) {
             int key = keys[i];
-            message = algorithm.encrypt(message, key, SEPARATOR);
+            message = algorithm.encrypt(message, key, parameters.getSeparator());
         }
         return message;
     }
@@ -26,7 +26,7 @@ public class RepeatEncryptor extends Encryptor {
     @Override
     public String decrypt(String cipher) {
         for (int i = repeats-1; i >= 0; i--) {
-            cipher = algorithm.decrypt(cipher, keys[i], SEPARATOR);
+            cipher = algorithm.decrypt(cipher, keys[i], parameters.getSeparator());
         }
         return cipher;
     }
