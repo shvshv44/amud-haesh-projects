@@ -17,6 +17,7 @@ public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
             BigInteger res = operator.apply(new BigInteger(letter), BigInteger.valueOf(key));
             message.append(res).append(separator);
         }
+        message.setLength(message.length() - 1); // remove last separator
         return message.toString();
     }
 
@@ -27,6 +28,7 @@ public abstract class ShiftAlgorithm implements EncryptionAlgorithm {
         for(String letter : textArray) {
             message.append(operator.apply(new BigInteger(letter), BigInteger.valueOf(key))).append(separator);
         }
+        message.setLength(message.length() - 1); // remove last separator
         return message.toString();
     }
 }

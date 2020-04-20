@@ -15,14 +15,14 @@ public class ShiftUpEncryptionTest {
     private final String MESSAGE = new StringJoiner(SEPARATOR).add("98").add("99").add("100").add("101").toString();
 
     @Test
-    void encryptTest_exampleKey() {
+    public void encryptTest_exampleKey() {
         String expected = "99,100,101,102";
         String actual = shiftUp.encrypt(MESSAGE, 1, SEPARATOR);
         assertEquals(expected, actual);
     }
 
     @Test
-    void decryptTest_exampleKey() {
+    public void decryptTest_exampleKey() {
         String expected = "97,98,99,100";
         String actual = shiftUp.decrypt(MESSAGE, 1, SEPARATOR);
         assertEquals(expected, actual);

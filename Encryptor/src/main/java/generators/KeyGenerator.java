@@ -3,7 +3,7 @@ package generators;
 public abstract class KeyGenerator {
     abstract int makeKey();
 
-    private int generateKey() {
+    public int generateKey() {
         int key = makeKey();
         while (key == 0) {
             key = makeKey();

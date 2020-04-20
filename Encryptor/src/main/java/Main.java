@@ -43,7 +43,7 @@ public class Main {
         Properties prop = new Properties();
         try {
             InputStream input = new FileInputStream(
-                    "C:\\BEN\\Encryptor\\amud-haesh-projects\\Encryptor\\src\\resources\\Properties.properties");
+                    "C:\\BEN\\Encryptor\\amud-haesh-projects\\Encryptor\\src\\main\\resources\\Properties.properties");
             // load a properties file
             prop.load(input);
         } catch (IOException e) {
