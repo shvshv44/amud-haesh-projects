@@ -4,6 +4,7 @@ import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileManager;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,6 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.MockitoAnnotations;
 import pojos.EncryptorParameters;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -20,7 +23,7 @@ public class RepeatEncryptorTest  {
 
     private  RepeatEncryptor repeatEncryptor;
 
-    private int repeats = 3;
+    private int repeats = 5;
 
     @Mock
     private EncryptionAlgorithm algorithm;
@@ -31,24 +34,25 @@ public class RepeatEncryptorTest  {
     @Mock
     private FileManager fileManager;
 
-    @Mock
+    //@Mock
     private EncryptorParameters parameters;
 
     @Before
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
+        parameters = new EncryptorParameters(",", "\\.","_encrypted.","_decrypted.","\\\\key.txt");
         this.repeatEncryptor = new RepeatEncryptor(algorithm, keyGenerator, fileManager, repeats, parameters);
     }
 
     @Test
     public void encryptTest() {
-        repeatEncryptor.encrypt("message");
-        verify(algorithm, times(repeats)).encrypt("message", 1, parameters.getSeparator());
+        repeatEncryptor.encrypt("98,99,100");
+        verify(algorithm, times(repeats)).encrypt(anyString(), anyInt(), anyString());
     }
 
     @Test
     public void decryptTest() {
-        repeatEncryptor.encrypt("message");
-        verify(algorithm, times(repeats)).decrypt("message", 1, parameters.getSeparator());
+        repeatEncryptor.decrypt("100,101,102");
+        verify(algorithm, times(repeats)).decrypt(anyString(), anyInt(), anyString());
     }
 }
