@@ -1,8 +1,9 @@
 import algorithms.shift.ShiftUpEncryption;
-import encryptors.Encryptor;
+import encryptors.FileEncryptor;
 import encryptors.RepeatEncryptor;
 import generators.KeyGenerator;
 import generators.RandomKeyGenerator;
+import loggers.EncryptionLogger;
 import managers.ApplicationManager;
 import managers.FileManager;
 import managers.UIManager;
@@ -27,11 +28,13 @@ public class Main {
         KeyGenerator keyGenerator = new RandomKeyGenerator();
         EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        Encryptor encryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), 20, parameters);
-        //encryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), parameters);
+        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), 20, parameters);
+        //fileEncryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), parameters);
+
+        EncryptionLogger logger = new EncryptionLogger(fileEncryptor);
 
 
-        ApplicationManager applicationManager = new ApplicationManager(encryptor, new UIManager());
+        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager());
         applicationManager.startMenu();
 
         // C:\BEN\Encryptor_messages\ben.txt

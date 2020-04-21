@@ -1,13 +1,13 @@
 package managers;
 
-import encryptors.Encryptor;
+import encryptors.FileEncryptor;
 import models.UserOptions;
 
 public class ApplicationManager {
     private UIManager uiManager;
-    private Encryptor fileEncryptor;
+    private FileEncryptor fileEncryptor;
 
-    public ApplicationManager(Encryptor fileEncryptor, UIManager uiManager) {
+    public ApplicationManager(FileEncryptor fileEncryptor, UIManager uiManager) {
         this.uiManager = uiManager;
         this.fileEncryptor = fileEncryptor;
     }

@@ -2,15 +2,18 @@ package encryptors;
 
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
+import listeners.Observable;
 import managers.FileManager;
+import pojos.EncryptionLogEventArgs;
 import pojos.EncryptorParameters;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.StringJoiner;
 
-public abstract class Encryptor {
+public abstract class FileEncryptor extends Observable {
     private FileManager fileManager;
     protected KeyGenerator keyGenerator;
     protected EncryptionAlgorithm algorithm;
@@ -18,7 +21,8 @@ public abstract class Encryptor {
 
     protected EncryptorParameters parameters;
 
-    public Encryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
+    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
+        super();
         this.keyGenerator = keyGenerator;
         this.fileManager = fileManager;
         this.algorithm = algorithm;
@@ -60,7 +64,12 @@ public abstract class Encryptor {
         String keyPath = Paths.get(pathToFile).getParent() + parameters.getKeyFileName();
         String message = fileManager.readFile(pathToFile);
         String readyToEncryptMessage = prepareMessageForEncryption(message);
+        encryptionStarted();
+        long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        EncryptionLogEventArgs args = new EncryptionLogEventArgs("encrypting", pathToFile, cipherPath, algorithm, startTime, endTime);
+        encryptionEnded(args);
         publishEncryptionResults(cipherPath, cipher, keyPath);
     }
 
@@ -69,8 +78,13 @@ public abstract class Encryptor {
         String[] splitPath = pathToFile.split(parameters.getPathSeparator());
         String messagePath = splitPath[0] + parameters.getDecryptedEnding()+ splitPath[1];
         String cipher = fileManager.readFile(pathToFile);
+        decryptionStarted();
+        long startTime = Calendar.getInstance().getTimeInMillis();
         String message = decrypt(cipher);
+        long endTime = Calendar.getInstance().getTimeInMillis();
         String convertedMessage = convertDecryptionToText(message);
+        EncryptionLogEventArgs args = new EncryptionLogEventArgs("decrypting", pathToFile, messagePath, algorithm, startTime, endTime);
+        encryptionEnded(args);
         publishDecryptionResults(messagePath, convertedMessage);
     }
 
@@ -122,5 +136,18 @@ public abstract class Encryptor {
 
     protected void generateKeys() {
         this.keys = keyGenerator.generateKeys();
+    }
+
+    private void encryptionStarted() {
+        updateObservers("encryption started");
+    }
+    private void encryptionEnded(EncryptionLogEventArgs args) {
+        updateObservers(args);
+    }
+    private void decryptionStarted() {
+        updateObservers("decryption started");
+    }
+    private void decryptionEnded(EncryptionLogEventArgs args) {
+        updateObservers(args);
     }
 }

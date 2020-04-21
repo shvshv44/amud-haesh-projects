@@ -5,9 +5,7 @@ import generators.KeyGenerator;
 import managers.FileManager;
 import pojos.EncryptorParameters;
 
-import java.util.Properties;
-
-public class ShiftEncryptor extends Encryptor {
+public class ShiftEncryptor extends FileEncryptor {
 
     public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
         super(algorithm, keyGenerator, fileManager, parameters);

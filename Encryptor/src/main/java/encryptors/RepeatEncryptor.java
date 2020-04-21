@@ -5,7 +5,7 @@ import generators.KeyGenerator;
 import managers.FileManager;
 import pojos.EncryptorParameters;
 
-public class RepeatEncryptor extends Encryptor {
+public class RepeatEncryptor extends FileEncryptor {
     private int repeats;
 
     public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, int repeats, EncryptorParameters parameters) {
