@@ -2,20 +2,13 @@ package listeners;
 
 import pojos.EncryptionLogEventArgs;
 
-public abstract class Observer {
-    protected Observable observable;
+public interface Observer {
+    void encryptionStarted();
 
-    public Observer(Observable observable) {
-        this.observable = observable;
-        assignObservable();
-    }
+    void encryptionEnded(EncryptionLogEventArgs args);
 
-    private void assignObservable() {
-    observable.addObserver(this);
-    }
+    void decryptionStarted();
 
-    public abstract void update(EncryptionLogEventArgs args);
-
-    public abstract void update(String message);
+    void decryptionEnded(EncryptionLogEventArgs args);
 
 }

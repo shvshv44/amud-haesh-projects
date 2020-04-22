@@ -3,28 +3,18 @@ package pojos;
 import algorithms.EncryptionAlgorithm;
 
 public class EncryptionLogEventArgs {
-    private String operation;
     private String sourceFileName;
     private String destinationFileName;
     private EncryptionAlgorithm algorithm;
     private long startTime;
     private long endTime;
 
-    public EncryptionLogEventArgs(String operation, String sourceFileName, String destinationFileName, EncryptionAlgorithm algorithm, long startTime, long endTime) {
-        this.operation = operation;
+    public EncryptionLogEventArgs(String sourceFileName, String destinationFileName, EncryptionAlgorithm algorithm, long startTime, long endTime) {
         this.sourceFileName = sourceFileName;
         this.destinationFileName = destinationFileName;
         this.algorithm = algorithm;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
     }
 
     public String getSourceFileName() {

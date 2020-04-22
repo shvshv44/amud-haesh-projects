@@ -33,6 +33,10 @@ public class UIManager {
         return UserOptions.getOptionByCodeNumber(choice);
     }
 
+    public void printFinishMessage() {
+        System.out.print("Hope you enjoyed! Goodbye :)");
+    }
+
     private String buildMenuMessage() {
         StringBuilder menuMessage = new StringBuilder("Hello user!");
         UserOptions[] options = UserOptions.values();

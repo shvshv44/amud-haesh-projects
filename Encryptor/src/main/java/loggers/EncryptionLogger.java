@@ -1,26 +1,34 @@
 package loggers;
 
-import listeners.Observable;
 import listeners.Observer;
 import pojos.EncryptionLogEventArgs;
 
-public class EncryptionLogger extends Observer {
-    public EncryptionLogger(Observable observable) {
-        super(observable);
+public class EncryptionLogger implements Observer {
+    @Override
+    public void encryptionStarted() {
+        System.out.println("starting to encrypt");
     }
 
     @Override
-    public void update(EncryptionLogEventArgs args) {
+    public void encryptionEnded(EncryptionLogEventArgs args) {
         long operationTime = args.getEndTime() - args.getStartTime();
-        System.out.println(args.getOperation() + " the source file " + args.getSourceFileName() +
+        System.out.println("encrypting the source file " + args.getSourceFileName() +
                 " with the " + args.getAlgorithm().getClass().getSimpleName() +
                 " algorithm took " + operationTime + " millis." +
                 "\nthe new file is in " + args.getDestinationFileName());
-
     }
 
     @Override
-    public void update(String message) {
-        System.out.println(message);
+    public void decryptionStarted() {
+        System.out.println("starting to decrypt");
+    }
+
+    @Override
+    public void decryptionEnded(EncryptionLogEventArgs args) {
+        long operationTime = args.getEndTime() - args.getStartTime();
+        System.out.println("decrypting the source file " + args.getSourceFileName() +
+                " with the " + args.getAlgorithm().getClass().getSimpleName() +
+                " algorithm took " + operationTime + " millis." +
+                "\nthe new file is in " + args.getDestinationFileName());
     }
 }

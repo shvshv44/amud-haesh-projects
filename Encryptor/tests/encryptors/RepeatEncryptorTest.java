@@ -2,15 +2,12 @@ package encryptors;
 
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
-import managers.FileManager;
+import managers.FileIOHandler;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.MockitoAnnotations;
 import pojos.EncryptorParameters;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -32,7 +29,7 @@ public class RepeatEncryptorTest  {
     private KeyGenerator keyGenerator;
 
     @Mock
-    private FileManager fileManager;
+    private FileIOHandler fileIOHandler;
 
     //@Mock
     private EncryptorParameters parameters;
@@ -41,7 +38,7 @@ public class RepeatEncryptorTest  {
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
         parameters = new EncryptorParameters(",", "\\.","_encrypted.","_decrypted.","\\\\key.txt");
-        this.repeatEncryptor = new RepeatEncryptor(algorithm, keyGenerator, fileManager, repeats, parameters);
+        this.repeatEncryptor = new RepeatEncryptor(algorithm, keyGenerator, fileIOHandler, repeats, parameters);
     }
 
     @Test

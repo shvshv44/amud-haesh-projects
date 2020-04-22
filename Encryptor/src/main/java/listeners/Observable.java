@@ -20,15 +20,20 @@ public abstract class Observable {
         observerList.remove(observer);
     }
 
-    public void updateObservers(EncryptionLogEventArgs args) {
-        for(Observer observer : observerList) {
-            observer.update(args);
-        }
+    protected void encryptionStarted() {
+        for(Observer observer : observerList)
+            observer.encryptionStarted();
     }
-
-    public void updateObservers(String message) {
-        for(Observer observer : observerList) {
-            observer.update(message);
-        }
+    protected void encryptionEnded(EncryptionLogEventArgs args) {
+        for(Observer observer : observerList)
+            observer.encryptionEnded(args);
+    }
+    protected void decryptionStarted() {
+        for(Observer observer : observerList)
+            observer.decryptionStarted();
+    }
+    protected void decryptionEnded(EncryptionLogEventArgs args) {
+        for(Observer observer : observerList)
+            observer.decryptionEnded(args);
     }
 }

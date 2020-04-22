@@ -5,7 +5,7 @@ import generators.KeyGenerator;
 import generators.RandomKeyGenerator;
 import loggers.EncryptionLogger;
 import managers.ApplicationManager;
-import managers.FileManager;
+import managers.FileIOHandler;
 import managers.UIManager;
 import pojos.EncryptorParameters;
 
@@ -28,10 +28,11 @@ public class Main {
         KeyGenerator keyGenerator = new RandomKeyGenerator();
         EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), 20, parameters);
-        //fileEncryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileManager(), parameters);
+        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), 20, parameters);
+        //fileEncryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), parameters);
 
-        EncryptionLogger logger = new EncryptionLogger(fileEncryptor);
+        EncryptionLogger logger = new EncryptionLogger();
+        fileEncryptor.addObserver(logger);
 
 
         ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager());
@@ -46,7 +47,7 @@ public class Main {
         Properties prop = new Properties();
         try {
             InputStream input = new FileInputStream(
-                    "C:\\BEN\\Encryptor\\amud-haesh-projects\\Encryptor\\src\\main\\resources\\Properties.properties");
+                    "C:\\BEN\\Encryptor\\amud-haesh-projects\\Encryptor\\src\\main\\resources\\application.properties");
             // load a properties file
             prop.load(input);
         } catch (IOException e) {

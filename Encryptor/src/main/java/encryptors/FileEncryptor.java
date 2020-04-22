@@ -3,7 +3,7 @@ package encryptors;
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import listeners.Observable;
-import managers.FileManager;
+import managers.FileIOHandler;
 import pojos.EncryptionLogEventArgs;
 import pojos.EncryptorParameters;
 
@@ -14,17 +14,17 @@ import java.util.Calendar;
 import java.util.StringJoiner;
 
 public abstract class FileEncryptor extends Observable {
-    private FileManager fileManager;
+    private FileIOHandler fileIOHandler;
     protected KeyGenerator keyGenerator;
     protected EncryptionAlgorithm algorithm;
     protected int[] keys;
 
     protected EncryptorParameters parameters;
 
-    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
+    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
         super();
         this.keyGenerator = keyGenerator;
-        this.fileManager = fileManager;
+        this.fileIOHandler = fileIOHandler;
         this.algorithm = algorithm;
         this.keys = new int[1]; // the default number of keys is 1
 
@@ -62,30 +62,30 @@ public abstract class FileEncryptor extends Observable {
         String[] splitPath = pathToFile.split(parameters.getPathSeparator());
         String cipherPath = splitPath[0] + parameters.getEncryptedEnding() + splitPath[1];
         String keyPath = Paths.get(pathToFile).getParent() + parameters.getKeyFileName();
-        String message = fileManager.readFile(pathToFile);
+        String message = fileIOHandler.readFile(pathToFile);
         String readyToEncryptMessage = prepareMessageForEncryption(message);
         encryptionStarted();
         long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
         long endTime = Calendar.getInstance().getTimeInMillis();
-        EncryptionLogEventArgs args = new EncryptionLogEventArgs("encrypting", pathToFile, cipherPath, algorithm, startTime, endTime);
+        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, cipherPath, algorithm, startTime, endTime);
         encryptionEnded(args);
-        publishEncryptionResults(cipherPath, cipher, keyPath);
+        writeEncryptionResults(cipherPath, cipher, keyPath);
     }
 
     private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException {
-        readKeys(fileManager.readFile(pathToKey));
+        readKeys(fileIOHandler.readFile(pathToKey));
         String[] splitPath = pathToFile.split(parameters.getPathSeparator());
         String messagePath = splitPath[0] + parameters.getDecryptedEnding()+ splitPath[1];
-        String cipher = fileManager.readFile(pathToFile);
+        String cipher = fileIOHandler.readFile(pathToFile);
         decryptionStarted();
         long startTime = Calendar.getInstance().getTimeInMillis();
         String message = decrypt(cipher);
         long endTime = Calendar.getInstance().getTimeInMillis();
         String convertedMessage = convertDecryptionToText(message);
-        EncryptionLogEventArgs args = new EncryptionLogEventArgs("decrypting", pathToFile, messagePath, algorithm, startTime, endTime);
-        encryptionEnded(args);
-        publishDecryptionResults(messagePath, convertedMessage);
+        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, messagePath, algorithm, startTime, endTime);
+        decryptionEnded(args);
+        writeDecryptionResults(messagePath, convertedMessage);
     }
 
     private String prepareMessageForEncryption(String message) {
@@ -107,16 +107,13 @@ public abstract class FileEncryptor extends Observable {
         return messageText.toString();
     }
 
-    private void publishEncryptionResults(String cipherPath, String cipher, String keyPath) throws IOException {
-        fileManager.writeToFile(cipherPath, cipher);
-        fileManager.writeToFile(keyPath, getKeysString());
-        System.out.println("The encrypted file is in: " + cipherPath);
-        System.out.println("The key is in: " + keyPath);
+    private void writeEncryptionResults(String cipherPath, String cipher, String keyPath) throws IOException {
+        fileIOHandler.writeToFile(cipherPath, cipher);
+        fileIOHandler.writeToFile(keyPath, getKeysString());
     }
 
-    private void publishDecryptionResults(String messagePath, String message) throws IOException {
-        fileManager.writeToFile(messagePath, message);
-        System.out.println("The decrypted file is in: " + messagePath);
+    private void writeDecryptionResults(String messagePath, String message) throws IOException {
+        fileIOHandler.writeToFile(messagePath, message);
     }
 
     private String getKeysString() {
@@ -136,18 +133,5 @@ public abstract class FileEncryptor extends Observable {
 
     protected void generateKeys() {
         this.keys = keyGenerator.generateKeys();
-    }
-
-    private void encryptionStarted() {
-        updateObservers("encryption started");
-    }
-    private void encryptionEnded(EncryptionLogEventArgs args) {
-        updateObservers(args);
-    }
-    private void decryptionStarted() {
-        updateObservers("decryption started");
-    }
-    private void decryptionEnded(EncryptionLogEventArgs args) {
-        updateObservers(args);
     }
 }

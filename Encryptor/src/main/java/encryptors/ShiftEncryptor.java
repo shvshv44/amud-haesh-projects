@@ -2,13 +2,13 @@ package encryptors;
 
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
-import managers.FileManager;
+import managers.FileIOHandler;
 import pojos.EncryptorParameters;
 
 public class ShiftEncryptor extends FileEncryptor {
 
-    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileManager fileManager, EncryptorParameters parameters) {
-        super(algorithm, keyGenerator, fileManager, parameters);
+    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
+        super(algorithm, keyGenerator, fileIOHandler, parameters);
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class FileManager {
+public class FileIOHandler {
     public void writeToFile(String pathToFile, String text) throws IOException {
         File file = new File(pathToFile);
         try {

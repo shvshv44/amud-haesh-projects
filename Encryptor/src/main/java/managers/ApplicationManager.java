@@ -19,22 +19,22 @@ public class ApplicationManager {
 
             switch (choice) {
                 case ENCRYPTION:
-                    choseEncrypt();
+                    startEncrypt();
                     break;
                 case DECRYPTION:
-                    choseDecrypt();
+                    startDecrypt();
                     break;
             }
         }
-        System.out.print("Hope you enjoyed! Goodbye :)");
+        uiManager.printFinishMessage();
     }
 
-    private void choseEncrypt() {
+    private void startEncrypt() {
         String path = uiManager.getMessagePath();
         fileEncryptor.startEncryption(path);
     }
 
-    private void choseDecrypt() {
+    private void startDecrypt() {
         String cipherPath = uiManager.getCipherPath();
         String keyPath = uiManager.getKeyPath();
         fileEncryptor.startDecryption(cipherPath, keyPath);
