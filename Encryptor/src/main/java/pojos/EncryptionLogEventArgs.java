@@ -56,4 +56,25 @@ public class EncryptionLogEventArgs {
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof EncryptionLogEventArgs)) {
+            return false;
+        }
+
+        EncryptionLogEventArgs args = (EncryptionLogEventArgs) obj;
+        return sourceFileName == args.sourceFileName &&
+                destinationFileName == args.destinationFileName &&
+                algorithm == args.algorithm &&
+                startTime == args.startTime &&
+                endTime == args.endTime;
+    }
+
+    @Override
+    public int hashCode() {
+        return sourceFileName.hashCode() + destinationFileName.hashCode() + algorithm.hashCode() + (int)startTime + (int)endTime;
+    }
 }
