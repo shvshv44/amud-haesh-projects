@@ -3,60 +3,49 @@ package pojos;
 import algorithms.EncryptionAlgorithm;
 
 public class EncryptionLogEventArgs {
-    private String sourceFileName;
-    private String destinationFileName;
-    private EncryptionAlgorithm algorithm;
-    private long startTime;
-    private long endTime;
+    private String originalFileName;
+    private String outputFileName;
+    private EncryptionAlgorithm algorithmType;
+    private long operationLengthInMilliseconds;
 
-    public EncryptionLogEventArgs(String sourceFileName, String destinationFileName, EncryptionAlgorithm algorithm, long startTime, long endTime) {
-        this.sourceFileName = sourceFileName;
-        this.destinationFileName = destinationFileName;
-        this.algorithm = algorithm;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public EncryptionLogEventArgs(String originalFileName, String outputFileName, EncryptionAlgorithm algorithmType, long operationLengthInMilliseconds) {
+        this.originalFileName = originalFileName;
+        this.outputFileName = outputFileName;
+        this.algorithmType = algorithmType;
+        this.operationLengthInMilliseconds = operationLengthInMilliseconds;
     }
 
-    public String getSourceFileName() {
-        return sourceFileName;
+    public String getOriginalFileName() {
+        return originalFileName;
     }
 
-    public void setSourceFileName(String sourceFileName) {
-        this.sourceFileName = sourceFileName;
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 
-    public String getDestinationFileName() {
-        return destinationFileName;
+    public String getOutputFileName() {
+        return outputFileName;
     }
 
-    public void setDestinationFileName(String destinationFileName) {
-        this.destinationFileName = destinationFileName;
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
     }
 
-    public EncryptionAlgorithm getAlgorithm() {
-        return algorithm;
+    public EncryptionAlgorithm getAlgorithmType() {
+        return algorithmType;
     }
 
-    public void setAlgorithm(EncryptionAlgorithm algorithm) {
-        this.algorithm = algorithm;
+    public void setAlgorithmType(EncryptionAlgorithm algorithmType) {
+        this.algorithmType = algorithmType;
     }
 
-    public long getStartTime() {
-        return startTime;
+    public long getOperationLengthInMilliseconds() {
+        return operationLengthInMilliseconds;
     }
 
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
+    public void setOperationLengthInMilliseconds(long operationLengthInMilliseconds) {
+        this.operationLengthInMilliseconds = operationLengthInMilliseconds;
     }
-
-    public long getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(long endTime) {
-        this.endTime = endTime;
-    }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -66,15 +55,14 @@ public class EncryptionLogEventArgs {
         }
 
         EncryptionLogEventArgs args = (EncryptionLogEventArgs) obj;
-        return sourceFileName == args.sourceFileName &&
-                destinationFileName == args.destinationFileName &&
-                algorithm == args.algorithm &&
-                startTime == args.startTime &&
-                endTime == args.endTime;
+        return originalFileName == args.originalFileName &&
+                outputFileName == args.outputFileName &&
+                algorithmType == args.algorithmType &&
+                operationLengthInMilliseconds == args.operationLengthInMilliseconds;
     }
 
     @Override
     public int hashCode() {
-        return sourceFileName.hashCode() + destinationFileName.hashCode() + algorithm.hashCode() + (int)startTime + (int)endTime;
+        return originalFileName.hashCode() + outputFileName.hashCode() + algorithmType.hashCode() + (int) operationLengthInMilliseconds;
     }
 }

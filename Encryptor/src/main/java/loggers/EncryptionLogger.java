@@ -11,11 +11,10 @@ public class EncryptionLogger implements Observer {
 
     @Override
     public void encryptionEnded(EncryptionLogEventArgs args) {
-        long operationTime = args.getEndTime() - args.getStartTime();
-        System.out.println("encrypting the source file " + args.getSourceFileName() +
-                " with the " + args.getAlgorithm().getClass().getSimpleName() +
-                " algorithm took " + operationTime + " millis." +
-                "\nthe new file is in " + args.getDestinationFileName());
+        System.out.println("encrypting the source file " + args.getOriginalFileName() +
+                " with the " + args.getAlgorithmType().getClass().getSimpleName() +
+                " algorithm took " + args.getOperationLengthInMilliseconds() + " millis." +
+                "\nthe new file is in " + args.getOutputFileName());
     }
 
     @Override
@@ -25,10 +24,9 @@ public class EncryptionLogger implements Observer {
 
     @Override
     public void decryptionEnded(EncryptionLogEventArgs args) {
-        long operationTime = args.getEndTime() - args.getStartTime();
-        System.out.println("decrypting the source file " + args.getSourceFileName() +
-                " with the " + args.getAlgorithm().getClass().getSimpleName() +
-                " algorithm took " + operationTime + " millis." +
-                "\nthe new file is in " + args.getDestinationFileName());
+        System.out.println("decrypting the source file " + args.getOriginalFileName() +
+                " with the " + args.getAlgorithmType().getClass().getSimpleName() +
+                " algorithm took " + args.getOperationLengthInMilliseconds() + " millis." +
+                "\nthe new file is in " + args.getOutputFileName());
     }
 }

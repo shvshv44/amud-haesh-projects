@@ -67,8 +67,8 @@ public abstract class FileEncryptor extends Observable {
         encryptionStarted();
         long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
-        long endTime = Calendar.getInstance().getTimeInMillis();
-        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, cipherPath, algorithm, startTime, endTime);
+        long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
+        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, cipherPath, algorithm, totalTime);
         encryptionEnded(args);
         writeEncryptionResults(cipherPath, cipher, keyPath);
     }
@@ -81,9 +81,9 @@ public abstract class FileEncryptor extends Observable {
         decryptionStarted();
         long startTime = Calendar.getInstance().getTimeInMillis();
         String message = decrypt(cipher);
-        long endTime = Calendar.getInstance().getTimeInMillis();
+        long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         String convertedMessage = convertDecryptionToText(message);
-        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, messagePath, algorithm, startTime, endTime);
+        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, messagePath, algorithm, totalTime);
         decryptionEnded(args);
         writeDecryptionResults(messagePath, convertedMessage);
     }
