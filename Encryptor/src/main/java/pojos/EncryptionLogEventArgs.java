@@ -1,18 +1,17 @@
 package pojos;
 
-import algorithms.EncryptionAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.StringJoiner;
 
 @Data
 @AllArgsConstructor
-@XmlRootElement(name = "EncryptionResult")
+@NoArgsConstructor
+@XmlRootElement
+@XmlSeeAlso({EncryptionArgs.class, DecryptionArgs.class})
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class EncryptionLogEventArgs {
     @XmlElement(name = "OriginalFileName")
@@ -20,7 +19,7 @@ public abstract class EncryptionLogEventArgs {
     @XmlElement(name = "OutputFileName")
     private String outputFileName;
     @XmlElement(name = "AlgorithmType")
-    private EncryptionAlgorithm algorithmType;
+    private String algorithmType;
     @XmlElement(name = "OperationLengthInMilliseconds")
     private long operationLengthInMilliseconds;
 

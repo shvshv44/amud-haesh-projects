@@ -1,12 +1,15 @@
 package pojos;
 
-import algorithms.EncryptionAlgorithm;
+import lombok.NoArgsConstructor;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "Encryption")
+@XmlRootElement
+@XmlType
+@NoArgsConstructor
 public class EncryptionArgs extends EncryptionLogEventArgs {
-    public EncryptionArgs(String originalFileName, String outputFileName, EncryptionAlgorithm algorithmType, long operationLengthInMilliseconds) {
+    public EncryptionArgs(String originalFileName, String outputFileName, String algorithmType, long operationLengthInMilliseconds) {
         super(originalFileName, outputFileName, algorithmType, operationLengthInMilliseconds);
     }
 }

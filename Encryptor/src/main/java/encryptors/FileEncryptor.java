@@ -48,6 +48,7 @@ public abstract class FileEncryptor extends Observable {
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
             System.err.println("Cannot split the file path. Check the path.");
         } catch (JAXBException e) {
+            e.printStackTrace();
             System.err.println("Cannot parse the encryption result to xml.");
         }
     }
@@ -62,6 +63,9 @@ public abstract class FileEncryptor extends Observable {
         } catch (NumberFormatException e) {
             String foundKey = e.getMessage().split(": ")[1];
             System.err.println("Error while decrypting: wrong key format. The key found was " + foundKey);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            System.err.println("Cannot parse the encryption result to xml.");
         }
     }
 
@@ -76,13 +80,13 @@ public abstract class FileEncryptor extends Observable {
         long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
-        EncryptionLogEventArgs args = new EncryptionArgs(pathToFile, cipherPath, algorithm, totalTime);
+        EncryptionLogEventArgs args = new EncryptionArgs(pathToFile, cipherPath, algorithm.getClass().toString(), totalTime);
         encryptionEnded(args);
         writeEncryptionResults(cipherPath, cipher, keyPath);
         jaxbManager.marshal(args);
     }
 
-    private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException {
+    private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException, JAXBException {
         readKeys(fileIOHandler.readFile(pathToKey));
         String[] splitPath = pathToFile.split(parameters.getPathSeparator());
         String messagePath = splitPath[0] + parameters.getDecryptedEnding()+ splitPath[1];
@@ -92,9 +96,10 @@ public abstract class FileEncryptor extends Observable {
         String message = decrypt(cipher);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         String convertedMessage = convertDecryptionToText(message);
-        EncryptionLogEventArgs args = new DecryptionArgs(pathToFile, messagePath, algorithm, totalTime);
+        EncryptionLogEventArgs args = new DecryptionArgs(pathToFile, messagePath, algorithm.getClass().toString(), totalTime);
         decryptionEnded(args);
         writeDecryptionResults(messagePath, convertedMessage);
+        jaxbManager.marshal(args);
     }
 
     private String prepareMessageForEncryption(String message) {
