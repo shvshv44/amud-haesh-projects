@@ -4,8 +4,10 @@ import algorithms.EncryptionAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.xml.bind.annotation.*;
-import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.StringJoiner;
 
 @Data
@@ -26,9 +28,8 @@ public abstract class EncryptionLogEventArgs {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (!(obj instanceof EncryptionLogEventArgs)) {
+        if (!(obj instanceof EncryptionLogEventArgs))
             return false;
-        }
 
         EncryptionLogEventArgs args = (EncryptionLogEventArgs) obj;
         return hashCode() == args.hashCode();

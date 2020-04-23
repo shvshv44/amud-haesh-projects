@@ -8,8 +8,10 @@ import managers.ApplicationManager;
 import managers.FileIOHandler;
 import managers.JAXBManager;
 import managers.UIManager;
+import pojos.EncryptionLogEventArgs;
 import pojos.EncryptorParameters;
 
+import javax.xml.bind.JAXBException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;

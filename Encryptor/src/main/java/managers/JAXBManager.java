@@ -12,15 +12,15 @@ import java.io.IOException;
 public class JAXBManager {
 
     public void marshal(EncryptionLogEventArgs args) throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(this.getClass(), EncryptionLogEventArgs.class);
+        JAXBContext context = JAXBContext.newInstance(EncryptionLogEventArgs.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(args, new File("./abcd.xml"));
+        marshaller.marshal(args, new File("C:\\BEN\\Encryptor_messages\\result.xml"));
     }
 
     public EncryptionLogEventArgs unmarshall() throws JAXBException, IOException {
         JAXBContext context = JAXBContext.newInstance(EncryptionLogEventArgs.class);
         return (EncryptionLogEventArgs) context.createUnmarshaller()
-                .unmarshal(new FileReader("./abcd.xml"));
+                .unmarshal(new FileReader("C:\\BEN\\Encryptor_messages\\result.xml"));
     }
 }
