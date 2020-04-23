@@ -83,7 +83,7 @@ public abstract class FileEncryptor extends Observable {
         EncryptionLogEventArgs args = new EncryptionArgs(pathToFile, cipherPath, algorithm.getClass().toString(), totalTime);
         encryptionEnded(args);
         writeEncryptionResults(cipherPath, cipher, keyPath);
-        jaxbManager.addResult(args);
+        jaxbManager.addLog(args);
     }
 
     private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException, JAXBException {
@@ -99,7 +99,7 @@ public abstract class FileEncryptor extends Observable {
         EncryptionLogEventArgs args = new DecryptionArgs(pathToFile, messagePath, algorithm.getClass().toString(), totalTime);
         decryptionEnded(args);
         writeDecryptionResults(messagePath, convertedMessage);
-        jaxbManager.addResult(args);
+        jaxbManager.addLog(args);
     }
 
     private String prepareMessageForEncryption(String message) {

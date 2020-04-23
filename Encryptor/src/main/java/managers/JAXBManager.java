@@ -33,7 +33,7 @@ public class JAXBManager {
                 .unmarshal(new FileReader(resultFilePath));
     }
 
-    public void addResult(EncryptionLogEventArgs log) {
+    public void addLog(EncryptionLogEventArgs log) {
         xmlEncryptionLogs.addLog(log);
     }
 }

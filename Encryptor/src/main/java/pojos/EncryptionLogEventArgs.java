@@ -11,7 +11,6 @@ import java.util.StringJoiner;
 @XmlType
 @AllArgsConstructor
 @NoArgsConstructor
-@XmlRootElement()
 @XmlSeeAlso({EncryptionArgs.class, DecryptionArgs.class})
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class EncryptionLogEventArgs {
