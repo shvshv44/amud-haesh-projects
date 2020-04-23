@@ -28,16 +28,18 @@ public class Main {
         String encryptedEnding = properties.getProperty("encryptedFileEnding");
         String decryptedEnding = properties.getProperty("decryptedFileEnding");
         String keyFileName = properties.getProperty("keyFileName");
+        String resultPath = properties.getProperty("resultFilePath");
 
+        JAXBManager jaxbManager = new JAXBManager(resultPath);
         KeyGenerator keyGenerator = new RandomKeyGenerator();
         EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        FileEncryptor fileEncryptor = new RepeatEncryptor(new JAXBManager(), new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), 20, parameters);
+        FileEncryptor fileEncryptor = new RepeatEncryptor(jaxbManager, new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), 20, parameters);
         EncryptionLogger logger = new EncryptionLogger();
         fileEncryptor.addObserver(logger);
 
 
-        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager());
+        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager(), jaxbManager);
         applicationManager.startMenu();
 
         // C:\BEN\Encryptor_messages\ben.txt

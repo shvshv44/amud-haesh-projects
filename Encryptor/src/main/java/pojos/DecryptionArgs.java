@@ -1,7 +1,6 @@
 package pojos;
 
 import lombok.NoArgsConstructor;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
