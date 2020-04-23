@@ -11,12 +11,12 @@ import java.util.List;
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "EncryptionResults")
-public class Results {
+public class EncryptionLogs {
 
     @XmlElementRef()
     private List<EncryptionLogEventArgs> logList;
 
-    public Results() {
+    public EncryptionLogs() {
         this.logList = new LinkedList<>();
     }
 
