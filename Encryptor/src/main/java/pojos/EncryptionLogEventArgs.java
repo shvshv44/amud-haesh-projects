@@ -1,51 +1,27 @@
 package pojos;
 
 import algorithms.EncryptionAlgorithm;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class EncryptionLogEventArgs {
+import javax.xml.bind.annotation.*;
+import java.io.Serializable;
+import java.util.StringJoiner;
+
+@Data
+@AllArgsConstructor
+@XmlRootElement(name = "EncryptionResult")
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class EncryptionLogEventArgs {
+    @XmlElement(name = "OriginalFileName")
     private String originalFileName;
+    @XmlElement(name = "OutputFileName")
     private String outputFileName;
+    @XmlElement(name = "AlgorithmType")
     private EncryptionAlgorithm algorithmType;
+    @XmlElement(name = "OperationLengthInMilliseconds")
     private long operationLengthInMilliseconds;
 
-    public EncryptionLogEventArgs(String originalFileName, String outputFileName, EncryptionAlgorithm algorithmType, long operationLengthInMilliseconds) {
-        this.originalFileName = originalFileName;
-        this.outputFileName = outputFileName;
-        this.algorithmType = algorithmType;
-        this.operationLengthInMilliseconds = operationLengthInMilliseconds;
-    }
-
-    public String getOriginalFileName() {
-        return originalFileName;
-    }
-
-    public void setOriginalFileName(String originalFileName) {
-        this.originalFileName = originalFileName;
-    }
-
-    public String getOutputFileName() {
-        return outputFileName;
-    }
-
-    public void setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
-    }
-
-    public EncryptionAlgorithm getAlgorithmType() {
-        return algorithmType;
-    }
-
-    public void setAlgorithmType(EncryptionAlgorithm algorithmType) {
-        this.algorithmType = algorithmType;
-    }
-
-    public long getOperationLengthInMilliseconds() {
-        return operationLengthInMilliseconds;
-    }
-
-    public void setOperationLengthInMilliseconds(long operationLengthInMilliseconds) {
-        this.operationLengthInMilliseconds = operationLengthInMilliseconds;
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -55,14 +31,16 @@ public class EncryptionLogEventArgs {
         }
 
         EncryptionLogEventArgs args = (EncryptionLogEventArgs) obj;
-        return originalFileName == args.originalFileName &&
-                outputFileName == args.outputFileName &&
-                algorithmType == args.algorithmType &&
-                operationLengthInMilliseconds == args.operationLengthInMilliseconds;
+        return hashCode() == args.hashCode();
     }
 
     @Override
     public int hashCode() {
-        return originalFileName.hashCode() + outputFileName.hashCode() + algorithmType.hashCode() + (int) operationLengthInMilliseconds;
+        StringJoiner joinedStrings = new StringJoiner("\n")
+                .add(originalFileName)
+                .add(outputFileName)
+                .add(algorithmType.toString())
+                .add(Long.toString(operationLengthInMilliseconds));
+        return joinedStrings.hashCode();
     }
 }

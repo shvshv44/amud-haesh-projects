@@ -4,9 +4,13 @@ import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import listeners.Observable;
 import managers.FileIOHandler;
+import managers.JAXBManager;
+import pojos.DecryptionArgs;
+import pojos.EncryptionArgs;
 import pojos.EncryptionLogEventArgs;
 import pojos.EncryptorParameters;
 
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -18,11 +22,12 @@ public abstract class FileEncryptor extends Observable {
     protected KeyGenerator keyGenerator;
     protected EncryptionAlgorithm algorithm;
     protected int[] keys;
-
     protected EncryptorParameters parameters;
+    private JAXBManager jaxbManager;
 
-    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
+    public FileEncryptor(JAXBManager jaxbManager, EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
         super();
+        this.jaxbManager = jaxbManager;
         this.keyGenerator = keyGenerator;
         this.fileIOHandler = fileIOHandler;
         this.algorithm = algorithm;
@@ -30,6 +35,7 @@ public abstract class FileEncryptor extends Observable {
 
         this.parameters = parameters;
     }
+
 
     abstract String encrypt(String message);
     abstract String decrypt(String cipher);
@@ -41,6 +47,8 @@ public abstract class FileEncryptor extends Observable {
             System.err.println(e.getMessage());
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
             System.err.println("Cannot split the file path. Check the path.");
+        } catch (JAXBException e) {
+            System.err.println("Cannot parse the encryption result to xml.");
         }
     }
 
@@ -57,7 +65,7 @@ public abstract class FileEncryptor extends Observable {
         }
     }
 
-    private void tryToEncrypt(String pathToFile) throws IOException {
+    private void tryToEncrypt(String pathToFile) throws IOException, JAXBException {
         generateKeys();
         String[] splitPath = pathToFile.split(parameters.getPathSeparator());
         String cipherPath = splitPath[0] + parameters.getEncryptedEnding() + splitPath[1];
@@ -68,9 +76,10 @@ public abstract class FileEncryptor extends Observable {
         long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
-        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, cipherPath, algorithm, totalTime);
+        EncryptionLogEventArgs args = new EncryptionArgs(pathToFile, cipherPath, algorithm, totalTime);
         encryptionEnded(args);
         writeEncryptionResults(cipherPath, cipher, keyPath);
+        jaxbManager.marshal(args);
     }
 
     private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException {
@@ -83,7 +92,7 @@ public abstract class FileEncryptor extends Observable {
         String message = decrypt(cipher);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         String convertedMessage = convertDecryptionToText(message);
-        EncryptionLogEventArgs args = new EncryptionLogEventArgs(pathToFile, messagePath, algorithm, totalTime);
+        EncryptionLogEventArgs args = new DecryptionArgs(pathToFile, messagePath, algorithm, totalTime);
         decryptionEnded(args);
         writeDecryptionResults(messagePath, convertedMessage);
     }

@@ -3,12 +3,13 @@ package encryptors;
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileIOHandler;
+import managers.JAXBManager;
 import pojos.EncryptorParameters;
 
 public class ShiftEncryptor extends FileEncryptor {
 
-    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
-        super(algorithm, keyGenerator, fileIOHandler, parameters);
+    public ShiftEncryptor(JAXBManager jaxbManager, EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
+        super(jaxbManager, algorithm, keyGenerator, fileIOHandler, parameters);
     }
 
     @Override

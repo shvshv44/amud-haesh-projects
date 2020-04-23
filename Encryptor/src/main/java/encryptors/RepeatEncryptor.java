@@ -3,13 +3,14 @@ package encryptors;
 import algorithms.EncryptionAlgorithm;
 import generators.KeyGenerator;
 import managers.FileIOHandler;
+import managers.JAXBManager;
 import pojos.EncryptorParameters;
 
 public class RepeatEncryptor extends FileEncryptor {
     private int repeats;
 
-    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, int repeats, EncryptorParameters parameters) {
-        super(algorithm, keyGenerator, fileIOHandler, parameters);
+    public RepeatEncryptor(JAXBManager jaxbManager, EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, int repeats, EncryptorParameters parameters) {
+        super(jaxbManager, algorithm, keyGenerator, fileIOHandler, parameters);
         this.repeats = repeats;
         this.keys = new int[repeats];
     }

@@ -6,6 +6,7 @@ import generators.RandomKeyGenerator;
 import loggers.EncryptionLogger;
 import managers.ApplicationManager;
 import managers.FileIOHandler;
+import managers.JAXBManager;
 import managers.UIManager;
 import pojos.EncryptorParameters;
 
@@ -28,9 +29,7 @@ public class Main {
         KeyGenerator keyGenerator = new RandomKeyGenerator();
         EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), 20, parameters);
-        //fileEncryptor = new ShiftEncryptor(new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), parameters);
-
+        FileEncryptor fileEncryptor = new RepeatEncryptor(new JAXBManager(), new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), 20, parameters);
         EncryptionLogger logger = new EncryptionLogger();
         fileEncryptor.addObserver(logger);
 

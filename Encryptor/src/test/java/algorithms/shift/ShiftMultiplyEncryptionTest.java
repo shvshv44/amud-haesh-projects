@@ -1,6 +1,7 @@
 package algorithms.shift;
 
 import algorithms.EncryptionAlgorithm;
+import algorithms.shift.ShiftMultiplyEncryption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
