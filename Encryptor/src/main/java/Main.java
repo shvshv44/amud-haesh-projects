@@ -9,6 +9,7 @@ import managers.FileIOHandler;
 import managers.JAXBManager;
 import managers.UIManager;
 import pojos.EncryptionLogEventArgs;
+import pojos.EncryptionResults;
 import pojos.EncryptorParameters;
 
 import javax.xml.bind.JAXBException;
@@ -30,16 +31,17 @@ public class Main {
         String keyFileName = properties.getProperty("keyFileName");
         String resultPath = properties.getProperty("resultFilePath");
 
-        JAXBManager jaxbManager = new JAXBManager(resultPath);
+        FileIOHandler fileIOHandler = new FileIOHandler();
+        JAXBManager<EncryptionResults> jaxbManager = new JAXBManager<>();
         KeyGenerator keyGenerator = new RandomKeyGenerator();
         EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        FileEncryptor fileEncryptor = new RepeatEncryptor(jaxbManager, new ShiftUpEncryption(), keyGenerator, new FileIOHandler(), 20, parameters);
+        FileEncryptor fileEncryptor = new RepeatEncryptor(jaxbManager, new ShiftUpEncryption(), keyGenerator, fileIOHandler, 20, parameters);
         EncryptionLogger logger = new EncryptionLogger();
         fileEncryptor.addObserver(logger);
 
 
-        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager(), jaxbManager);
+        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager(), jaxbManager, fileIOHandler, resultPath);
         applicationManager.startMenu();
 
         // C:\BEN\Encryptor_messages\ben.txt

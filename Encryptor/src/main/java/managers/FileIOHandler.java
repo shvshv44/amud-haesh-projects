@@ -1,8 +1,5 @@
 package managers;
 
-import exceptions.ReadingFromFileException;
-import exceptions.WritingToFileException;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,7 +14,7 @@ public class FileIOHandler {
             writer.write(text);
             writer.close();
         } catch (IOException e) {
-            throw new WritingToFileException(pathToFile);
+            throw new IOException("Error writing to file " + pathToFile);
         }
     }
 
@@ -25,7 +22,7 @@ public class FileIOHandler {
         try {
             return new String(Files.readAllBytes(Paths.get(pathToFile)));
         } catch (IOException e) {
-            throw new ReadingFromFileException(pathToFile);
+            throw new IOException("Error reading from file " + pathToFile);
         }
     }
 }

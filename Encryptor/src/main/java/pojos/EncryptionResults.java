@@ -10,17 +10,20 @@ import java.util.List;
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "EncryptionResults")
-public class EncryptionLogs {
+@XmlRootElement
+public class EncryptionResults {
+    private static EncryptionResults results;
 
     @XmlElementRef()
     private List<EncryptionLogEventArgs> logList;
 
-    public EncryptionLogs() {
-        this.logList = new LinkedList<>();
+    public static EncryptionResults getInstance() {
+        if(results == null)
+            results = new EncryptionResults();
+        return results;
     }
 
-    public void addLog(EncryptionLogEventArgs log) {
-        logList.add(log);
+    private EncryptionResults() {
+        this.logList = new LinkedList<>();
     }
 }

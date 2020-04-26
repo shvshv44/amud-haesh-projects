@@ -1,39 +1,27 @@
 package managers;
 
 import pojos.EncryptionLogEventArgs;
-import pojos.EncryptionLogs;
+import pojos.EncryptionResults;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 
-public class JAXBManager {
-    private EncryptionLogs xmlEncryptionLogs;
-    private String resultFilePath;
-
-    public JAXBManager(String resultFilePath) {
-        this.resultFilePath = resultFilePath;
-        this.xmlEncryptionLogs = new EncryptionLogs();
-    }
-
-    public void marshal() throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(EncryptionLogs.class, EncryptionLogEventArgs.class);
+public class JAXBManager<T> {
+    public String marshal(T object) throws JAXBException, IOException {
+        JAXBContext context = JAXBContext.newInstance(object.getClass());
         Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(xmlEncryptionLogs, new File(resultFilePath));
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        StringWriter xmlContent = new StringWriter();
+        marshaller.marshal(object, xmlContent);
+        return xmlContent.toString();
     }
 
-    public EncryptionLogs unmarshall() throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(EncryptionLogEventArgs.class);
-        return (EncryptionLogs) context.createUnmarshaller()
-                .unmarshal(new FileReader(resultFilePath));
-    }
-
-    public void addLog(EncryptionLogEventArgs log) {
-        xmlEncryptionLogs.addLog(log);
+    public T unmarshal(Class<T> tClass, String xmlContent) throws JAXBException, IOException {
+        JAXBContext context = JAXBContext.newInstance(tClass);
+        return (T) context.createUnmarshaller()
+                .unmarshal(new StringReader(xmlContent));
     }
 }

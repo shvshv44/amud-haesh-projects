@@ -1,20 +1,20 @@
 package managers;
 
 import encryptors.FileEncryptor;
+import lombok.AllArgsConstructor;
 import models.UserOptions;
+import pojos.EncryptionResults;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 
+@AllArgsConstructor
 public class ApplicationManager {
-    private UIManager uiManager;
     private FileEncryptor fileEncryptor;
+    private UIManager uiManager;
     private JAXBManager jaxbManager;
-    public ApplicationManager(FileEncryptor fileEncryptor, UIManager uiManager, JAXBManager jaxbManager) {
-        this.uiManager = uiManager;
-        this.fileEncryptor = fileEncryptor;
-        this.jaxbManager = jaxbManager;
-    }
+    private FileIOHandler fileIOHandler;
+    private String resultFilePath;
 
     public void startMenu() {
         UserOptions choice = UserOptions.getOptionByCodeNumber(0);
@@ -46,10 +46,10 @@ public class ApplicationManager {
 
     private void finishMenu() {
         try {
-            jaxbManager.marshal();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            String xmlContent = jaxbManager.marshal(EncryptionResults.getInstance());
+            fileIOHandler.writeToFile(resultFilePath, xmlContent);
+            System.out.println(jaxbManager.unmarshal(EncryptionResults.class, fileIOHandler.readFile(resultFilePath)));
+        } catch (IOException | JAXBException e) {
             e.printStackTrace();
             System.err.println("Could not parse to xml.");
         }

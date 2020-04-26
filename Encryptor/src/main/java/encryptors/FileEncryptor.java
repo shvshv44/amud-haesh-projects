@@ -5,10 +5,7 @@ import generators.KeyGenerator;
 import listeners.Observable;
 import managers.FileIOHandler;
 import managers.JAXBManager;
-import pojos.DecryptionArgs;
-import pojos.EncryptionArgs;
-import pojos.EncryptionLogEventArgs;
-import pojos.EncryptorParameters;
+import pojos.*;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
@@ -83,7 +80,7 @@ public abstract class FileEncryptor extends Observable {
         EncryptionLogEventArgs args = new EncryptionArgs(pathToFile, cipherPath, algorithm.getClass().toString(), totalTime);
         encryptionEnded(args);
         writeEncryptionResults(cipherPath, cipher, keyPath);
-        jaxbManager.addLog(args);
+        EncryptionResults.getInstance().getLogList().add(args);
     }
 
     private void tryToDecrypt(String pathToFile, String pathToKey) throws IOException, NumberFormatException, JAXBException {
@@ -99,7 +96,7 @@ public abstract class FileEncryptor extends Observable {
         EncryptionLogEventArgs args = new DecryptionArgs(pathToFile, messagePath, algorithm.getClass().toString(), totalTime);
         decryptionEnded(args);
         writeDecryptionResults(messagePath, convertedMessage);
-        jaxbManager.addLog(args);
+        EncryptionResults.getInstance().getLogList().add(args);
     }
 
     private String prepareMessageForEncryption(String message) {
