@@ -20,9 +20,6 @@ public class RepeatEncryptorTest  {
 
     private RepeatEncryptor repeatEncryptor;
 
-    @Mock
-    private JAXBManager jaxbManager;
-
     private int repeats = 5;
 
     @Mock
@@ -41,7 +38,7 @@ public class RepeatEncryptorTest  {
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
         parameters = new EncryptorParameters(",", "\\.","_encrypted.","_decrypted.","\\\\key.txt");
-        this.repeatEncryptor = new encryptors.RepeatEncryptor(jaxbManager, algorithm, keyGenerator, fileIOHandler, repeats, parameters);
+        this.repeatEncryptor = new encryptors.RepeatEncryptor(algorithm, keyGenerator, fileIOHandler, repeats, parameters);
         doAnswer(invocationOnMock -> {
             return invocationOnMock.getArgument(0);
             }).when(algorithm).encrypt(anyString(), anyInt(), anyString());

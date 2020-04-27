@@ -1,6 +1,6 @@
 package managers;
 
-import models.UserOptions;
+import uiapi.UserOptions;
 
 import java.util.Scanner;
 
@@ -33,8 +33,8 @@ public class UIManager {
         return UserOptions.getOptionByCodeNumber(choice);
     }
 
-    public void printFinishMessage() {
-        System.out.print("Hope you enjoyed! Goodbye :)");
+    public void printMessage(String message) {
+        System.out.print(message);
     }
 
     private String buildMenuMessage() {

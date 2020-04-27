@@ -25,4 +25,12 @@ public class FileIOHandler {
             throw new IOException("Error reading from file " + pathToFile);
         }
     }
+
+    public String readFile(File file) throws IOException {
+        try {
+            return new String(Files.readAllBytes(Paths.get(file.getPath())));
+        } catch (IOException e) {
+            throw new IOException("Error reading from file " + file);
+        }
+    }
 }

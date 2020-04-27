@@ -1,4 +1,4 @@
-package models;
+package uiapi;
 
 public enum UserOptions {
     DEFAULT(0),

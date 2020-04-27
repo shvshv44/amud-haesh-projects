@@ -1,6 +1,7 @@
 import algorithms.shift.ShiftUpEncryption;
 import encryptors.FileEncryptor;
 import encryptors.RepeatEncryptor;
+import encryptors.ShiftEncryptor;
 import generators.KeyGenerator;
 import generators.RandomKeyGenerator;
 import loggers.EncryptionLogger;
@@ -36,7 +37,7 @@ public class Main {
         KeyGenerator keyGenerator = new RandomKeyGenerator();
         EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
 
-        FileEncryptor fileEncryptor = new RepeatEncryptor(jaxbManager, new ShiftUpEncryption(), keyGenerator, fileIOHandler, 20, parameters);
+        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, fileIOHandler, 10, parameters);
         EncryptionLogger logger = new EncryptionLogger();
         fileEncryptor.addObserver(logger);
 
