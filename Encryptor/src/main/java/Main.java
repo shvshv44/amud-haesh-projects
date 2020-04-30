@@ -12,6 +12,8 @@ import managers.UIManager;
 import pojos.EncryptionLogEventArgs;
 import pojos.EncryptionResults;
 import pojos.EncryptorParameters;
+import processors.AsyncDirectoryProcessor;
+import processors.DirectoryProcessorInterface;
 
 import javax.xml.bind.JAXBException;
 import java.io.FileInputStream;
@@ -41,8 +43,9 @@ public class Main {
         EncryptionLogger logger = new EncryptionLogger();
         fileEncryptor.addObserver(logger);
 
+        DirectoryProcessorInterface directoryProcessor = new AsyncDirectoryProcessor(fileEncryptor);
 
-        ApplicationManager applicationManager = new ApplicationManager(fileEncryptor, new UIManager(), jaxbManager, fileIOHandler, resultPath);
+        ApplicationManager applicationManager = new ApplicationManager(directoryProcessor, new UIManager(), jaxbManager, fileIOHandler, resultPath);
         applicationManager.startMenu();
 
         // C:\BEN\Encryptor_messages\ben.txt

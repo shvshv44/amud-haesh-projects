@@ -2,16 +2,19 @@ package managers;
 
 import encryptors.FileEncryptor;
 import lombok.AllArgsConstructor;
+import pojos.EncryptionLogEventArgs;
+import processors.DirectoryProcessorInterface;
 import uiapi.UserOptions;
 import pojos.EncryptionResults;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @AllArgsConstructor
-public class ApplicationManager {
-    private FileEncryptor fileEncryptor;
+public class ApplicationManager{
+    private DirectoryProcessorInterface directoryProcessor;
     private UIManager uiManager;
     private JAXBManager jaxbManager;
     private FileIOHandler fileIOHandler;
@@ -36,12 +39,14 @@ public class ApplicationManager {
 
     private void startEncrypt() {
         String path = uiManager.getMessagePath();
-        fileEncryptor.generateKeys();
+        directoryProcessor.generateKeys();
         File[] filesList = new File(path).listFiles();
+        if(filesList == null)
+            return;
         new File(path+"encrypted").mkdir();
         for(File file : filesList) {
             if(isTextFile(file))
-                fileEncryptor.startEncryption(file);
+                directoryProcessor.encryptFile(file);
         }
     }
 
@@ -49,10 +54,13 @@ public class ApplicationManager {
         String cipherPath = uiManager.getCipherPath();
         String keyPath = uiManager.getKeyPath();
         File[] filesList = new File(cipherPath).listFiles();
+        if(filesList == null)
+            return;
+
         new File(cipherPath+"decrypted").mkdir();
         for(File file : filesList) {
             if(isTextFile(file))
-                fileEncryptor.startDecryption(file, keyPath);
+                directoryProcessor.decryptFile(file, keyPath);
         }
     }
 
@@ -64,10 +72,20 @@ public class ApplicationManager {
         } catch (IOException | JAXBException e) {
             System.err.println("Could not parse to xml.");
         }
+        uiManager.printMessage(generateTotalTimeMessage());
         uiManager.printMessage("Hope you enjoyed! Goodbye :)");
     }
 
     private boolean isTextFile(File file) {
         return file.getPath().endsWith(".txt") && !file.getPath().endsWith("key.txt");
+    }
+
+    private String generateTotalTimeMessage() {
+        List<EncryptionLogEventArgs> logs = EncryptionResults.getInstance().getLogList();
+        long time = 0;
+        for(EncryptionLogEventArgs log : logs) {
+            time += log.getOperationLengthInMilliseconds();
+        }
+        return "the total process took " + time +" millis";
     }
 }

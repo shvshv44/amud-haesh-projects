@@ -34,7 +34,7 @@ public class UIManager {
     }
 
     public void printMessage(String message) {
-        System.out.print(message);
+        System.out.println(message);
     }
 
     private String buildMenuMessage() {
