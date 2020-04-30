@@ -4,7 +4,7 @@ import encryptors.FileEncryptor;
 
 import java.io.File;
 
-public class SyncDirectoryProcessor extends DirectoryProcessor{
+public class SyncDirectoryProcessor extends DirectoryProcessor {
 
     public SyncDirectoryProcessor(FileEncryptor fileEncryptor) {
         super(fileEncryptor);

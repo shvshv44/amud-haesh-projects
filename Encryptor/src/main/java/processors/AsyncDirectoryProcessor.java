@@ -5,10 +5,10 @@ import encryptors.FileEncryptor;
 import java.io.File;
 
 public class AsyncDirectoryProcessor extends DirectoryProcessor {
+
     public AsyncDirectoryProcessor(FileEncryptor fileEncryptor) {
         super(fileEncryptor);
     }
-
 
     @Override
     public void encryptFile(File file) {

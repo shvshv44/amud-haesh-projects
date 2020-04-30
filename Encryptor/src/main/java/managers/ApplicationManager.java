@@ -1,11 +1,10 @@
 package managers;
 
-import encryptors.FileEncryptor;
 import lombok.AllArgsConstructor;
 import pojos.EncryptionLogEventArgs;
+import pojos.EncryptionResults;
 import processors.DirectoryProcessorInterface;
 import uiapi.UserOptions;
-import pojos.EncryptionResults;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -19,6 +18,8 @@ public class ApplicationManager{
     private JAXBManager jaxbManager;
     private FileIOHandler fileIOHandler;
     private String resultFilePath;
+    private String encryptedFolderName;
+    private String decryptedFolderName;
 
     public void startMenu() {
         UserOptions choice = UserOptions.DEFAULT;
@@ -43,7 +44,7 @@ public class ApplicationManager{
         File[] filesList = new File(path).listFiles();
         if(filesList == null)
             return;
-        new File(path+"encrypted").mkdir();
+        new File(path+encryptedFolderName).mkdir();
         for(File file : filesList) {
             if(isTextFile(file))
                 directoryProcessor.encryptFile(file);
@@ -57,7 +58,7 @@ public class ApplicationManager{
         if(filesList == null)
             return;
 
-        new File(cipherPath+"decrypted").mkdir();
+        new File(cipherPath+decryptedFolderName).mkdir();
         for(File file : filesList) {
             if(isTextFile(file))
                 directoryProcessor.decryptFile(file, keyPath);

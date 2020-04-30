@@ -45,7 +45,7 @@ public class Main {
 
         DirectoryProcessorInterface directoryProcessor = new AsyncDirectoryProcessor(fileEncryptor);
 
-        ApplicationManager applicationManager = new ApplicationManager(directoryProcessor, new UIManager(), jaxbManager, fileIOHandler, resultPath);
+        ApplicationManager applicationManager = new ApplicationManager(directoryProcessor, new UIManager(), jaxbManager, fileIOHandler, resultPath, encryptedEnding, decryptedEnding);
         applicationManager.startMenu();
 
         // C:\BEN\Encryptor_messages\ben.txt
