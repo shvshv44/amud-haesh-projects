@@ -7,6 +7,7 @@ import loggers.EncryptionLogger;
 import managers.ApplicationManager;
 import managers.FileIOHandler;
 import managers.JAXBManager;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ui.UIManager;
 import pojos.EncryptionResults;
 import pojos.EncryptorParameters;
@@ -29,24 +30,26 @@ public class Main {
         String decryptedEnding = properties.getProperty("decryptedFileEnding");
         String keyFileName = properties.getProperty("keyFileName");
         String resultPath = properties.getProperty("resultFilePath");
+        String fileType = properties.getProperty("filesType");
 
+        UIManager uiManager = new UIManager();
         FileIOHandler fileIOHandler = new FileIOHandler();
         JAXBManager<EncryptionResults> jaxbManager = new JAXBManager<>();
         KeyGenerator keyGenerator = new RandomKeyGenerator();
-        EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName);
+        EncryptorParameters parameters = new EncryptorParameters(separator, pathSeparator, encryptedEnding, decryptedEnding, keyFileName, fileType, resultPath);
 
-        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, fileIOHandler, 10, parameters);
-        EncryptionLogger logger = new EncryptionLogger();
+        FileEncryptor fileEncryptor = new RepeatEncryptor(new ShiftUpEncryption(), keyGenerator, fileIOHandler, uiManager, 10, parameters);
+        EncryptionLogger logger = new EncryptionLogger(uiManager);
         fileEncryptor.addObserver(logger);
 
         DirectoryProcessorInterface directoryProcessor = new AsyncDirectoryProcessor(fileEncryptor);
 
-        ApplicationManager applicationManager = new ApplicationManager(directoryProcessor, new UIManager(), jaxbManager, fileIOHandler, resultPath, encryptedEnding, decryptedEnding);
+        ApplicationManager applicationManager = new ApplicationManager(directoryProcessor, uiManager, jaxbManager, fileIOHandler, parameters);
         applicationManager.startMenu();
 
-        // C:\BEN\Encryptor_messages\ben.txt
-
-        // C:\\Ben\\Encryptor_messages\\ben.txt
+        // C:\\BEN\\Encryptor_messages\\ben.txt
+        // C:\\Ben\\Encryptor_messages\\encrypted
+        // C:\\Ben\\Encryptor_messages\\encrypted\key.txt
     }
 
     public static Properties getProperties() {

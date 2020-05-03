@@ -2,29 +2,35 @@ package loggers;
 
 import listeners.Observer;
 import pojos.EncryptionLogEventArgs;
+import ui.UIManager;
 
 public class EncryptionLogger implements Observer {
+    private UIManager uiManager;
+    public  EncryptionLogger(UIManager uiManager) {
+        this.uiManager = uiManager;
+    }
+
     @Override
-    public void encryptionStarted() {
-        System.out.println("starting to encrypt");
+    public void encryptionStarted(String fileName) {
+        uiManager.printMessage("starting to encrypt the file " + fileName);
     }
 
     @Override
     public void encryptionEnded(EncryptionLogEventArgs args) {
-        System.out.println("encrypting the source file " + args.getOriginalFileName() +
+        uiManager.printMessage("encrypting the source file " + args.getOriginalFileName() +
                 " with the " + args.getAlgorithmType().getClass().getSimpleName() +
                 " algorithm took " + args.getOperationLengthInMilliseconds() + " millis." +
                 "\nthe new file is in " + args.getOutputFileName());
     }
 
     @Override
-    public void decryptionStarted() {
-        System.out.println("starting to decrypt");
+    public void decryptionStarted(String fileName) {
+        uiManager.printMessage("starting to decrypt the file " + fileName);
     }
 
     @Override
     public void decryptionEnded(EncryptionLogEventArgs args) {
-        System.out.println("decrypting the source file " + args.getOriginalFileName() +
+        uiManager.printMessage("decrypting the source file " + args.getOriginalFileName() +
                 " with the " + args.getAlgorithmType().getClass().getSimpleName() +
                 " algorithm took " + args.getOperationLengthInMilliseconds() + " millis." +
                 "\nthe new file is in " + args.getOutputFileName());

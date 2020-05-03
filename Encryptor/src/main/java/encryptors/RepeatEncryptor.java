@@ -5,12 +5,13 @@ import generators.KeyGenerator;
 import managers.FileIOHandler;
 import managers.JAXBManager;
 import pojos.EncryptorParameters;
+import ui.UIManager;
 
 public class RepeatEncryptor extends FileEncryptor {
     private int repeats;
 
-    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, int repeats, EncryptorParameters parameters) {
-        super(algorithm, keyGenerator, fileIOHandler, parameters);
+    public RepeatEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, int repeats, EncryptorParameters parameters) {
+        super(algorithm, keyGenerator, fileIOHandler, uiManager, parameters);
         this.repeats = repeats;
         this.keys = new int[repeats];
     }
@@ -33,7 +34,7 @@ public class RepeatEncryptor extends FileEncryptor {
     }
 
     @Override
-    public void generateKeys() {
-        this.keys = keyGenerator.generateKeys(repeats);
+    public int[] generateKeys() {
+        return keyGenerator.generateKeys(repeats);
     }
 }

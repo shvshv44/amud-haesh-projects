@@ -11,4 +11,6 @@ public class EncryptorParameters {
     private String encryptedEnding;
     private String decryptedEnding;
     private String keyFileName;
+    private String fileType;
+    private String resultPath;
 }

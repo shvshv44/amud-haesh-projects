@@ -5,12 +5,12 @@ import generators.KeyGenerator;
 import listeners.Observable;
 import managers.FileIOHandler;
 import pojos.*;
+import ui.UIManager;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.StringJoiner;
 
@@ -18,14 +18,16 @@ public abstract class FileEncryptor extends Observable {
     private FileIOHandler fileIOHandler;
     protected KeyGenerator keyGenerator;
     protected EncryptionAlgorithm algorithm;
+    private UIManager uiManager;
     protected int[] keys;
     protected EncryptorParameters parameters;
 
-    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
+    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters) {
         super();
         this.keyGenerator = keyGenerator;
         this.fileIOHandler = fileIOHandler;
         this.algorithm = algorithm;
+        this.uiManager = uiManager;
         this.keys = new int[1]; // the default number of keys is 1
 
         this.parameters = parameters;
@@ -39,12 +41,12 @@ public abstract class FileEncryptor extends Observable {
         try {
             tryToEncrypt(pathToFile);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            uiManager.printError(e.getMessage());
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
-            System.err.println("Cannot split the file path. Check the path.");
+            uiManager.printError("Cannot split the file path. Check the path.");
         } catch (JAXBException e) {
             e.printStackTrace();
-            System.err.println("Cannot parse the encryption result to xml.");
+            uiManager.printError("Cannot parse the encryption result to xml.");
         }
     }
 
@@ -52,30 +54,30 @@ public abstract class FileEncryptor extends Observable {
         try {
             tryToDecrypt(pathToFile, pathToKey);
         } catch (IOException e) {
-            System.err.println("Error while decrypting: " + e.getMessage());
+            uiManager.printError("Error while decrypting: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
-            System.err.println("Cannot split the file path. Check the path.");
+            uiManager.printError("Cannot split the file path. Check the path.");
         } catch (NumberFormatException e) {
             String foundKey = e.getMessage().split(": ")[1];
-            System.err.println("Error while decrypting: wrong key format. The key found was " + foundKey);
+            uiManager.printError("Error while decrypting: wrong key format. The key found was " + foundKey);
         } catch (JAXBException e) {
             e.printStackTrace();
-            System.err.println("Cannot parse the encryption result to xml.");
+            uiManager.printError("Cannot parse the encryption result to xml.");
         }
     }
 
     private void tryToEncrypt(File file) throws IOException, JAXBException {
+        readKeys(fileIOHandler.readFile(file.getParent() + parameters.getEncryptedEnding() +parameters.getKeyFileName()));
         String cipherPath = file.getParent() + parameters.getEncryptedEnding() + file.getName();
-        String keyPath = file.getParent() + parameters.getEncryptedEnding() + parameters.getKeyFileName();
         String message = fileIOHandler.readFile(file.getPath());
         String readyToEncryptMessage = prepareMessageForEncryption(message);
-        encryptionStarted();
+        encryptionStarted(file.getName());
         long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         EncryptionLogEventArgs args = new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().toString(), totalTime);
         encryptionEnded(args);
-        writeEncryptionResults(cipherPath, cipher, keyPath);
+        writeEncryptionResults(cipherPath, cipher);
         EncryptionResults.getInstance().getLogList().add(args);
     }
 
@@ -83,7 +85,7 @@ public abstract class FileEncryptor extends Observable {
         readKeys(fileIOHandler.readFile(pathToKey));
         String messagePath = file.getParent() + parameters.getDecryptedEnding() + file.getName();
         String cipher = fileIOHandler.readFile(file.getPath());
-        decryptionStarted();
+        decryptionStarted(file.getName());
         long startTime = Calendar.getInstance().getTimeInMillis();
         String message = decrypt(cipher);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
@@ -113,22 +115,14 @@ public abstract class FileEncryptor extends Observable {
         return messageText.toString();
     }
 
-    private void writeEncryptionResults(String cipherPath, String cipher, String keyPath) throws IOException {
+    private void writeEncryptionResults(String cipherPath, String cipher) throws IOException {
         fileIOHandler.writeToFile(cipherPath, cipher);
-        fileIOHandler.writeToFile(keyPath, getKeysString());
     }
 
     private void writeDecryptionResults(String messagePath, String message) throws IOException {
         fileIOHandler.writeToFile(messagePath, message);
     }
 
-    private String getKeysString() {
-        StringJoiner formattedString = new StringJoiner(parameters.getSeparator());
-        for(int key : keys) {
-            formattedString.add(String.valueOf(key));
-        }
-        return formattedString.toString();
-    }
 
     private void readKeys(String keysString) {
         String[] keysArray = keysString.split(parameters.getSeparator());
@@ -137,7 +131,7 @@ public abstract class FileEncryptor extends Observable {
         }
     }
 
-    public void generateKeys() {
-        this.keys = keyGenerator.generateKeys();
+    public int[] generateKeys() {
+        return keyGenerator.generateKeys();
     }
 }

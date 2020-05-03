@@ -20,17 +20,17 @@ public abstract class Observable {
         observerList.remove(observer);
     }
 
-    protected void encryptionStarted() {
+    protected void encryptionStarted(String fileName) {
         for(Observer observer : observerList)
-            observer.encryptionStarted();
+            observer.encryptionStarted(fileName);
     }
     protected void encryptionEnded(EncryptionLogEventArgs args) {
         for(Observer observer : observerList)
             observer.encryptionEnded(args);
     }
-    protected void decryptionStarted() {
+    protected void decryptionStarted(String fileName) {
         for(Observer observer : observerList)
-            observer.decryptionStarted();
+            observer.decryptionStarted(fileName);
     }
     protected void decryptionEnded(EncryptionLogEventArgs args) {
         for(Observer observer : observerList)

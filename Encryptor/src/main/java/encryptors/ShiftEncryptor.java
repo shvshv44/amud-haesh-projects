@@ -5,11 +5,12 @@ import generators.KeyGenerator;
 import managers.FileIOHandler;
 import managers.JAXBManager;
 import pojos.EncryptorParameters;
+import ui.UIManager;
 
 public class ShiftEncryptor extends FileEncryptor {
 
-    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
-        super(algorithm, keyGenerator, fileIOHandler, parameters);
+    public ShiftEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters) {
+        super(algorithm, keyGenerator, fileIOHandler, uiManager, parameters);
     }
 
     @Override
