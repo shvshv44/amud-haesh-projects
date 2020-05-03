@@ -1,4 +1,4 @@
-package uiapi;
+package ui.api;
 
 public enum UserOptions {
     DEFAULT(0),

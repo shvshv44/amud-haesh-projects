@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import pojos.EncryptionLogEventArgs;
 import pojos.EncryptionResults;
 import processors.DirectoryProcessorInterface;
-import uiapi.UserOptions;
+import ui.UIManager;
+import ui.api.UserOptions;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -45,10 +46,7 @@ public class ApplicationManager{
         if(filesList == null)
             return;
         new File(path+encryptedFolderName).mkdir();
-        for(File file : filesList) {
-            if(isTextFile(file))
-                directoryProcessor.encryptFile(file);
-        }
+        encryptFolder(filesList);
     }
 
     private void startDecrypt() {
@@ -57,9 +55,19 @@ public class ApplicationManager{
         File[] filesList = new File(cipherPath).listFiles();
         if(filesList == null)
             return;
-
         new File(cipherPath+decryptedFolderName).mkdir();
-        for(File file : filesList) {
+        decryptFolder(filesList, keyPath);
+    }
+
+    private void encryptFolder(File[] folder) {
+        for(File file : folder) {
+            if(isTextFile(file))
+                directoryProcessor.encryptFile(file);
+        }
+    }
+
+    private void decryptFolder(File[] folder, String keyPath) {
+        for(File file : folder) {
             if(isTextFile(file))
                 directoryProcessor.decryptFile(file, keyPath);
         }
@@ -71,7 +79,7 @@ public class ApplicationManager{
             fileIOHandler.writeToFile(resultFilePath, xmlContent);
             System.out.println(jaxbManager.unmarshal(EncryptionResults.class, fileIOHandler.readFile(resultFilePath)));
         } catch (IOException | JAXBException e) {
-            System.err.println("Could not parse to xml.");
+            uiManager.printError("Could not parse to xml.");
         }
         uiManager.printMessage(generateTotalTimeMessage());
         uiManager.printMessage("Hope you enjoyed! Goodbye :)");

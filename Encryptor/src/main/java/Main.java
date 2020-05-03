@@ -1,28 +1,24 @@
 import algorithms.shift.ShiftUpEncryption;
 import encryptors.FileEncryptor;
 import encryptors.RepeatEncryptor;
-import encryptors.ShiftEncryptor;
 import generators.KeyGenerator;
 import generators.RandomKeyGenerator;
 import loggers.EncryptionLogger;
 import managers.ApplicationManager;
 import managers.FileIOHandler;
 import managers.JAXBManager;
-import managers.UIManager;
-import pojos.EncryptionLogEventArgs;
+import ui.UIManager;
 import pojos.EncryptionResults;
 import pojos.EncryptorParameters;
 import processors.AsyncDirectoryProcessor;
 import processors.DirectoryProcessorInterface;
 
-import javax.xml.bind.JAXBException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 import static java.lang.System.exit;
-import static java.lang.System.setOut;
 
 public class Main {
     public static void main(String[] args) {

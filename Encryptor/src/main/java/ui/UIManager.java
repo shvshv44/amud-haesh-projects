@@ -1,6 +1,6 @@
-package managers;
+package ui;
 
-import uiapi.UserOptions;
+import ui.api.UserOptions;
 
 import java.util.Scanner;
 
@@ -35,6 +35,10 @@ public class UIManager {
 
     public void printMessage(String message) {
         System.out.println(message);
+    }
+
+    public void printError(String message) {
+        System.err.println(message);
     }
 
     private String buildMenuMessage() {
