@@ -18,7 +18,7 @@ public class EncryptionLogger implements Observer {
     @Override
     public void encryptionEnded(EncryptionLogEventArgs args) {
         uiManager.printMessage("encrypting the source file " + args.getOriginalFileName() +
-                " with the " + args.getAlgorithmType().getClass().getSimpleName() +
+                " with the " + args.getAlgorithmType() +
                 " algorithm took " + args.getOperationLengthInMilliseconds() + " millis." +
                 "\nthe new file is in " + args.getOutputFileName());
     }
@@ -31,7 +31,7 @@ public class EncryptionLogger implements Observer {
     @Override
     public void decryptionEnded(EncryptionLogEventArgs args) {
         uiManager.printMessage("decrypting the source file " + args.getOriginalFileName() +
-                " with the " + args.getAlgorithmType().getClass().getSimpleName() +
+                " with the " + args.getAlgorithmType() +
                 " algorithm took " + args.getOperationLengthInMilliseconds() + " millis." +
                 "\nthe new file is in " + args.getOutputFileName());
     }

@@ -33,7 +33,6 @@ public abstract class FileEncryptor extends Observable {
         this.parameters = parameters;
     }
 
-
     abstract String encrypt(String message);
     abstract String decrypt(String cipher);
 
@@ -71,7 +70,7 @@ public abstract class FileEncryptor extends Observable {
     }
 
     private void tryToEncrypt(File file) throws IOException, JAXBException {
-        readKeys(fileIOHandler.readFile(file.getParent() + parameters.getEncryptedEnding() +parameters.getKeyFileName()));
+        readKeys(fileIOHandler.readFile(file.getParent() + parameters.getEncryptedEnding() + parameters.getKeyFileName()));
         String cipherPath = file.getParent() + parameters.getEncryptedEnding() + file.getName();
         String message = fileIOHandler.readFile(file.getPath());
         String readyToEncryptMessage = prepareMessageForEncryption(message);
@@ -79,7 +78,7 @@ public abstract class FileEncryptor extends Observable {
         long startTime = Calendar.getInstance().getTimeInMillis();
         String cipher = encrypt(readyToEncryptMessage);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
-        EncryptionLogEventArgs args = new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().toString(), totalTime);
+        EncryptionLogEventArgs args = new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().getSimpleName(), totalTime);
         encryptionEnded(args);
         fileIOHandler.writeToFile(cipherPath, cipher);
         EncryptionResults.getInstance().getLogList().add(args);
@@ -94,7 +93,7 @@ public abstract class FileEncryptor extends Observable {
         String message = decrypt(cipher);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         String convertedMessage = convertDecryptionToText(message);
-        EncryptionLogEventArgs args = new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().toString(), totalTime);
+        EncryptionLogEventArgs args = new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().getSimpleName(), totalTime);
         decryptionEnded(args);
         fileIOHandler.writeToFile(messagePath, convertedMessage);
         EncryptionResults.getInstance().getLogList().add(args);
