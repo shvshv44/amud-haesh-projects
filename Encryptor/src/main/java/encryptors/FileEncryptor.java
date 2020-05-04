@@ -44,7 +44,6 @@ public abstract class FileEncryptor extends Observable {
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
             uiManager.printError("Cannot split the file path. Check the path.");
         } catch (JAXBException e) {
-            e.printStackTrace();
             uiManager.printError("Cannot parse the encryption result to xml.");
         }
     }
@@ -60,7 +59,6 @@ public abstract class FileEncryptor extends Observable {
             String foundKey = e.getMessage().split(": ")[1];
             uiManager.printError("Error while decrypting: wrong key format. The key found was " + foundKey);
         } catch (JAXBException e) {
-            e.printStackTrace();
             uiManager.printError("Cannot parse the encryption result to xml.");
         }
     }
