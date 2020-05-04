@@ -4,7 +4,6 @@ import lombok.NoArgsConstructor;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType
 @NoArgsConstructor
 @XmlRootElement(name = "Encryption")
 public class EncryptionArgs extends EncryptionLogEventArgs {

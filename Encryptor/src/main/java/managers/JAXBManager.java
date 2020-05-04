@@ -9,7 +9,7 @@ import java.io.StringWriter;
 
 
 public class JAXBManager<T> {
-    public String marshal(T object) throws JAXBException, IOException {
+    public String marshal(T object) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(object.getClass());
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -18,7 +18,7 @@ public class JAXBManager<T> {
         return xmlContent.toString();
     }
 
-    public T unmarshal(Class<T> tClass, String xmlContent) throws JAXBException, IOException {
+    public T unmarshal(Class<T> tClass, String xmlContent) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(tClass);
         return (T) context.createUnmarshaller()
                 .unmarshal(new StringReader(xmlContent));

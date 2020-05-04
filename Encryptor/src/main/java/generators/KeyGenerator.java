@@ -1,9 +1,9 @@
 package generators;
 
-public abstract class KeyGenerator {
-    abstract int makeKey();
+public interface KeyGenerator {
+    int makeKey();
 
-    public int generateKey() {
+    default int generateKey() {
         int key = makeKey();
         while (key == 0) {
             key = makeKey();
@@ -11,11 +11,11 @@ public abstract class KeyGenerator {
         return key;
     }
 
-    public int[] generateKeys() {
+    default int[] generateKeys() {
         return new int[] {generateKey()};
     }
 
-    public int[] generateKeys(int size) {
+    default int[] generateKeys(int size) {
         int[] keys = new int[size];
         for (int i = 0; i < size; i++) {
             keys[i] = generateKey();

@@ -7,12 +7,11 @@ import loggers.EncryptionLogger;
 import managers.ApplicationManager;
 import managers.FileIOHandler;
 import managers.JAXBManager;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ui.UIManager;
 import pojos.EncryptionResults;
 import pojos.EncryptorParameters;
 import processors.AsyncDirectoryProcessor;
 import processors.DirectoryProcessorInterface;
+import ui.UIManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;

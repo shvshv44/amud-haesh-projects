@@ -2,7 +2,7 @@ package generators;
 
 import java.util.Random;
 
-public class RandomKeyGenerator extends KeyGenerator {
+public class RandomKeyGenerator implements KeyGenerator {
     private Random rnd;
 
     public RandomKeyGenerator() {

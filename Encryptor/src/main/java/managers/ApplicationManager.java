@@ -1,7 +1,6 @@
 package managers;
 
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.jni.Thread;
 import pojos.EncryptionLogEventArgs;
 import pojos.EncryptionResults;
 import pojos.EncryptorParameters;
@@ -12,14 +11,11 @@ import ui.api.UserOptions;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 @AllArgsConstructor
-public class ApplicationManager{
+public class ApplicationManager {
     private DirectoryProcessorInterface directoryProcessor;
     private UIManager uiManager;
     private JAXBManager jaxbManager;
@@ -56,11 +52,12 @@ public class ApplicationManager{
 
     private void startDecrypt() {
         String cipherPath = uiManager.getCipherPath();
+        new File(cipherPath+parameters.getDecryptedEnding()).mkdir();
         String keyPath = uiManager.getKeyPath();
         File[] filesList = getFilesInDirectory(cipherPath);
-        if(filesList == null)
+        if(filesList == null) {
             return;
-        new File(cipherPath+parameters.getDecryptedEnding()).mkdir();
+        }
         directoryProcessor.decryptDirectory(filesList, keyPath);
     }
 
@@ -69,8 +66,10 @@ public class ApplicationManager{
             String xmlContent = jaxbManager.marshal(EncryptionResults.getInstance());
             fileIOHandler.writeToFile(parameters.getResultPath(), xmlContent);
             uiManager.printMessage(jaxbManager.unmarshal(EncryptionResults.class, fileIOHandler.readFile(parameters.getResultPath())).toString());
-        } catch (IOException | JAXBException e) {
+        } catch (JAXBException e) {
             uiManager.printError("Could not parse to xml.");
+        } catch (IOException e) {
+            uiManager.printError("Could not write to file");
         }
         uiManager.printMessage(generateTotalTimeMessage());
         uiManager.printMessage("Hope you enjoyed! Goodbye :)");
@@ -82,7 +81,7 @@ public class ApplicationManager{
         try {
             fileIOHandler.writeToFile(keyPath, getKeysString(keys));
         } catch (IOException e) {
-            uiManager.printError("error writing keys");
+            uiManager.printError("Error writing keys");
         }
     }
 

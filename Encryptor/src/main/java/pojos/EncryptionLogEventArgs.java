@@ -8,19 +8,14 @@ import javax.xml.bind.annotation.*;
 import java.util.StringJoiner;
 
 @Data
-@XmlType
 @AllArgsConstructor
 @NoArgsConstructor
 @XmlSeeAlso({EncryptionArgs.class, DecryptionArgs.class})
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class EncryptionLogEventArgs {
-    @XmlElement(name = "OriginalFileName")
     private String originalFileName;
-    @XmlElement(name = "OutputFileName")
     private String outputFileName;
-    @XmlElement(name = "AlgorithmType")
     private String algorithmType;
-    @XmlElement(name = "OperationLengthInMilliseconds")
     private long operationLengthInMilliseconds;
 
 

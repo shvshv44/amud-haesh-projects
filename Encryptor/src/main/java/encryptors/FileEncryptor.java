@@ -66,6 +66,10 @@ public abstract class FileEncryptor extends Observable {
         }
     }
 
+    public int[] generateKeys() {
+        return keyGenerator.generateKeys();
+    }
+
     private void tryToEncrypt(File file) throws IOException, JAXBException {
         readKeys(fileIOHandler.readFile(file.getParent() + parameters.getEncryptedEnding() +parameters.getKeyFileName()));
         String cipherPath = file.getParent() + parameters.getEncryptedEnding() + file.getName();
@@ -77,7 +81,7 @@ public abstract class FileEncryptor extends Observable {
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         EncryptionLogEventArgs args = new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().toString(), totalTime);
         encryptionEnded(args);
-        writeEncryptionResults(cipherPath, cipher);
+        fileIOHandler.writeToFile(cipherPath, cipher);
         EncryptionResults.getInstance().getLogList().add(args);
     }
 
@@ -92,7 +96,7 @@ public abstract class FileEncryptor extends Observable {
         String convertedMessage = convertDecryptionToText(message);
         EncryptionLogEventArgs args = new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().toString(), totalTime);
         decryptionEnded(args);
-        writeDecryptionResults(messagePath, convertedMessage);
+        fileIOHandler.writeToFile(messagePath, convertedMessage);
         EncryptionResults.getInstance().getLogList().add(args);
     }
 
@@ -115,23 +119,10 @@ public abstract class FileEncryptor extends Observable {
         return messageText.toString();
     }
 
-    private void writeEncryptionResults(String cipherPath, String cipher) throws IOException {
-        fileIOHandler.writeToFile(cipherPath, cipher);
-    }
-
-    private void writeDecryptionResults(String messagePath, String message) throws IOException {
-        fileIOHandler.writeToFile(messagePath, message);
-    }
-
-
     private void readKeys(String keysString) {
         String[] keysArray = keysString.split(parameters.getSeparator());
         for (int i = 0; i < keysArray.length; i++) {
             keys[i] = Integer.parseInt(keysArray[i]);
         }
-    }
-
-    public int[] generateKeys() {
-        return keyGenerator.generateKeys();
     }
 }
