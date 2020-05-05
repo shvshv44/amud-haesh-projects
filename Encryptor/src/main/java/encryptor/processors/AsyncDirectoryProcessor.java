@@ -11,7 +11,7 @@ import java.io.File;
 public class AsyncDirectoryProcessor extends DirectoryProcessor {
 
     @Autowired
-    public AsyncDirectoryProcessor(@Qualifier("shiftEnc") FileEncryptor fileEncryptor) {
+    public AsyncDirectoryProcessor(@Qualifier("repeatEnc") FileEncryptor fileEncryptor) {
         super(fileEncryptor);
     }
 

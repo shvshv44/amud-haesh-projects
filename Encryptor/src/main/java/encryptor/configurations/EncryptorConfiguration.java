@@ -18,7 +18,7 @@ public class EncryptorConfiguration {
 
     @Autowired
     @Bean("shiftEnc")
-    public FileEncryptor createShiftEncryptor(@Qualifier("shiftUp") EncryptionAlgorithm algorithm,
+    public FileEncryptor createShiftEncryptor(@Qualifier("shiftMultiply") EncryptionAlgorithm algorithm,
                                               @Qualifier("randomKeyGenerator")KeyGenerator keyGenerator,
                                               FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters) {
         return new ShiftEncryptor(algorithm, keyGenerator, fileIOHandler, uiManager, parameters);
@@ -26,7 +26,7 @@ public class EncryptorConfiguration {
 
     @Autowired
     @Bean("repeatEnc")
-    public FileEncryptor createRepeatEncryptor(@Qualifier("shiftUp") EncryptionAlgorithm algorithm,
+    public FileEncryptor createRepeatEncryptor(@Qualifier("shiftMultiply") EncryptionAlgorithm algorithm,
                                                @Qualifier("randomKeyGenerator") KeyGenerator keyGenerator,
                                                FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters) {
         return new RepeatEncryptor(algorithm, keyGenerator, fileIOHandler, uiManager, 10, parameters);

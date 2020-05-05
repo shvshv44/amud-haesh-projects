@@ -33,8 +33,12 @@ public class ApplicationManager {
         this.fileIOHandler = fileIOHandler;
         this.parameters = parameters;
     }
+    public void run() {
+     startMenu();
+     finishMenu();
+    }
 
-    public void startMenu() {
+    private void startMenu() {
         UserOptions choice = UserOptions.DEFAULT;
         while (choice != UserOptions.EXIT) {
             choice = uiManager.getChoice();
@@ -48,7 +52,6 @@ public class ApplicationManager {
                     break;
             }
         }
-        finishMenu();
     }
 
     private void startEncrypt() {
