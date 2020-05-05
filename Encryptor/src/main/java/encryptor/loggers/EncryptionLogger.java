@@ -1,6 +1,7 @@
 package encryptor.loggers;
 
 import encryptor.listeners.Observer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import encryptor.pojos.EncryptionLogEventArgs;
 import encryptor.ui.UIManager;
@@ -8,6 +9,8 @@ import encryptor.ui.UIManager;
 @Component
 public class EncryptionLogger implements Observer {
     private UIManager uiManager;
+
+    @Autowired
     public  EncryptionLogger(UIManager uiManager) {
         this.uiManager = uiManager;
     }

@@ -1,12 +1,10 @@
 package encryptor.algorithms.shift;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 
 @Service
-@Qualifier
 public class ShiftUpEncryption extends ShiftAlgorithm {
 
     @Override

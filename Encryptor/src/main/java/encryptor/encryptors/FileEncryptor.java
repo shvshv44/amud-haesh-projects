@@ -3,6 +3,7 @@ package encryptor.encryptors;
 import encryptor.algorithms.EncryptionAlgorithm;
 import encryptor.generators.KeyGenerator;
 import encryptor.listeners.Observable;
+import encryptor.listeners.Observer;
 import encryptor.managers.FileIOHandler;
 import org.springframework.stereotype.Service;
 import encryptor.pojos.*;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.StringJoiner;
 
 @Service
@@ -24,8 +26,8 @@ public abstract class FileEncryptor extends Observable {
     protected int[] keys;
     protected EncryptorParameters parameters;
 
-    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters) {
-        super();
+    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters, List<Observer> observers) {
+        super(observers);
         this.keyGenerator = keyGenerator;
         this.fileIOHandler = fileIOHandler;
         this.algorithm = algorithm;

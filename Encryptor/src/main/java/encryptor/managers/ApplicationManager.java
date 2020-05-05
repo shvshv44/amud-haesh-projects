@@ -33,6 +33,7 @@ public class ApplicationManager {
         this.fileIOHandler = fileIOHandler;
         this.parameters = parameters;
     }
+
     public void run() {
      startMenu();
      finishMenu();

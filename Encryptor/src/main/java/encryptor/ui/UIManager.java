@@ -8,6 +8,7 @@ import java.util.Scanner;
 @Component
 public class UIManager {
     private Scanner scanner;
+
     public UIManager() {
         this.scanner = new Scanner(System.in);
     }

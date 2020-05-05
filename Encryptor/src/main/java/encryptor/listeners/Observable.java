@@ -14,6 +14,10 @@ public abstract class Observable {
         this.observerList = new LinkedList<>();
     }
 
+    public Observable(List<Observer> observerList) {
+        this.observerList = observerList;
+    }
+
     public void addObserver(Observer observer) {
         observerList.add(observer);
     }

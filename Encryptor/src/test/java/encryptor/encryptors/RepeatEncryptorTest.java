@@ -2,6 +2,7 @@ package encryptor.encryptors;
 
 import encryptor.algorithms.EncryptionAlgorithm;
 import encryptor.generators.KeyGenerator;
+import encryptor.listeners.Observer;
 import encryptor.managers.FileIOHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import encryptor.pojos.EncryptorParameters;
 import encryptor.ui.UIManager;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -37,11 +41,14 @@ public class RepeatEncryptorTest  {
     //@Mock
     private EncryptorParameters parameters;
 
+    @Mock
+    private List<Observer> observers;
+
     @Before
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
         parameters = new EncryptorParameters(",", "\\.","_encrypted.","_decrypted.","\\\\key.txt", ".txt", "result.xml");
-        this.repeatEncryptor = new encryptor.encryptors.RepeatEncryptor(algorithm, keyGenerator, fileIOHandler, uiManager, repeats, parameters);
+        this.repeatEncryptor = new encryptor.encryptors.RepeatEncryptor(algorithm, keyGenerator, fileIOHandler, uiManager, repeats, parameters, observers);
         doAnswer(invocationOnMock -> {
             return invocationOnMock.getArgument(0);
             }).when(algorithm).encrypt(anyString(), anyInt(), anyString());
