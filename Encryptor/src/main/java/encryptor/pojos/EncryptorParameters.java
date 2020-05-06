@@ -17,6 +17,7 @@ public class EncryptorParameters {
     private String keyFileName;
     private String fileType;
     private String resultPath;
+    private String xsdValidationFilePath;
 
     @Autowired
     public EncryptorParameters(@Value("${separator}") String separator,
@@ -25,7 +26,8 @@ public class EncryptorParameters {
                                @Value("${decryptedEnding}") String decryptedEnding,
                                @Value("${keyFileName}") String keyFileName,
                                @Value("${fileType}") String fileType,
-                               @Value("${resultFilePath}") String resultPath){
+                               @Value("${resultFilePath}") String resultPath,
+                               @Value("${xsdValidationFilePath}") String xsdValidationFilePath){
         this.separator = separator;
         this.pathSeparator = pathSeparator;
         this.encryptedEnding = encryptedEnding;
@@ -33,5 +35,6 @@ public class EncryptorParameters {
         this.keyFileName = keyFileName;
         this.fileType = fileType;
         this.resultPath = resultPath;
+        this.xsdValidationFilePath = xsdValidationFilePath;
     }
 }

@@ -24,6 +24,10 @@ public class EncryptionResults {
         return results;
     }
 
+    public void addOldResults(EncryptionResults results) {
+        getInstance().getLogList().addAll(results.getLogList());
+    }
+
     private EncryptionResults() {
         this.logList = new LinkedList<>();
     }

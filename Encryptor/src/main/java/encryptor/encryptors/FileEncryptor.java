@@ -46,8 +46,6 @@ public abstract class FileEncryptor extends Observable {
             uiManager.printError(e.getMessage());
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
             uiManager.printError("Cannot split the file path. Check the path.");
-        } catch (JAXBException e) {
-            uiManager.printError("Cannot parse the encryption result to xml.");
         }
     }
 
@@ -61,8 +59,6 @@ public abstract class FileEncryptor extends Observable {
         } catch (NumberFormatException e) {
             String foundKey = e.getMessage().split(": ")[1];
             uiManager.printError("Error while decrypting: wrong key format. The key found was " + foundKey);
-        } catch (JAXBException e) {
-            uiManager.printError("Cannot parse the encryption result to xml.");
         }
     }
 
@@ -70,22 +66,20 @@ public abstract class FileEncryptor extends Observable {
         return keyGenerator.generateKeys();
     }
 
-    private void tryToEncrypt(File file) throws IOException, JAXBException {
+    private void tryToEncrypt(File file) throws IOException {
         readKeys(fileIOHandler.readFile(file.getParent() + parameters.getEncryptedEnding() + parameters.getKeyFileName()));
         String cipherPath = file.getParent() + parameters.getEncryptedEnding() + file.getName();
         String message = fileIOHandler.readFile(file.getPath());
-        String readyToEncryptMessage = prepareMessageForEncryption(message);
+        String formattedMessage = prepareMessageForEncryption(message);
         encryptionStarted(file.getName());
         long startTime = Calendar.getInstance().getTimeInMillis();
-        String cipher = encrypt(readyToEncryptMessage);
+        String cipher = encrypt(formattedMessage);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
-        EncryptionLogEventArgs args = new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().getSimpleName(), totalTime);
-        encryptionEnded(args);
         fileIOHandler.writeToFile(cipherPath, cipher);
-        EncryptionResults.getInstance().getLogList().add(args);
+        handleEncryptionArgs(new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().getSimpleName(), totalTime));
     }
 
-    private void tryToDecrypt(File file, String pathToKey) throws IOException, NumberFormatException, JAXBException {
+    private void tryToDecrypt(File file, String pathToKey) throws IOException, NumberFormatException {
         readKeys(fileIOHandler.readFile(pathToKey));
         String messagePath = file.getParent() + parameters.getDecryptedEnding() + file.getName();
         String cipher = fileIOHandler.readFile(file.getPath());
@@ -94,10 +88,8 @@ public abstract class FileEncryptor extends Observable {
         String message = decrypt(cipher);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         String convertedMessage = convertDecryptionToText(message);
-        EncryptionLogEventArgs args = new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().getSimpleName(), totalTime);
-        decryptionEnded(args);
         fileIOHandler.writeToFile(messagePath, convertedMessage);
-        EncryptionResults.getInstance().getLogList().add(args);
+        handleDecryptionArgs(new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().getSimpleName(), totalTime));
     }
 
     private String prepareMessageForEncryption(String message) {
@@ -124,5 +116,15 @@ public abstract class FileEncryptor extends Observable {
         for (int i = 0; i < keysArray.length; i++) {
             keys[i] = Integer.parseInt(keysArray[i]);
         }
+    }
+
+    private void handleEncryptionArgs(EncryptionArgs args) {
+        encryptionEnded(args);
+        EncryptionResults.getInstance().getLogList().add(args);
+    }
+
+    private void handleDecryptionArgs(DecryptionArgs args) {
+        decryptionEnded(args);
+        EncryptionResults.getInstance().getLogList().add(args);
     }
 }

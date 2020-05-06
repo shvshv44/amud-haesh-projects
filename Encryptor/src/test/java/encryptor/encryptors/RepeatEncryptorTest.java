@@ -47,7 +47,7 @@ public class RepeatEncryptorTest  {
     @Before
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
-        parameters = new EncryptorParameters(",", "\\.","_encrypted.","_decrypted.","\\\\key.txt", ".txt", "result.xml");
+        parameters = new EncryptorParameters(",", "\\.","_encrypted.","_decrypted.","\\\\key.txt", ".txt","EncryptionResults.xsd", "result.xml");
         this.repeatEncryptor = new encryptor.encryptors.RepeatEncryptor(algorithm, keyGenerator, fileIOHandler, uiManager, repeats, parameters, observers);
         doAnswer(invocationOnMock -> {
             return invocationOnMock.getArgument(0);

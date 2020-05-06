@@ -1,5 +1,6 @@
 package encryptor.managers;
 
+import encryptor.validators.XMLValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -20,23 +21,26 @@ import java.util.StringJoiner;
 public class ApplicationManager {
     private DirectoryProcessorInterface directoryProcessor;
     private UIManager uiManager;
-    private JAXBManager jaxbManager;
+    private JAXBManager<EncryptionResults> jaxbManager;
     private FileIOHandler fileIOHandler;
+    private XMLValidator validator;
     private EncryptorParameters parameters;
 
     @Autowired
     public ApplicationManager(@Qualifier("asynProcessor") DirectoryProcessorInterface directoryProcessor,
-                              UIManager uiManager, JAXBManager jaxbManager, FileIOHandler fileIOHandler, EncryptorParameters parameters) {
+                              UIManager uiManager, JAXBManager<EncryptionResults> jaxbManager, FileIOHandler fileIOHandler, XMLValidator validator, EncryptorParameters parameters) {
         this.directoryProcessor = directoryProcessor;
         this.uiManager = uiManager;
         this.jaxbManager = jaxbManager;
         this.fileIOHandler = fileIOHandler;
+        this.validator = validator;
         this.parameters = parameters;
     }
 
     public void run() {
-     startMenu();
-     finish();
+        startMenu();
+        mergeOldAndNewResults();
+        finish();
     }
 
     private void startMenu() {
@@ -53,6 +57,7 @@ public class ApplicationManager {
                     break;
             }
         }
+        uiManager.printMessage(generateTotalTimeMessage());
     }
 
     private void startEncrypt() {
@@ -77,17 +82,29 @@ public class ApplicationManager {
         directoryProcessor.decryptDirectory(filesList, keyPath);
     }
 
+    private void mergeOldAndNewResults() {
+        try {
+            EncryptionResults.getInstance().addOldResults(jaxbManager.unmarshal(
+                    EncryptionResults.class, fileIOHandler.readFile(parameters.getResultPath())));
+        } catch (JAXBException e) {
+            uiManager.printError("could not parse results xml file to results object");
+        } catch (IOException e) {
+            uiManager.printError("could not read results from path. check if file exist");
+        }
+    }
+
     private void finish() {
         try {
             String xmlContent = jaxbManager.marshal(EncryptionResults.getInstance());
-            fileIOHandler.writeToFile(parameters.getResultPath(), xmlContent);
-            uiManager.printMessage(jaxbManager.unmarshal(EncryptionResults.class, fileIOHandler.readFile(parameters.getResultPath())).toString());
+            if(validator.validate(xmlContent, parameters.getXsdValidationFilePath())) {
+                fileIOHandler.writeToFile(parameters.getResultPath(), xmlContent);
+                uiManager.printMessage(EncryptionResults.getInstance().toString());
+            }
         } catch (JAXBException e) {
             uiManager.printError("Could not parse to xml.");
         } catch (IOException e) {
             uiManager.printError("Could not write to file.");
         }
-        uiManager.printMessage(generateTotalTimeMessage());
         uiManager.printMessage("Hope you enjoyed! Goodbye :)");
     }
 

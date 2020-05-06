@@ -21,7 +21,8 @@ public class JAXBManager<T> {
 
     public T unmarshal(Class<T> tClass, String xmlContent) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(tClass);
-        return (T) context.createUnmarshaller()
+        T object = (T) context.createUnmarshaller()
                 .unmarshal(new StringReader(xmlContent));
+        return object;
     }
 }
