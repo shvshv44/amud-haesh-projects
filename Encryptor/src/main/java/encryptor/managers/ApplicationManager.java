@@ -36,7 +36,7 @@ public class ApplicationManager {
 
     public void run() {
      startMenu();
-     finishMenu();
+     finish();
     }
 
     private void startMenu() {
@@ -77,7 +77,7 @@ public class ApplicationManager {
         directoryProcessor.decryptDirectory(filesList, keyPath);
     }
 
-    private void finishMenu() {
+    private void finish() {
         try {
             String xmlContent = jaxbManager.marshal(EncryptionResults.getInstance());
             fileIOHandler.writeToFile(parameters.getResultPath(), xmlContent);

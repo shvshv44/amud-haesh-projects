@@ -14,8 +14,7 @@ public class MainApp {
         ApplicationManager applicationManager = context.getBean(ApplicationManager.class);
         applicationManager.run();
 
-        // C:\\BEN\\Encryptor_messages\\ben.txt
         // C:\\Ben\\Encryptor_messages\\encrypted
-        // C:\\Ben\\Encryptor_messages\\encrypted\key.txt*/
+        // C:\\Ben\\Encryptor_messages\\encrypted\\key.txt
     }
 }

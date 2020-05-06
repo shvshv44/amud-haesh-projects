@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class XMLValidator {
 
-    private boolean validate(String xmlPath, String schemaPath) {
+    public boolean validate(String xmlPath, String schemaPath) {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try {
             Schema schema = schemaFactory.newSchema(new File(schemaPath));

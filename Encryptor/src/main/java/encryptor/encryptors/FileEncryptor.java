@@ -33,7 +33,6 @@ public abstract class FileEncryptor extends Observable {
         this.algorithm = algorithm;
         this.uiManager = uiManager;
         this.keys = new int[1]; // the default number of keys is 1
-
         this.parameters = parameters;
     }
 
