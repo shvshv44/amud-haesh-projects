@@ -1,6 +1,7 @@
 package encryptor.pojos;
 
-import lombok.Data;
+import lombok.Getter;
+import org.springframework.context.annotation.Scope;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,7 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.LinkedList;
 import java.util.List;
 
-@Data
+@Getter
+@Scope
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class EncryptionResults {
@@ -24,11 +26,15 @@ public class EncryptionResults {
         return results;
     }
 
+    private EncryptionResults() {
+        this.logList = new LinkedList<>();
+    }
+
     public void addOldResults(EncryptionResults results) {
         getInstance().getLogList().addAll(results.getLogList());
     }
 
-    private EncryptionResults() {
-        this.logList = new LinkedList<>();
+    public void removeResult(EncryptionLogEventArgs args) {
+        getInstance().getLogList().remove(args);
     }
 }

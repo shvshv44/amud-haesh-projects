@@ -55,7 +55,7 @@ public class UIManager {
     }
 
     private String getUserInput(String messageToPrint) {
-        System.out.println(messageToPrint);
+        printMessage(messageToPrint);
         return scanner.nextLine();
     }
 }

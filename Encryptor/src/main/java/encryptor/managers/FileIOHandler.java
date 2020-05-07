@@ -13,10 +13,8 @@ public class FileIOHandler {
 
     public void writeToFile(String pathToFile, String text) throws IOException {
         File file = new File(pathToFile);
-        try {
-            FileWriter writer = new FileWriter(file);
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(text);
-            writer.close();
         } catch (IOException e) {
             throw new IOException("Error writing to file " + pathToFile);
         }

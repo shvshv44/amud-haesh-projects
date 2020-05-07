@@ -62,30 +62,32 @@ public class ApplicationManager {
 
     private void startEncrypt() {
         String path = uiManager.getMessagePath();
-        new File(path+parameters.getEncryptedEnding()).mkdir();
+        new File(path+parameters.getEncryptedFolderName()).mkdir();
         generateKeys(path);
         File[] filesList = getFilesInDirectory(path);
-        if(filesList == null) {
-            return;
+        if(filesList != null) {
+            uiManager.printMessage(EncryptionResults.getInstance().toString());
+            directoryProcessor.encryptDirectory(filesList);
         }
-        directoryProcessor.encryptDirectory(filesList);
     }
 
     private void startDecrypt() {
         String cipherPath = uiManager.getCipherPath();
-        new File(cipherPath+parameters.getDecryptedEnding()).mkdir();
+        new File(cipherPath+parameters.getDecryptedFolderName()).mkdir();
         String keyPath = uiManager.getKeyPath();
         File[] filesList = getFilesInDirectory(cipherPath);
-        if(filesList == null) {
-            return;
+        if(filesList != null) {
+            directoryProcessor.decryptDirectory(filesList, keyPath);
         }
-        directoryProcessor.decryptDirectory(filesList, keyPath);
     }
 
     private void mergeOldAndNewResults() {
         try {
-            EncryptionResults.getInstance().addOldResults(jaxbManager.unmarshal(
-                    EncryptionResults.class, fileIOHandler.readFile(parameters.getResultPath())));
+            String xmlContent = fileIOHandler.readFile(parameters.getResultPath());
+            if (validator.validate(xmlContent, parameters.getXsdFilePath())) {
+                EncryptionResults.getInstance().addOldResults(jaxbManager.unmarshal(
+                        EncryptionResults.class, xmlContent));
+            }
         } catch (JAXBException e) {
             uiManager.printError("could not parse results xml file to results object");
         } catch (IOException e) {
@@ -96,10 +98,8 @@ public class ApplicationManager {
     private void finish() {
         try {
             String xmlContent = jaxbManager.marshal(EncryptionResults.getInstance());
-            if(validator.validate(xmlContent, parameters.getXsdValidationFilePath())) {
-                fileIOHandler.writeToFile(parameters.getResultPath(), xmlContent);
-                uiManager.printMessage(EncryptionResults.getInstance().toString());
-            }
+            fileIOHandler.writeToFile(parameters.getResultPath(), xmlContent);
+
         } catch (JAXBException e) {
             uiManager.printError("Could not parse to xml.");
         } catch (IOException e) {
@@ -109,7 +109,7 @@ public class ApplicationManager {
     }
 
     private void generateKeys(String path) {
-        String keyPath = path + parameters.getEncryptedEnding() + parameters.getKeyFileName();
+        String keyPath = path + parameters.getEncryptedFolderName() + parameters.getKeyFileName();
         int[] keys = directoryProcessor.generateKeys();
         try {
             fileIOHandler.writeToFile(keyPath, getKeysString(keys));

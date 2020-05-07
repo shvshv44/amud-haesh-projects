@@ -5,11 +5,13 @@ import encryptor.generators.KeyGenerator;
 import encryptor.listeners.Observable;
 import encryptor.listeners.Observer;
 import encryptor.managers.FileIOHandler;
-import org.springframework.stereotype.Service;
-import encryptor.pojos.*;
+import encryptor.pojos.DecryptionArgs;
+import encryptor.pojos.EncryptionArgs;
+import encryptor.pojos.EncryptionResults;
+import encryptor.pojos.EncryptorParameters;
 import encryptor.ui.UIManager;
+import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
@@ -39,9 +41,9 @@ public abstract class FileEncryptor extends Observable {
     abstract String encrypt(String message);
     abstract String decrypt(String cipher);
 
-    public void startEncryption(File pathToFile) {
+    public void startEncryption(File pathToFile, String keyPath) {
         try {
-            tryToEncrypt(pathToFile);
+            tryToEncrypt(pathToFile, keyPath);
         } catch (IOException e) {
             uiManager.printError(e.getMessage());
         } catch (ArrayIndexOutOfBoundsException | InvalidPathException e) {
@@ -66,9 +68,9 @@ public abstract class FileEncryptor extends Observable {
         return keyGenerator.generateKeys();
     }
 
-    private void tryToEncrypt(File file) throws IOException {
-        readKeys(fileIOHandler.readFile(file.getParent() + parameters.getEncryptedEnding() + parameters.getKeyFileName()));
-        String cipherPath = file.getParent() + parameters.getEncryptedEnding() + file.getName();
+    private void tryToEncrypt(File file, String keyPath) throws IOException {
+        readKeys(fileIOHandler.readFile(keyPath));
+        String cipherPath = file.getParent() + parameters.getEncryptedFolderName() + file.getName();
         String message = fileIOHandler.readFile(file.getPath());
         String formattedMessage = prepareMessageForEncryption(message);
         encryptionStarted(file.getName());
@@ -76,12 +78,12 @@ public abstract class FileEncryptor extends Observable {
         String cipher = encrypt(formattedMessage);
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         fileIOHandler.writeToFile(cipherPath, cipher);
-        handleEncryptionArgs(new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().getSimpleName(), totalTime));
+        handleEncryptionResult(new EncryptionArgs(file.getPath(), cipherPath, algorithm.getClass().getSimpleName(), totalTime));
     }
 
     private void tryToDecrypt(File file, String pathToKey) throws IOException, NumberFormatException {
         readKeys(fileIOHandler.readFile(pathToKey));
-        String messagePath = file.getParent() + parameters.getDecryptedEnding() + file.getName();
+        String messagePath = file.getParent() + parameters.getDecryptedFolderName() + file.getName();
         String cipher = fileIOHandler.readFile(file.getPath());
         decryptionStarted(file.getName());
         long startTime = Calendar.getInstance().getTimeInMillis();
@@ -89,7 +91,7 @@ public abstract class FileEncryptor extends Observable {
         long totalTime = Calendar.getInstance().getTimeInMillis() - startTime;
         String convertedMessage = convertDecryptionToText(message);
         fileIOHandler.writeToFile(messagePath, convertedMessage);
-        handleDecryptionArgs(new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().getSimpleName(), totalTime));
+        handleDecryptionResult(new DecryptionArgs(file.getPath(), messagePath, algorithm.getClass().getSimpleName(), totalTime));
     }
 
     private String prepareMessageForEncryption(String message) {
@@ -118,12 +120,12 @@ public abstract class FileEncryptor extends Observable {
         }
     }
 
-    private void handleEncryptionArgs(EncryptionArgs args) {
+    private void handleEncryptionResult(EncryptionArgs args) {
         encryptionEnded(args);
         EncryptionResults.getInstance().getLogList().add(args);
     }
 
-    private void handleDecryptionArgs(DecryptionArgs args) {
+    private void handleDecryptionResult(DecryptionArgs args) {
         decryptionEnded(args);
         EncryptionResults.getInstance().getLogList().add(args);
     }

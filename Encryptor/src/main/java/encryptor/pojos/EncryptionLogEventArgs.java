@@ -34,7 +34,7 @@ public abstract class EncryptionLogEventArgs {
         StringJoiner joinedStrings = new StringJoiner("\n")
                 .add(originalFileName)
                 .add(outputFileName)
-                .add(algorithmType.toString())
+                .add(algorithmType)
                 .add(Long.toString(operationLengthInMilliseconds));
         return joinedStrings.hashCode();
     }

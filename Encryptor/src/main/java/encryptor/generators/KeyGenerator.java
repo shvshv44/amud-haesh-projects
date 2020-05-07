@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public interface KeyGenerator {
     int makeKey();
 
-    default int generateKey() {
+    default int generateSingleKey() {
         int key = makeKey();
         while (key == 0) {
             key = makeKey();
@@ -15,13 +15,13 @@ public interface KeyGenerator {
     }
 
     default int[] generateKeys() {
-        return new int[] {generateKey()};
+        return new int[] {generateSingleKey()};
     }
 
     default int[] generateKeys(int size) {
         int[] keys = new int[size];
         for (int i = 0; i < size; i++) {
-            keys[i] = generateKey();
+            keys[i] = generateSingleKey();
         }
         return keys;
     }

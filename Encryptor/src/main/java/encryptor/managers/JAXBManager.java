@@ -10,6 +10,7 @@ import java.io.StringWriter;
 
 @Service
 public class JAXBManager<T> {
+
     public String marshal(T object) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(object.getClass());
         Marshaller marshaller = context.createMarshaller();
