@@ -1,6 +1,6 @@
 package encryptor.configurations;
 
-import encryptor.listeners.Observer;
+import encryptor.listeners.EncryptionObserver;
 import encryptor.loggers.EncryptionLogger;
 import encryptor.ui.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,8 @@ public class ObservableListConfiguration {
 
     @Autowired
     @Bean("observersList")
-    public List<encryptor.listeners.Observer> createObserversList(UIManager uiManager) {
-        List<Observer> observerList = new LinkedList<>();
+    public List<EncryptionObserver> createObserversList(UIManager uiManager) {
+        List<EncryptionObserver> observerList = new LinkedList<>();
         observerList.add(new EncryptionLogger(uiManager));
         return observerList;
     }

@@ -19,15 +19,10 @@ public enum UserOptions {
     }
 
     public static UserOptions getOptionByCodeNumber(int code) {
-        switch (code) {
-            case 1:
-                return ENCRYPTION;
-            case 2:
-                return DECRYPTION;
-            case 3:
-                return EXIT;
-            default:
-                return DEFAULT;
+        try {
+            return UserOptions.values()[code];
+        } catch (IndexOutOfBoundsException e) {
+            return DEFAULT;
         }
     }
 }

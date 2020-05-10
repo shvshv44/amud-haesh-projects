@@ -3,6 +3,7 @@ package encryptor.ui;
 import org.springframework.stereotype.Component;
 import encryptor.ui.api.UserOptions;
 
+import java.io.PrintStream;
 import java.util.Scanner;
 
 @Component
@@ -31,7 +32,7 @@ public class UIManager {
             choice = Integer.valueOf(getUserInput(
                     buildMenuMessage()));
         } catch (NumberFormatException e) {
-            System.err.println("Could not parse your choice. Please enter a number again.");
+            printError("Could not parse your choice. Please enter a number again.");
         }
         return UserOptions.getOptionByCodeNumber(choice);
     }

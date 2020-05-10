@@ -1,13 +1,13 @@
 package encryptor.loggers;
 
-import encryptor.listeners.Observer;
+import encryptor.listeners.EncryptionObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import encryptor.pojos.EncryptionLogEventArgs;
 import encryptor.ui.UIManager;
 
 @Component
-public class EncryptionLogger implements Observer {
+public class EncryptionLogger implements EncryptionObserver {
     private UIManager uiManager;
 
     @Autowired

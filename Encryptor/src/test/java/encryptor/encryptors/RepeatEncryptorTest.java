@@ -2,7 +2,7 @@ package encryptor.encryptors;
 
 import encryptor.algorithms.EncryptionAlgorithm;
 import encryptor.generators.KeyGenerator;
-import encryptor.listeners.Observer;
+import encryptor.listeners.EncryptionObserver;
 import encryptor.managers.FileIOHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import encryptor.pojos.EncryptorParameters;
 import encryptor.ui.UIManager;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -42,7 +41,7 @@ public class RepeatEncryptorTest  {
     private EncryptorParameters parameters;
 
     @Mock
-    private List<Observer> observers;
+    private List<EncryptionObserver> observers;
 
     @Before
     public void setUp() {

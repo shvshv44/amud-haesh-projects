@@ -2,14 +2,14 @@ package encryptor.encryptors;
 
 import encryptor.algorithms.EncryptionAlgorithm;
 import encryptor.generators.KeyGenerator;
-import encryptor.listeners.Observer;
+import encryptor.listeners.EncryptionObserver;
 import encryptor.managers.FileIOHandler;
+import encryptor.pojos.EncryptorParameters;
+import encryptor.ui.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import encryptor.pojos.EncryptorParameters;
-import encryptor.ui.UIManager;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ public class RepeatEncryptor extends FileEncryptor {
     private int repeats;
 
     @Autowired
-    public RepeatEncryptor(@Qualifier("shiftUp") EncryptionAlgorithm algorithm,
+    public RepeatEncryptor(EncryptionAlgorithm algorithm,
                            KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager,
                            @Value("10") int repeats, EncryptorParameters parameters,
-                           @Qualifier("observersList") List<Observer> observers) {
+                           @Qualifier("observersList") List<EncryptionObserver> observers) {
         super(algorithm, keyGenerator, fileIOHandler, uiManager, parameters, observers);
         this.repeats = repeats;
         this.keys = new int[repeats];

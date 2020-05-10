@@ -1,9 +1,6 @@
 package encryptor.processors;
 
 import encryptor.encryptors.FileEncryptor;
-import encryptor.pojos.EncryptorParameters;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -11,9 +8,8 @@ import java.io.File;
 @Component
 public class SyncDirectoryProcessor extends DirectoryProcessor {
 
-    public SyncDirectoryProcessor(@Qualifier("shiftEnc") FileEncryptor fileEncryptor,
-                                  EncryptorParameters parameters) {
-        super(fileEncryptor, parameters);
+    public SyncDirectoryProcessor(FileEncryptor fileEncryptor) {
+        super(fileEncryptor);
     }
 
     @Override

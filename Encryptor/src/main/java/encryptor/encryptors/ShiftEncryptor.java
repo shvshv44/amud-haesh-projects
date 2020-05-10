@@ -2,13 +2,13 @@ package encryptor.encryptors;
 
 import encryptor.algorithms.EncryptionAlgorithm;
 import encryptor.generators.KeyGenerator;
-import encryptor.listeners.Observer;
+import encryptor.listeners.EncryptionObserver;
 import encryptor.managers.FileIOHandler;
+import encryptor.pojos.EncryptorParameters;
+import encryptor.ui.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import encryptor.pojos.EncryptorParameters;
-import encryptor.ui.UIManager;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ import java.util.List;
 public class ShiftEncryptor extends FileEncryptor {
 
     @Autowired
-    public ShiftEncryptor(@Qualifier("shiftUp") EncryptionAlgorithm algorithm,
+    public ShiftEncryptor(EncryptionAlgorithm algorithm,
                           KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters,
-                          @Qualifier("observersList") List<Observer> observers) {
+                          @Qualifier("observersList") List<EncryptionObserver> observers) {
         super(algorithm, keyGenerator, fileIOHandler, uiManager, parameters, observers);
     }
 

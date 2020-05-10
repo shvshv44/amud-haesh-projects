@@ -2,8 +2,8 @@ package encryptor.encryptors;
 
 import encryptor.algorithms.EncryptionAlgorithm;
 import encryptor.generators.KeyGenerator;
-import encryptor.listeners.Observable;
-import encryptor.listeners.Observer;
+import encryptor.listeners.EncryptionObservable;
+import encryptor.listeners.EncryptionObserver;
 import encryptor.managers.FileIOHandler;
 import encryptor.pojos.DecryptionArgs;
 import encryptor.pojos.EncryptionArgs;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @Service
-public abstract class FileEncryptor extends Observable {
+public abstract class FileEncryptor extends EncryptionObservable {
     private FileIOHandler fileIOHandler;
     protected KeyGenerator keyGenerator;
     protected EncryptionAlgorithm algorithm;
@@ -28,7 +28,7 @@ public abstract class FileEncryptor extends Observable {
     protected int[] keys;
     protected EncryptorParameters parameters;
 
-    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters, List<Observer> observers) {
+    public FileEncryptor(EncryptionAlgorithm algorithm, KeyGenerator keyGenerator, FileIOHandler fileIOHandler, UIManager uiManager, EncryptorParameters parameters, List<EncryptionObserver> observers) {
         super(observers);
         this.keyGenerator = keyGenerator;
         this.fileIOHandler = fileIOHandler;

@@ -9,21 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class DirecroryProcessorConfiguration {
 
     @Autowired
+    @Primary
     @Bean("asynProcessor")
-    public DirectoryProcessorInterface createAsynDirectoryProcessor(@Qualifier("shiftEnc") FileEncryptor fileEncryptor,
-                                                                    EncryptorParameters parameters) {
-        return new AsyncDirectoryProcessor(fileEncryptor, parameters);
+    public DirectoryProcessorInterface createAsynDirectoryProcessor(FileEncryptor fileEncryptor) {
+        return new AsyncDirectoryProcessor(fileEncryptor);
     }
 
     @Autowired
     @Bean("synProcessor")
-    public DirectoryProcessorInterface createSynDirectoryProcessor(@Qualifier("shiftEnc") FileEncryptor fileEncryptor,
-                                                                   EncryptorParameters parameters) {
-        return new SyncDirectoryProcessor(fileEncryptor, parameters);
+    public DirectoryProcessorInterface createSynDirectoryProcessor(FileEncryptor fileEncryptor) {
+        return new SyncDirectoryProcessor(fileEncryptor);
     }
 }

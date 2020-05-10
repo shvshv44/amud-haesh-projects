@@ -1,15 +1,14 @@
 package encryptor.managers;
 
-import encryptor.validators.XMLValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import encryptor.pojos.EncryptionLogEventArgs;
 import encryptor.pojos.EncryptionResults;
 import encryptor.pojos.EncryptorParameters;
 import encryptor.processors.DirectoryProcessorInterface;
 import encryptor.ui.UIManager;
 import encryptor.ui.api.UserOptions;
+import encryptor.validators.XMLValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @Component
-public class ApplicationManager {
+public class EncryptionSystemManager {
     private DirectoryProcessorInterface directoryProcessor;
     private UIManager uiManager;
     private JAXBManager<EncryptionResults> jaxbManager;
@@ -27,8 +26,9 @@ public class ApplicationManager {
     private EncryptorParameters parameters;
 
     @Autowired
-    public ApplicationManager(@Qualifier("asynProcessor") DirectoryProcessorInterface directoryProcessor,
-                              UIManager uiManager, JAXBManager<EncryptionResults> jaxbManager, FileIOHandler fileIOHandler, XMLValidator validator, EncryptorParameters parameters) {
+    public EncryptionSystemManager(DirectoryProcessorInterface directoryProcessor,
+                                   UIManager uiManager, JAXBManager<EncryptionResults> jaxbManager, FileIOHandler fileIOHandler,
+                                   XMLValidator validator, EncryptorParameters parameters) {
         this.directoryProcessor = directoryProcessor;
         this.uiManager = uiManager;
         this.jaxbManager = jaxbManager;
@@ -66,8 +66,9 @@ public class ApplicationManager {
         generateKeys(path);
         File[] filesList = getFilesInDirectory(path);
         if(filesList != null) {
+            String keyPath = path + parameters.getEncryptedFolderName() + parameters.getKeyFileName();
             uiManager.printMessage(EncryptionResults.getInstance().toString());
-            directoryProcessor.encryptDirectory(filesList);
+            directoryProcessor.encryptDirectory(filesList, keyPath);
         }
     }
 
@@ -114,7 +115,7 @@ public class ApplicationManager {
         try {
             fileIOHandler.writeToFile(keyPath, getKeysString(keys));
         } catch (IOException e) {
-            uiManager.printError("Error writing keys");
+            uiManager.printError("Error writing keys in given path. check entered path");
         }
     }
 

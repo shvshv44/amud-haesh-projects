@@ -9,6 +9,6 @@ public interface DirectoryProcessorInterface {
     int[] generateKeys();
     void encryptFile(File file, String keyPath);
     void decryptFile(File file, String keyPath);
-    void encryptDirectory(File[] files);
+    void encryptDirectory(File[] files, String keyPath);
     void decryptDirectory(File[] files, String keyPath);
 }

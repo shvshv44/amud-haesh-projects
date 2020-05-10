@@ -10,11 +10,9 @@ import java.io.File;
 @Component
 public abstract class DirectoryProcessor implements DirectoryProcessorInterface {
     protected FileEncryptor fileEncryptor;
-    private EncryptorParameters parameters;
 
-    public DirectoryProcessor(FileEncryptor fileEncryptor, EncryptorParameters parameters) {
+    public DirectoryProcessor(FileEncryptor fileEncryptor) {
         this.fileEncryptor = fileEncryptor;
-        this.parameters = parameters;
     }
 
     @Override
@@ -23,9 +21,8 @@ public abstract class DirectoryProcessor implements DirectoryProcessorInterface 
     }
 
     @Override
-    public void encryptDirectory(File[] files) {
+    public void encryptDirectory(File[] files, String keyPath) {
         for(File file : files) {
-            String keyPath = file.getParent() + parameters.getEncryptedFolderName() + parameters.getKeyFileName();
             encryptFile(file, keyPath);
         }
     }

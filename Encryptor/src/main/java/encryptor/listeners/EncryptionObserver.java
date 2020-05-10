@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import encryptor.pojos.EncryptionLogEventArgs;
 
 @Component
-public interface Observer {
+public interface EncryptionObserver {
     void encryptionStarted(String fileName);
 
     void encryptionEnded(EncryptionLogEventArgs args);
